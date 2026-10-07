@@ -1,18 +1,64 @@
-# CLAUDE.md — 旅遊懶人包（從 trip-template 建立）
+# CLAUDE.md — 2025 大阪・金澤・妙高・長野・東京 旅遊懶人包（行程紀錄）
 
 > 使用者以繁體中文溝通，回覆請一律使用繁體中文。
 
 ## 這個 repo 是什麼
-從 `trip-template` 範本開出來的旅遊懶人包專案：單一 `index.html`，用 GitHub Pages 發布給同行者。
-做法、資料格式、踩雷筆記都在 `.claude/skills/trip-guide/`（輸入 `/trip-guide` 或說「用 trip-guide 規劃…」即可載入）。
+使用者**已經走完**的 2025/2/22–3/2 北陸・信州 9 天 8 夜鐵路自由行，從原始 Excel（行程、住宿、景點、餐廳、北海線、南海線、檢討、待辦、圖片各頁）
+整理成單一 `index.html` 的行程網站，用 GitHub Pages 發布。桌機（>640px）是長頁面＋每日路線地圖；手機（≤640px）是 App 版（首頁／行程／地圖／清單／資訊五分頁）。
+做法與資料格式見 `.claude/skills/trip-guide/`（`/trip-guide` 載入）。
 
-## 第一次對話（repo 裡還沒有 index.html）
-1. 載入 trip-guide skill，依 `SKILL.md` 的「建立新行程的流程」進行：先用選項問清楚日期、人數、住宿、交通、必去與不要的地方。
-2. 從 `.claude/skills/trip-guide/assets/` 複製範例與 PWA 檔到 repo 根目錄，依 `references/new-trip-checklist.md` 逐項換成新行程。
-3. 換掉 localStorage 前綴與 `sw.js` 快取名（同一 GitHub 帳號的 Pages 同網域，不換會和其他行程互相覆蓋）。
-4. `node .claude/skills/trip-guide/scripts/check.js index.html <scratchpad>/shots` 零錯誤後 commit、push。
-5. **把這份 CLAUDE.md 改寫成這次行程的交接文件**（專案是什麼、行程表、重要決策、變更紀錄、待辦），刪掉本節。
+## 行程表
+| Day | 日期 | 內容 | 過夜 |
+|---|---|---|---|
+| 1 | 2/22（六） | D7378 桃園 14:35 → 關西 18:15，南海到新今宮 | 太洋商務飯店（新今宮） |
+| 2 | 2/23（日） | 新大阪 → サンダーバード → 敦賀 → 北陸新幹線 → 金澤；兼六園、金澤城、近江町晚餐、東茶屋街 | 金澤香林坊海茵娜飯店 |
+| 3 | 2/24（一） | 近江町市場、のとめぐり壽司、巴士來回白川鄉合掌村、うなぎ菊川 | 同上 |
+| 4 | 2/25（二） | 北陸新幹線 → 上越妙高 → はねうまライン → 妙高高原 → 巴士 → 赤倉溫泉 | 岡山旅館 |
+| 5 | 2/26（三） | 赤倉觀光度假滑雪場整天 | 岡山旅館 |
+| 6 | 2/27（四） | 北しなの線到長野，巴士到渋溫泉九番湯、溫泉街、湯田中，長野電鐵回長野 | 相鐵 FRESA INN 長野 |
+| 7 | 2/28（五） | 北陸新幹線 → 大宮 → 埼京線 → 新宿；元村、中野百老匯、タロちゃん、歌舞伎町 | BOOK AND BED 新宿 |
+| 8 | 3/1（六） | 搬到淺草；秋葉原、神保町神田勝本、一蘭、淺草寺 | 淺草 Plus Hostel |
+| 9 | 3/2（日） | 京成到成田 T3，GK013 08:30 → 桃園 11:50 | — |
 
-## 分支與發布
-- 使用者若說「直接推到 main」，就 commit 到 main；GitHub Pages 設 Settings → Pages → Deploy from a branch → main / root。
-- 網址：`https://<帳號>.github.io/<repo 名稱>/`。
+## 重要決策
+- **這是過去的行程紀錄**，不是規劃中的行程：
+  - 時間軸與景點卡裡「實際：」開頭的是 Excel「吃飯整理」「檢討」的真實心得；行程表原訂但沒去的（麵屋大河、麺屋蕪村、丸香、米久本店）標「原訂」並放進候選。
+  - Excel 行程表與實際吃的不一致時（例：2/23 晚餐原訂麵屋大河，實際在近江町市場吃），**時間軸以實際為準**。
+  - 雨備按鈕用 CSS 藏起來（`RAIN_STOPS={}`）；天氣只顯示 2 月下旬平年值（約），`wxFetch` 期間設在 2025 年所以不會抓預報。
+  - 首頁倒數會顯示「旅程結束」。
+- 新增「回顧與檢討」區塊 `#review`（桌機在花費後面；手機在 資訊 › 檢討）：檢討 12 條、吃飯整理表、Excel 圖片頁的 6 張參考圖（`AREAMAPS`，燈箱可放大）、沒走的南線方案。
+- Excel 圖片頁的長野 Google 地圖截圖（有剪取工具浮層）沒放進來。
+- 沒有租車：`CAR_ROUTES=[]`，交通頁沒有自駕須知。
+
+## 資料出處與未查證
+- 座標：多數從 Excel 的 Google 地圖連結解析（`!3d…!4d`）。**推估的**：金澤香林坊海茵娜飯店（Excel 連結名稱是「金澤香林坊古怪酒店」，用香林坊位置）、うなぎ四代目菊川（Excel 連結座標誤指到のとめぐり，改用クロスゲート金沢附近）、ホルモン人生タロちゃん（連結誤指元村，改用中野站附近）、咖哩飯 Manten（連結是 Hinoya Curry 秋葉原，改用神保町估計）、一蘭淺草店、淺草寺卡片位置、關西機場、各車站。
+- `LINES`（鐵道）是**依沿線車站座標連成的示意折線**（`國土數值情報` 下載被網路政策擋），不是實際軌道線形；頁尾有註明。`LAND` 來自 dataofjapan/land（bbox 134.9,34.2,140.7,37.3，tol 0.003）。
+- 票價、時刻都是 Excel 記錄的 2025/2 資料；兼六園 ¥320 是常識值（標「約」）。景點卡的介紹文字是一般常識，營業時間取自 Excel。
+- 機票、住宿 Excel 沒記金額 → 花費頁標「未知／未記錄」。
+- Excel 住宿頁日期寫 2024 是筆誤，以行程頁的 2025 為準。
+
+## 變更紀錄
+
+### 2026-10-07 變更（一）：從 Excel 建立行程網站
+使用者要求「這是我過去的行程，請幫我建構出他的行程網站，請幫我考量同時有電腦跟手機使用者」。
+- 從 `trip-guide` 範例複製，換掉 `P／NAMES／GQ／CARDS（32 張）／DAYS／STOPS／COST／BOOK／RESTO（40 家）／SPOT_TREE／WX_*／MAP_ZONES／PACK`、hero、交通頁、美食頁、頁尾。
+- `RAIL_OK`：新幹線＝名稱含「新幹線」；`rail`＝JR／南海／京成（不含新幹線）；`izukyu`（標籤改「地方鐵道・私鐵」）＝えちご／しなの／長野電鉄；`subway`＝JR 中央線／東京 Metro。
+- `MAP_ZONES`：Day 3 金澤、Day 6 長野＋湯田中（手機地圖「點我放大」）。
+- localStorage 前綴 `hkr-`，`sw.js` 快取名 `hkr-v1`，manifest 名稱「北陸・信州・東京 旅のしおり」。
+- **踩雷**：範例 `sw.js` 第 8 行 `const V=…  // 註解, PAGE=…, CORE=…` 註解把後面的 `PAGE`、`CORE` 宣告吃掉，service worker 安裝會失敗——已拆成兩行（skill 的 assets 也有同樣問題，尚未修）。
+- 驗證：`node .claude/skills/trip-guide/scripts/check.js index.html <scratchpad>/shots` 全部通過（零錯誤、無落海、無溢出）；另用 Playwright 截圖看了 hero、Day 2/3/6/8、交通、檢討、手機各分頁。
+
+## GitHub Pages 發布
+- Settings → Pages → Deploy from a branch → 選分支 / `(root)`。
+- 網址：`https://jerry940080.github.io/2025-osaka-kanazawa-miokokoen-nagano-tokyo/`
+
+## 待辦
+- 使用者如果有現場照片，用 `scripts/addphotos.py` 嵌進對應卡片（目前全部用維基百科即時載入的示意圖）。
+- 機票、住宿金額若想記錄，補進 `COST`。
+- skill 範本的 `assets/sw.js` 同樣的註解 bug 可以順手修。
+
+## index.html 內部結構與修改慣例
+- 結構同 `.claude/skills/trip-guide/references/architecture.md`。改行程只改 `STOPS`；`COST`、`BOOK`、交通頁每日卡片、hero 路線字串是手寫的要一起改。
+- 參考圖 `AREAMAPS` 由 `let W=600,H=440;` 前一行的小段 JS 畫進 `#offmaps`。
+- 手機資訊分頁 `INFO_PANES` 多了 `['review','檢討',['#review']]`。
+- 每次改完跑 `check.js`；改 `sw.js` 要把 `V` 加一。
