@@ -44,7 +44,7 @@
 - 從 `trip-guide` 範例複製，換掉 `P／NAMES／GQ／CARDS（32 張）／DAYS／STOPS／COST／BOOK／RESTO（40 家）／SPOT_TREE／WX_*／MAP_ZONES／PACK`、hero、交通頁、美食頁、頁尾。
 - `RAIL_OK`：新幹線＝名稱含「新幹線」；`rail`＝JR／南海／京成（不含新幹線）；`izukyu`（標籤改「地方鐵道・私鐵」）＝えちご／しなの／長野電鉄；`subway`＝JR 中央線／東京 Metro。
 - `MAP_ZONES`：Day 3 金澤、Day 6 長野＋湯田中（手機地圖「點我放大」）。
-- localStorage 前綴 `hkr-`，`sw.js` 快取名 `hkr-v1`，manifest 名稱「北陸・信州・東京 旅のしおり」。
+- localStorage 前綴 `hkr-`，`sw.js` 快取名 `hkr-v2`（activate 只清 `hkr-` 前綴的舊快取，不會動到同網域其他行程網站），manifest 名稱「北陸・信州・東京 旅のしおり」。
 - **踩雷**：範例 `sw.js` 第 8 行 `const V=…  // 註解, PAGE=…, CORE=…` 註解把後面的 `PAGE`、`CORE` 宣告吃掉，service worker 安裝會失敗——已拆成兩行（skill 的 assets 也有同樣問題，尚未修）。
 - 驗證：`node .claude/skills/trip-guide/scripts/check.js index.html <scratchpad>/shots` 全部通過（零錯誤、無落海、無溢出）；另用 Playwright 截圖看了 hero、Day 2/3/6/8、交通、檢討、手機各分頁。
 
