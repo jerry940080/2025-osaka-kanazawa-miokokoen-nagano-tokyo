@@ -765,6 +765,14 @@ html.big .txt{font-size:19px}html.big .one{font-size:21px}html.big h2{font-size:
 .sbox .scene.pimg{background-size:cover;background-position:center}.sbox .scene.pimg i{display:none}
 .cv .win.pimg{background-size:cover;background-position:center 40%}.cv .win.pimg .mtn{display:none}.cv .win.pimg::after{opacity:.55}
 </style>
+<style>
+/* ===== 2026-11-18 影片 ===== */
+.ph.img.vid::before{z-index:2}
+.pcount{position:absolute;right:6px;top:6px;z-index:3;font:12px var(--mono);color:#fff;background:rgba(0,0,0,.55);padding:2px 8px;border-radius:999px;pointer-events:none}
+#lb video{width:100%;height:100%;object-fit:contain;background:#000}
+.tframe .ly.vid video,.vidfill{width:100%;height:100%;object-fit:cover;display:block}
+.dstrip .ph.img{background-size:cover}
+</style>
 <style id="dyn"></style></head><body>
 <div id="pal"><button id="palb">🎨 選配色</button></div>
 <div id="pk" hidden><div class="pkh"><b>每一章選一個色票</b><button id="pkx">完成</button></div><div id="pkrows"></div><label class="pkband"><input type="checkbox" id="band"> 頁面上緣加一條章節色帶</label><div class="pkcur"><span id="pkcur"></span><button id="pkcp">複製</button></div></div>
@@ -891,7 +899,7 @@ Object.assign(P,{
    <button class="tarr l" aria-label="上一節">‹</button><button class="tarr r" aria-label="下一節">›</button>
    <div class="tdots">${TRX.map(c=>`<i class="${c[1]?'v':''}"></i>`).join('')}</div></div>`})},
  cabinet:{c:'ch5',full:1,h:()=>sp({cls:'cabinet',k:'DAY 7 · 中野百老匯',t:'逛樓層',txt:['整體空間感很棒、逛起來舒服；多是過季商品和老東西，不賣最新的貨。','有一間店賣攤位、書店、商家、街景的小小模型；四樓有很大的展覽空間。'],one:'點一格，玻璃門會打開。',
-   stage:`<div class="cab"><div class="cabf">${CABS.map((r,ri)=>`<div class="shf" style="grid-template-columns:${r.cells.map(c=>c.w==='wide'?'1fr':c.w==='tall'?'.55fr':'1fr').join(' ')}"><span class="sn">${r.n}</span>${r.cells.map((c,ci)=>`<button class="cel ${c.w||''}" data-r="${ri}" data-c="${ci}"><span class="mdl"></span>${c.w==='tall'?'<span class="ph-vid">▶</span>':''}<span class="gls"></span><span class="ml">${c.l}</span></button>`).join('')}</div>`).join('')}</div>
+   stage:`<div class="cab"><div class="cabf">${CABS.map((r,ri)=>`<div class="shf" style="grid-template-columns:${r.cells.map(c=>c.w==='wide'?'1fr':c.w==='tall'?'.55fr':'1fr').join(' ')}"><span class="sn">${r.n}</span>${r.cells.map((c,ci)=>`<button class="cel ${c.w||''}" data-r="${ri}" data-c="${ci}"><span class="mdl"${c.ps&&c.ps[0]&&typeof MBYID!=='undefined'&&MBYID[c.ps[0]]?` style="background:center/cover url(${MBYID[c.ps[0]][2]==='v'?'vid':'img'}/IMG_${c.ps[0]}.${MBYID[c.ps[0]][2]==='v'?'jpg':'webp'})"`:''}></span>${c.w==='tall'?'<span class="ph-vid">▶</span>':''}<span class="gls"></span><span class="ml">${c.l}</span></button>`).join('')}</div>`).join('')}</div>
    <div class="drw"><div class="dh">點櫃子裡的一格，照片會在這裡展開</div><div class="dstrip"></div></div></div>`})},
  focus:{c:'ch5',full:1,h:()=>sp({cls:'focus',k:'DAY 7 · 新宿的夜',t:'對焦',txt:['同一個晚上，從遠到近：歌舞伎町的招牌、街上的人、最後是タロちゃん。','烤肉完美，牛舌好吃到又加點一份。'],one:'左右拖動下面的對焦環。',
    stage:`<div class="fcs"><div class="fview" style="--b:12px;--bo:1">${FOCUS.map((f,i)=>`<div class="fl" data-i="${i}" style="opacity:${i?0:1}"><div class="ph" data-l="${f.l}" style="--ph1:${['#3b1f4a','#2a2340','#4a2a2a'][i]};--ph2:${['#a0306a','#5a3f7a','#c4703d'][i]}"></div></div>`).join('')}<div class="bok"></div><span class="flab">${FOCUS[0].l}</span><button class="spbtn fopen">展開這一段的照片</button></div>
@@ -917,7 +925,7 @@ function scratchInit(cv){const box=cv.parentNode,ctx=cv.getContext('2d');const d
   cv.addEventListener('pointerup',()=>{down=false;last=null;check();});}
 function tunnelSet(B,v){const L=B.querySelectorAll('.tframe .ly');const cl=(x)=>Math.max(0,Math.min(1,x));
   L[0].style.opacity=cl((42-v)/10);L[0].style.backgroundPosition=(-v*6)+'px 0';
-  L[1].style.opacity=Math.min(cl((v-30)/8),cl((70-v)/6));L[2].style.opacity=cl((v-62)/8);L[3].style.opacity=cl((v-84)/8);
+  L[1].style.opacity=Math.min(cl((v-30)/8),cl((70-v)/6));L[2].style.opacity=cl((v-62)/8);L[3].style.opacity=cl((v-84)/8);{const tv=B.querySelector('.tvid');if(tv){if(v>=80){tv.play().catch(()=>{});}else tv.pause();}}
   B.querySelector('.sp-tunnel').classList.toggle('lit',v>=66);B.querySelector('.tfloat').classList.toggle('on',v>=95);}
 function focusSet(B,v){const fv=B.querySelector('.fview');let best=0,bd=999;FOCUS.forEach((f,i)=>{const d=Math.abs(v-f.at);if(d<bd){bd=d;best=i;}});
   fv.style.setProperty('--b',Math.min(14,bd*.45)+'px');fv.style.setProperty('--bo',Math.min(1,.15+bd/20));
@@ -955,7 +963,7 @@ function specialClick2(e){const B=e.target.closest('#base');if(!B)return false;c
   if(t.closest('.trgo')){const l=B.querySelector('.lane');l.classList.toggle('stop');t.closest('.trgo').textContent=l.classList.contains('stop')?'▶ 開車':'⏸ 停車';return true;}
   if(t.closest('.car[data-i]')){lbOpen('はねうまライン',7,+t.closest('.car').dataset.i);return true;}
   const cel=t.closest('.cel');if(cel){B.querySelectorAll('.cel.on').forEach(x=>{if(x!==cel)x.classList.remove('on');});cel.classList.add('on');const c=CABS[+cel.dataset.r].cells[+cel.dataset.c];
-    B.querySelector('.drw .dh').innerHTML=`<b>${CABS[+cel.dataset.r].n} · ${c.l}</b>　${c.ps.length} 項`;B.querySelector('.dstrip').innerHTML=c.ps.map((x,i)=>{const [k,l]=x.split('|');return `<div class="ph ${k}" style="--i:${i}" data-l="${l}"></div>`;}).join('');return true;}
+    B.querySelector('.drw .dh').innerHTML=`<b>${CABS[+cel.dataset.r].n} · ${c.l}</b>　${c.ps.length} 項（點照片看大圖）`;B.querySelector('.dstrip').innerHTML=c.ps.length?c.ps.map((id,i)=>{const x=MBYID[id];return phHTML((x[3]==='v'?'v':'h'),x,'cabinet').replace('style="','style="--i:'+i+';');}).join(''):'<span class="spn">這一格還沒有照片</span>';return true;}
   if(t.closest('.dstrip .ph:not(.vid)')){const a=[...t.closest('.dstrip').children];lbOpen('中野百老匯',a.length,a.indexOf(t.closest('.ph')));return true;}
   if(t.closest('.fopen')){const i=+B.querySelector('.fview').dataset.i||0;lbOpen(FOCUS[i].l,FOCUS[i].n,0);return true;}
   if(t.closest('.fview,.ring'))return true;
@@ -999,8 +1007,8 @@ function bmClose(){$('#bmp').hidden=true;$('.bm').classList.remove('on');}
 document.addEventListener('input',e=>{if(e.target.id==='bmr')bmLabel(+e.target.value);});
 document.addEventListener('change',e=>{if(e.target.id==='bmr'){const i=+e.target.value;bmClose();if(i!==I)jump(i);}});
 document.addEventListener('click',e=>{
-  {const im=e.target.closest('#base .ph[data-src],#pscr .ph[data-src]');if(im&&!im.closest('.cap,.got')){const g=GAL[im.dataset.g]||[[im.dataset.src,im.dataset.l]];const i=Math.max(0,g.findIndex(v=>v[0]===im.dataset.src));lbOpen('',0,i,g);e.stopPropagation();return;}}
-  if(e.target.closest('#base .more[data-alb]')){lbOpen('',0,0,GAL.s_album);e.stopPropagation();return;}
+  {const im=e.target.closest('#base .ph[data-src],#pscr .ph[data-src]');if(im&&!im.closest('.cap,.got')){const g=galOf(im.dataset.g)||[[im.dataset.src,im.dataset.l]];const i=Math.max(0,g.findIndex(v=>v[0]===im.dataset.src));lbOpen('',0,i,g);e.stopPropagation();return;}}
+  if(e.target.closest('#base .more[data-alb]')){lbOpen('',0,0,MEDIA.s_album);e.stopPropagation();return;}
   if(e.target.closest('#base .fopen')){const i=+document.querySelector('#base .fview').dataset.i||0;lbOpen('',0,0,FOCUSGAL[i]);e.stopPropagation();return;}
   if(e.target.closest('.bm')){$('#bmp').hidden?bmOpen():bmClose();e.stopPropagation();return;}
   if(e.target.closest('#bmp')){const t=e.target;if(t.id==='bmx'){bmClose();return;}
@@ -1118,6 +1126,9 @@ Object.assign(P,{
 });
 P.after.h=P.after.h.replace(/<\/div>$/,`<a class="planlink" href="plan.html">出發前做的行程規劃 →</a></div>`);
 
+/* MEDIA-BEGIN（scratchpad media_build.py 產生，別手改）*/
+const MEDIA={"s_dinner1":[["0494","串炸（炸蝦串淋塔塔醬）與生高麗菜","i","h"],["0495","串炸（塔塔醬炸串）、生高麗菜","i","h"]],"t1":[["1846","大雪中的太陽能板與住宅（敦賀前）","i","h"],["1848","雪覆蓋的屋頂與田野","i","h"],["1851","雪中的今津（滋賀・今津駅前會館）一帶","i","h"],["1850","大雪中的田野、雪屋頂民宅、電塔","v","v"],["0501","雪覆蓋的住宅與山","v","v"],["0502","雪田、民宅、雲中雪山","v","h"],["0505","雪中的城鎮、雲層、隔音板","v","v"],["1853","雪林、電線桿、雪屋","v","h"]],"s_tsuzumi":[["0508","金澤站鼓門與雪吊松樹、殘雪","i","h"],["0509","金澤站鼓門與殘雪廣場","i","v"],["1854","金澤站鼓門","i","h"],["0506","金澤站鼓門正面","i","h"],["0507","金澤站鼓門正面（與 0506 幾乎相同構圖）","i","h"],["1858","雪中小巷（招牌「彌助」）","i","v"],["1866","尾山神社神門與參道","i","h"]],"gate":[["1872","金澤城公園玉泉院丸庭園雪景、雪吊松與池塘","i","h"],["1873","雪覆蓋的休憩所（玉泉庵）與池塘","i","h"],["0518","金澤城公園玉泉院丸庭園雪景全景","i","p"],["0526","金澤城鼠多門與雪中木橋","i","v"],["0527","金澤城鼠多門與雪中木橋","i","h"],["1883","金澤城公園雪原與雲","i","h"],["1884","雪中步道、河北門／石垣方向","i","h"],["1885","剷過雪的步道延伸到遠處石垣與休憩亭","v","h"],["0546","金澤城菱櫓一帶、雪覆蓋的休憩亭與石垣","i","v"],["1886","雪中的菱櫓／石垣與休憩亭","i","h"],["1889","雪中的石川門・菱櫓一帶城門與石垣、護城壕","i","h"]],"s_castle":[["0552","兼六園桂坂入口告示牌與積雪","i","v"],["0551","兼六園「桂坂」入口的開園時間木牌與雪","i","v"],["1895","雪中鳥居、石燈籠與曲水","i","h"],["0562","兼六園雪中生鏽的石鳥居與小池","i","v"],["0565","走過積雪的紅色千本鳥居隧道","v","v"]],"s_dinner2":[["0618","炙燒牛肉片（疑為能登牛）佐鹽、山葵、芥末","i","h"],["0619","能登牛炙燒切片（洋蔥絲、鹽、山葵、芥末）","i","h"],["0624","月見烏龍湯麵（生蛋黃、蔥）","i","v"],["0625","月見烏龍麵特寫","i","v"],["0626","筷子把蛋黃攪散","v","v"],["0627","晚上大雪中的近江町一帶街口","v","v"]],"s_noto":[["0628","炙燒起司甜蝦握壽司","i","v"],["1943","炙燒美乃滋綜合握壽司（蝦、鮭魚、白身魚）","i","v"],["0630","鮪魚、鮭魚、炙燒蝦三盤","i","h"],["0629","鮪魚、鮭魚、炙燒甜蝦","i","h"],["0631","在炙燒鮪魚（或鰤魚）握壽司上擠柚子","v","v"],["1944","鮭魚卵鮭魚軍艦、飛魚卵軍艦","i","v"],["1945","鮭魚親子軍艦與飛魚卵軍艦","i","v"],["1946","炙燒鮪魚腹（大トロ）握壽司佐檸檬鹽（金色盤）","i","v"]],"s_bus":[["1947","巴士車窗外的雪山與高架道路（往白川鄉途中）","i","v"],["1949","剛到白川鄉","v","h"],["0640","雪中山路、國道 360 指標、進入村落","v","v"],["1950","白川鄉入口巨大的雪堆、雪屋頂商店","v","h"]],"s_album":[["0641","白川鄉巴士站（雪很厚的屋頂）","i","h"],["0642","白川鄉巴士站","i","h"],["1951","大雪中的合掌屋土產店「いろり」","i","h"],["0643","白川鄉「いろり」伴手禮合掌屋","i","v"],["0644","白川鄉「いろり」伴手禮合掌屋","i","v"],["0645","「いろり」與旁邊合掌屋","i","h"],["1952","白川鄉合掌屋（「落雪注意」看板、木長椅）","i","h"],["1953","白川鄉主街","i","h"],["1954","合掌屋屋簷與被雪埋住的屋頂、遠山","v","h"],["1959","白川鄉雪邊水溝裡的鯉魚","i","v"],["1960","白川鄉合掌屋山牆與雪堆、杉林","i","h"],["1961","白川鄉雪地上三位女性遊客","i","h"],["0651","白川鄉雪中全景","i","p"],["1962","白川鄉雪中全景","i","p"],["1963","白川鄉雪中商店與合掌屋","i","h"],["1964","白川鄉雪原與民宅","i","h"],["1965","白川鄉「きどや」合掌屋","i","h"],["1966","白川鄉「きどや」合掌屋","i","h"],["1972","白川鄉雪中石鳥居與小神社（白川八幡神社一帶）","i","h"],["1973","白川鄉雪中石鳥居與小神社（白川八幡神社一帶）","i","h"],["1978","兩側雪牆的道路","i","h"],["0664","白川鄉（往展望台方向／荻町對岸）雪中的山與庄川","i","h"],["0665","同一處俯瞰停車場與庄川、雪山","i","h"],["1977","白川鄉高處俯瞰停車場與庄川、雪山（大雪）","i","h"],["0666","從高處俯瞰雪中山景與停車場","i","h"],["0667","白川鄉俯瞰停車場與庄川、雪山","i","h"],["0670","屋頂積厚雪的合掌屋","i","h"],["0668","被厚雪埋住的合掌屋（田中央）","i","h"],["0669","同一棟被雪埋住的合掌屋","i","h"],["0671","白川鄉田間雪地全景","i","p"],["1979","被雪埋到屋簷的合掌屋","i","h"],["1980","白川鄉雪原與合掌屋","i","h"],["1981","大雪中的合掌屋","v","h"],["1983","大型合掌屋與雪原、山","i","h"],["1982","白川鄉雪原與合掌屋、杉林","i","h"],["1984","白川鄉雪原上一群遊客在玩雪","i","h"],["1985","從雪覆蓋的合掌屋與路邊遊客","v","h"],["0680","白川鄉「田島家養蠶展示館」屋簷冰柱與厚雪","i","h"],["1989","白川鄉雪中合掌屋與枯樹","i","h"],["1990","白川鄉雪原上一排合掌屋屋頂、雪山（雪停）","i","h"],["0684","白川鄉雪原與兩棟合掌屋","i","h"],["1991","白川鄉雪原、兩棵杉樹與合掌屋","i","h"],["0685","白川鄉雪中的庄川河岸、杉林與山","v","v"],["1993","白川鄉雪原全景","i","p"],["1994","雪中河谷與山林","i","h"],["1995","庄川河岸步道與雪山","i","h"],["0693","木欄杆上一排小雪人（雪捏的小動物）","i","h"],["0692","木欄杆上一排小雪人（雪捏的小動物）","i","h"],["0694","木欄杆上一排小雪人（雪捏的小動物）","i","h"]],"s_uber":[["0753","上越妙高站大廳（えちごトキめき鉄道剪票口）","i","h"],["0754","上越妙高站自由通路","i","h"],["0755","吉伊卡哇新潟限定吊飾、豆柴","i","h"],["0759","晴天雪山與街道（站前大樓「上越妙高」字樣）","i","h"],["0760","上越妙高站西口","i","h"],["0761","晴空下的妙高山與雪街","i","h"],["0762","晴空下的妙高山與雪街","i","h"],["0763","上越妙高站窗外","i","h"],["0764","上越妙高站窗外","i","h"],["0765","上越妙高站窗外","i","h"]],"s_kogen":[["0771","妙高高原遊客中心的世界地圖（貼紅點記錄遊客國家）","i","h"],["0772","妙高高原遊客中心的世界地圖","v","h"],["0773","妙高高原站前","v","v"],["0775","「赤倉温泉行き To Akakura Onsen","v","h"]],"s_okayama":[["0776","榻榻米旁的窗邊座位（紅椅、紙燈）","i","h"],["0777","岡山旅館房間窗邊座位（紅椅、紙燈、窗外雪景）","i","h"],["0780","雪中的樹與藍天","i","v"],["0781","岡山旅館和室全景","i","h"]],"s_night":[["2080","探照燈下的雪道（藍光與橘光）、遠處纜椅","i","h"]],"s_day5":[["0831","旅館日式早餐（鮭魚、玉子燒、小菜）","i","h"],["0827","岡山旅館日式早餐","i","h"],["0828","岡山旅館日式早餐","i","h"]],"t3":[["2121","濃霧大雪中的建築","i","h"],["2122","濃霧中一棵杉樹與雪地","i","v"],["2123","岡山旅館西式早餐","i","h"],["0835","月台上的藍米色 115 系電車","i","h"],["2124","積雪月台上的藍米色 115 系電車（側面全景）","i","h"],["0834","妙高高原站月台上的藍白（橫須賀色）115 系電車","i","h"],["0836","妙高高原站 1 號月台","i","h"],["0837","妙高高原站藍白 115 系電車","i","v"],["0838","妙高高原站藍白 115 系電車","i","v"],["2125","妙高高原站月台與積雪軌道、遠山","i","h"],["0841","從車站天橋俯瞰積雪軌道與電車車頂","i","v"],["0839","從跨線橋俯拍 115 系車頂與積雪月台、遠山","i","v"],["0840","從跨線橋俯拍 115 系車頂與積雪月台、遠山","i","v"],["0842","從跨線橋俯拍妙高高原站","i","h"],["2126","妙高高原站跨線橋俯拍 115 系車頂與雪月台","i","h"],["2127","115 系車頂、厚雪屋頂與雪山藍天","i","h"],["2128","妙高高原站月台旁超厚雪牆與雪山藍天","i","h"],["0843","妙高高原站月台旁的厚雪牆與山","i","h"],["2129","妙高高原站月台旁的厚雪牆與山","i","h"],["2130","妙高高原站月台旁的厚雪牆與山","i","h"],["2131","妙高高原站月台雪牆與倉庫","i","h"],["0844","月台雨棚下的藍米色 115 系電車「普通 ワンマ","i","v"],["0845","115 系「普通 ワンマン」停在月台","i","v"],["0848","115 系正面進站","i","v"],["2132","藍白 115 系「普通 ワンマン」正面停在月台、","i","h"],["0854","115 系電車正面停在積雪軌道","i","h"],["0849","115 系正面、藍色跨線橋","i","v"],["0855","115 系正面、藍色跨線橋","i","v"],["2133","115 系正面、藍色跨線橋","i","h"]],"s_soba":[["0858","天婦羅蕎麥麵套餐（盛蕎麥＋天丼）","i","h"],["0857","天婦羅蕎麥麵套餐","i","h"],["2134","ざる蕎麥＋天丼套餐","i","h"],["2135","溫蕎麥麵（花形魚板）＋紫蘇天婦羅丼","i","h"]],"noren":[["0862","湯田中・渋溫泉一帶的「渋湯橋」與雪中坡地","i","h"],["0863","渋湯橋與溫泉街入口門樓","i","h"],["2136","渋溫泉入口「渋湯橋」與紅欄杆、雪坡民宅","i","h"],["2137","渋溫泉入口大街與渋湯橋","i","h"],["2138","渋溫泉入口大街與渋湯橋","i","h"],["0866","金具屋（斉月楼）木造多層建築","i","v"],["2139","渋溫泉金具屋（斉月楼）與旁邊唐破風屋頂仰拍","i","h"],["0869","渋溫泉的狹窄石板小巷","i","v"],["2141","渋溫泉石板小巷","i","v"],["0870","渋溫泉石板街","i","v"],["0871","渋溫泉石板街","i","v"],["2142","渋溫泉石板大街","i","v"],["0881","渋溫泉足湯「休足処 信玄」","i","v"],["0891","溫泉街上的寺院（臨時朱印所）與石階、湧泉","i","h"],["0888","渋溫泉「渋高薬師」石階、湧泉與石碑","i","v"],["0894","渋溫泉「渋高薬師」石階、湧泉與石碑","i","v"],["0907","夕陽照在金具屋木造多層建築","i","v"],["0906","渋溫泉金具屋（斉月楼）木造多層建築仰拍","i","v"],["0908","金具屋正面與 KANAGUYA 接駁車","i","v"],["0909","金具屋前","i","v"],["0911","渋溫泉旁的橫湯川與雪坡民宅","i","h"],["2143","渋溫泉往湯田中的河邊路","i","h"],["2144","湯田中・渋一帶夕陽、ヤマト屋旅館與雪坡","i","h"],["2145","河邊雪景夕陽（角度較廣）","i","h"],["0914","河邊雪景夕陽","i","h"],["0915","河邊雪景夕陽（與 0914 幾乎相同）","i","h"]],"s_shibu":[["0913","夕陽下沿著河邊護欄的路往湯田中方向走","v","v"],["0916","湯田中一帶高處看夕陽落入山稜、雪原（鐵絲網前景）","i","h"],["0917","湯田中一帶高處看夕陽落入山稜、雪原（鐵絲網前景）","i","h"],["0918","湯田中夕陽落入北アルプス山稜、雪原與河","i","h"],["2146","湯田中高處夕陽落入北アルプス、雪原與三角形建築","i","h"],["0919","雪原、民宅、旅館大樓、太陽落在山後","v","h"],["2147","雪原、民宅、旅館大樓、太陽落在山後","i","h"]],"s_nagano":[["2148","味噌拉麵（叉燒、蔥、豆芽）","i","v"]],"s_motomura":[["2151","兩個小石爐（固形燃料點火中）","i","h"],["2152","牛かつ定食（炸牛排、麥飯、湯、小石爐）","i","h"],["0925","牛排炸、麥飯、味噌湯、小石爐","i","h"],["2153","夾起半熟的牛排炸看斷面","v","v"],["0926","在小石板爐上烤牛排炸","v","v"]],"cabinet":[["0930","吉伊卡哇大娃娃展示櫃","i","v"],["0931","未開封戰隊／鋼彈盒玩與價格","i","v"],["0932","超人力霸王模型展示櫃","i","h"],["0933","超人力霸王模型展示櫃","i","h"],["0934","超人力霸王模型展示櫃","i","h"],["0935","吉伊卡哇扭蛋機「ジェムリーズ」","i","v"],["0936","吉伊卡哇扭蛋機「つまんでつなげてますこっと」","i","v"],["0939","昭和風零食店「たんぽぽ商店」迷你模型","v","h"]],"focus":[["2159","生牛肉膾（ユッケ）佐蛋黃與山葵","i","h"],["0941","兩片霜降牛肉在烤網上冒煙","i","h"],["2160","厚切生牛舌佐檸檬","i","h"],["2161","鐵網上烤的厚切牛舌（撒黑胡椒）","i","h"],["2162","鐵網上烤到焦香的厚切牛舌","v","h"]],"s_bookbed":[["0944","夜裡從高樓窗邊紅色沙發俯瞰歌舞伎町街道","i","v"],["0945","紅色窗邊座位俯瞰歌舞伎町夜景、APA HOTEL","i","v"],["0946","紅色窗邊座位俯瞰歌舞伎町夜景、APA HOTEL","i","h"],["2164","BOOK AND BED 新宿高樓俯拍歌舞伎町夜","i","v"],["0985","黑膠唱盤與雜誌牆","i","h"],["0986","Bruno Mars 黑膠封面與唱盤特寫","i","v"]],"s_plus":[["0988","竹炭吐司炒蛋、湯杯","i","v"]],"s_akiba":[["0993","秋葉原店內「NIKKE」角色等身立牌（撮影OK）","i","v"],["0994","秋葉原店內「NIKKE」角色等身立牌（撮影OK）","i","v"]],"s_sensoji":[["1007","淺草寺寶藏門夜景","i","v"],["1008","淺草寺寶藏門夜景正面（大燈籠、仁王像）","i","h"],["1009","淺草寺寶藏門夜景正面（與 1008 相近）","i","h"],["1010","淺草寺寶藏門夜景","i","h"],["1221","奧山おまいりまち商店街入口","i","v"]],"cass":[["1223","穿白色緊身衣、戴面具的表演者在「浅草相撲部屋 A","v","h"]]};
+/* MEDIA-END */
 // ===== 2026-11-18：放進真的照片（公開照片 img/IMG_xxxx.webp，拍到路人的臉已模糊化、已去掉 GPS）=====
 // PHOTO[頁][佔位標籤]=[照片編號, 新的說明]；GAL[頁]＝點照片時燈箱裡可以翻的那一組（沒寫就用這一頁有放的照片）
 const CAP={};
@@ -1159,9 +1170,13 @@ const GAL={
 const TAPEGAL={'淺草寺的夜景':'s_sensoji'};
 const SNOWX='1983',PANO='0518',COVER='1983';
 const FOCUSIMG=['0944','0941','2160'],FOCUSGAL=[[['0944','窗外的歌舞伎町']],[['2159','生牛肉膾'],['0941','烤網上的牛肉']],[['2160','厚切牛舌']]];
-function photoPatch(key,html){const map=PHOTO[key]||{};const used=[];
+const galOf=k=>MEDIA[k]||GAL[k];
+function cnt(k){const g=MEDIA[k]||[];const p=g.filter(x=>x[2]!=='v').length,v=g.length-p;return (p?p+' 張':'')+(p&&v?'・':'')+(v?v+' 支影片':'');}
+function phHTML(cls,v,key,extra=''){const isV=v[2]==='v';cls=cls.replace(/\bvid\b/g,'').trim();
+  return `<div class="ph ${cls} img${isV?' vid':''}" data-l="${v[1]}" data-src="${v[0]}" data-g="${key}" style="background-image:url(${isV?'vid':'img'}/IMG_${v[0]}.${isV?'jpg':'webp'})">${extra}</div>`;}
+function photoPatch(key,html){const map=PHOTO[key]||{};const used=[];let first=true;const g=MEDIA[key]||[];
   html=html.replace(/<div class="ph ([^"]*)" data-l="([^"]*)"><\/div>/g,(m,cls,l)=>{const v=map[l];if(!v)return m;used.push(v);
-    return `<div class="ph ${cls} img" data-l="${v[1]}" data-src="${v[0]}" data-g="${key}" style="background-image:url(img/IMG_${v[0]}.webp)"></div>`;});
+    const ex=first&&g.length>1?`<span class="pcount">共 ${cnt(key)}</span>`:'';first=false;return phHTML(cls,v,key,ex);});
   if(!GAL[key]&&used.length)GAL[key]=used;return html;}
 // 先改內容（照片時間、說明），再把照片套上
 P.s_tsuzumi.h=P.s_tsuzumi.h.replace('11:01 · 金澤站','12:23 · 金澤站');
@@ -1175,7 +1190,7 @@ P.gate=Object.assign({},P.gate,{h:()=>sp({cls:'gate',k:'DAY 2 · 14:20 拉頁',t
    <div class="gsm">${[['1872','玉泉院丸庭園'],['0527','鼠多門與木橋'],['1889','石川門・菱櫓']].map(v=>`<div class="ph h img" data-l="${v[1]}" data-src="${v[0]}" data-g="gate" style="background-image:url(img/IMG_${v[0]}.webp)"></div>`).join('')}</div></div>`})});
 P.s_album={c:'ch2',h:()=>`${rh('','白川鄉','DAY 3')}<div class="col"><div class="meta">白川鄉 · 14:31–16:27</div><h3>雪中的合掌村</h3><div class="alb">${GAL.s_album.map(v=>`<div class="ph img" data-l="${v[1]}" data-src="${v[0]}" data-g="s_album" style="background-image:url(img/IMG_${v[0]}.webp)"></div>`).join('')}${ph('vid','影片')}</div><button class="more" data-alb="白川鄉">看全部 ${GAL.s_album.length} 張 →</button></div>`};
 // 套照片：每一頁的內容在輸出前換掉佔位
-Object.keys(PHOTO).forEach(k=>{const p=P[k];if(!p)return;const f=p.h;p.h=typeof f==='function'?()=>photoPatch(k,f()):photoPatch(k,f);});
+const PHOTO_DONE=new Set();function applyPhotos(){Object.keys(PHOTO).forEach(k=>{if(PHOTO_DONE.has(k))return;const p=P[k];if(!p)return;PHOTO_DONE.add(k);const f=p.h;p.h=typeof f==='function'?()=>photoPatch(k,f()):photoPatch(k,f);});}applyPhotos();
 // 撥雪頁、封面
 {const f=P.snowx.h;P.snowx.h=()=>f().replace('<div class="scene" data-l="全景照片・合掌村的第一眼">',`<div class="scene pimg" data-l="" style="background-image:url(img/IMG_${SNOWX}.webp)">`);}
 {const f=P.cover.h;P.cover.h=(typeof f==='function'?f():f).replace('<div class="win">',`<div class="win pimg" style="background-image:url(img/IMG_${COVER}.webp)">`);}
@@ -1183,6 +1198,37 @@ Object.keys(PHOTO).forEach(k=>{const p=P[k];if(!p)return;const f=p.h;p.h=typeof 
 {const f=P.focus.h;P.focus.h=()=>f().replace(/<div class="fl" data-i="(\d)" style="opacity:([01])"><div class="ph" data-l="([^"]*)" style="[^"]*"><\/div><\/div>/g,(m,i,o,l)=>`<div class="fl" data-i="${i}" style="opacity:${o}"><div class="ph img" data-l="" style="background-image:url(img/IMG_${FOCUSIMG[i]}.webp);cursor:default"></div></div>`);}
 FOCUS[0].l='遠：深夜窗外的歌舞伎町';FOCUS[1].l='中：烤網上的牛肉';FOCUS[2].l='近：厚切牛舌';
 P.focus.h=(f=>()=>f().replace('同一個晚上，從遠到近：歌舞伎町的招牌、街上的人、最後是タロちゃん。','同一個晚上，從遠到近：窗外的歌舞伎町、タロちゃん 烤網上的牛肉，最後是厚切牛舌。'))(P.focus.h);
+
+
+Object.assign(PHOTO,{
+ t1:{'橫幅照片・敦賀站':['1846','サンダーバード的車窗']},
+ s_castle:Object.assign(PHOTO.s_castle,{}),
+ s_kogen:{'橫幅照片・遊客中心的世界地圖':['0772','遊客中心的世界地圖','v']},
+ s_night:{'橫式影片・夜間雪道':['2080','夜間雪場']},
+ s_akiba:{'橫幅照片・AmiAmi':['0993','秋葉原的 NIKKE 立牌'],'橫幅照片・戰利品':['0994','NIKKE 立牌']},
+ s_kabuki:{'橫幅照片・歌舞伎町的街道':['2164','從高樓看下去的歌舞伎町']},
+ pop:{'直式影片・合掌村的雪':['1954','大雪中的合掌屋','v']},
+});
+PHOTO.noren['影片・溫泉街']=['0913','夕陽下往湯田中走','v'];
+PHOTO.s_shibu['直式影片・溫泉街']=['0919','湯田中的夕陽','v'];
+FOCUSGAL[2]=[['2160','厚切生牛舌'],['2161','烤到撒上黑胡椒'],['2162','烤網上的牛舌','v']];FOCUSGAL[1]=[['2159','生牛肉膾'],['0941','烤網上的牛肉']];
+// 展示櫃：照片換成中野百老匯拍的
+CABS.splice(0,CABS.length,
+ {n:'吉伊卡哇',cells:[{l:'大娃娃展示櫃',ps:['0930']},{l:'扭蛋機',ps:['0935','0936']},{w:'tall',l:'影片・迷你模型',ps:['0939']}]},
+ {n:'超人力霸王',cells:[{w:'wide',l:'模型展示櫃',ps:['0932','0933','0934']}]},
+ {n:'老物',cells:[{l:'未開封的盒玩',ps:['0931']},{l:'昭和零食店模型',ps:['0939']}]},
+ {n:'樓上展場',cells:[{w:'wide',l:'四樓的當季展覽',ps:[]}]});
+const MBYID={};Object.values(MEDIA).forEach(a=>a.forEach(x=>MBYID[x[0]]=x));
+// 白川鄉相簿：前 11 格＋影片
+P.s_album={c:'ch2',h:()=>{const g=MEDIA.s_album,ph11=g.filter(x=>x[2]!=='v').slice(0,10),v=g.find(x=>x[2]==='v');
+  return `${rh('','白川鄉','DAY 3')}<div class="col"><div class="meta">白川鄉 · 14:31–16:27 · ${cnt('s_album')}</div><h3>雪中的合掌村</h3><div class="alb">${ph11.concat(v?[v]:[]).map(x=>phHTML('',x,'s_album')).join('')}</div><button class="more" data-alb="白川鄉">看全部 ${g.length} 項 →</button></div>`;}};
+// 隧道：出隧道之後，窗外播車窗影片
+{const f=P.tunnel.h;P.tunnel.h=()=>f().replace('<div class="ly vid" style="opacity:0"><div class="ph vid w" data-l="車窗影片・出隧道後的雪"></div></div>',`<div class="ly vid" style="opacity:0"><video class="tvid" src="vid/IMG_${TUNNELVID}.mp4" poster="vid/IMG_${TUNNELVID}.jpg" muted loop playsinline preload="metadata"></video></div>`);}
+const TUNNELVID='1850';
+// 卡帶影片帶
+const TAPEVID={'商店街的街頭表演':'1223'};
+P.pop.h=P.pop.h.replace(' data-v="白川鄉的雪"','');
+['t1','s_kogen','s_night','s_akiba','s_kabuki','pop'].forEach(k=>PHOTO_DONE.delete(k));applyPhotos();
 
 // 書的順序：一般頁兩頁一個跨頁；特殊頁自己佔一個跨頁；車票一定在左頁（後面接章扉頁）；湊不成對時補一張留白頁
 const SEQ=['endp','toc','pre','route',
@@ -1252,8 +1298,8 @@ function doFlip(d){const U=UNITS(),A=U[I],B=U[I+d],b=$('#base');BUSY=true;
   if(!MOB){$('#book').style.transition='margin-left .75s cubic-bezier(.45,.05,.3,1),transform .9s';$('#book').style.marginLeft=(B[0]==='none')?(-W)+'px':(B[1]==='none')?W+'px':'0';}
   requestAnimationFrame(()=>requestAnimationFrame(()=>{leaf.classList.add('go');leaf.style.transform=MOB?(d>0?'rotateY(-180deg)':'rotateY(0deg)'):(d>0?'rotateY(-180deg)':'rotateY(180deg)');}));
   setTimeout(()=>{leaf.remove();I+=d;show();BUSY=false;},780);}
-function jump(i){if(BUSY)return;$('#lb').hidden=true;$('#stage').classList.remove('proj');document.body.classList.remove('pj');I=i;show();}
-addEventListener('keydown',e=>{if(!$('#bmp').hidden){if(e.key==='Escape')bmClose();return;}if(!$('#lb').hidden){if(e.key==='Escape')$('#lb').hidden=true;if(e.key==='ArrowRight')lbGo(1);if(e.key==='ArrowLeft')lbGo(-1);return;}const B=document.querySelector('#base');if(B&&B.querySelector('.tr2')&&(e.key==='ArrowRight'||e.key==='ArrowLeft')){const d=e.key==='ArrowRight'?1:-1;if(TI+d>=0&&TI+d<TRX.length){trainSet(B,TI+d);return;}}
+function jump(i){if(BUSY)return;$('#lb').hidden=true;$('#lbimg').innerHTML='';$('#stage').classList.remove('proj');document.body.classList.remove('pj');I=i;show();}
+addEventListener('keydown',e=>{if(!$('#bmp').hidden){if(e.key==='Escape')bmClose();return;}if(!$('#lb').hidden){if(e.key==='Escape'){$('#lb').hidden=true;$('#lbimg').innerHTML='';}if(e.key==='ArrowRight')lbGo(1);if(e.key==='ArrowLeft')lbGo(-1);return;}const B=document.querySelector('#base');if(B&&B.querySelector('.tr2')&&(e.key==='ArrowRight'||e.key==='ArrowLeft')){const d=e.key==='ArrowRight'?1:-1;if(TI+d>=0&&TI+d<TRX.length){trainSet(B,TI+d);return;}}
   if(e.key==='ArrowRight')flip(1);if(e.key==='ArrowLeft')flip(-1);});
 $('#next').onclick=()=>flip(1);$('#prev').onclick=()=>flip(-1);
 $('#tocb').onclick=()=>{const U=UNITS();jump(U.findIndex(u=>(MOB?u:u[1])==='toc'||(MOB?u:u[0])==='toc'));};
@@ -1261,9 +1307,10 @@ let x0=null;addEventListener('touchstart',e=>{if(e.target.closest('.deck,.tape,#
 addEventListener('touchend',e=>{if(x0===null)return;const dx=e.changedTouches[0].clientX-x0;x0=null;if(Math.abs(dx)>50)flip(dx<0?1:-1);},{passive:true});
 // 燈箱（相簿）
 let LB={n:0,i:0,t:''};function lbOpen(t,n,i,list){LB={t,n:list?list.length:n,i:i||0,list};$('#lb').hidden=false;lbDraw();}
-function lbDraw(){const im=$('#lbimg');if(LB.list){const it=LB.list[LB.i];im.classList.add('img');im.style.background='';im.style.backgroundImage=`url(img/IMG_${it[0]}.webp)`;$('#lbcap').textContent=(LB.t?LB.t+'　':'')+(it[1]||'');$('#lbn').textContent=(LB.i+1)+' / '+LB.n;return;}im.classList.remove('img');im.style.backgroundImage='';$('#lbcap').textContent='';$('#lbimg').setAttribute('data-l',LB.t+' · 第 '+(LB.i+1)+' 張');$('#lbimg').style.background=`linear-gradient(${135+LB.i*23}deg,#8fa6ba,#cfdbe6)`;$('#lbn').textContent=(LB.i+1)+' / '+LB.n;}
+function lbDraw(){const im=$('#lbimg');im.innerHTML='';if(LB.list){const it=LB.list[LB.i];im.classList.add('img');im.style.background='';
+  if(it[2]==='v'){im.style.backgroundImage='';im.innerHTML=`<video src="vid/IMG_${it[0]}.mp4" poster="vid/IMG_${it[0]}.jpg" controls autoplay playsinline></video>`;}else im.style.backgroundImage=`url(img/IMG_${it[0]}.webp)`;$('#lbcap').textContent=(LB.t?LB.t+'　':'')+(it[1]||'');$('#lbn').textContent=(LB.i+1)+' / '+LB.n;return;}im.classList.remove('img');im.style.backgroundImage='';$('#lbcap').textContent='';$('#lbimg').setAttribute('data-l',LB.t+' · 第 '+(LB.i+1)+' 張');$('#lbimg').style.background=`linear-gradient(${135+LB.i*23}deg,#8fa6ba,#cfdbe6)`;$('#lbn').textContent=(LB.i+1)+' / '+LB.n;}
 function lbGo(d){LB.i=(LB.i+d+LB.n)%LB.n;lbDraw();}
-$('#lbp').onclick=()=>lbGo(-1);$('#lbn2').onclick=()=>lbGo(1);$('#lbx').onclick=()=>$('#lb').hidden=true;
+$('#lbp').onclick=()=>lbGo(-1);$('#lbn2').onclick=()=>lbGo(1);$('#lbx').onclick=()=>{$('#lb').hidden=true;$('#lbimg').innerHTML='';};
 document.addEventListener('click',e=>{
   const go=e.target.closest('[data-go]');if(go){const key=go.dataset.go,U=UNITS();const target=key==='after'?'after':Object.keys(P).find(k=>k.startsWith('op')&&P[k].c===key);jump(U.findIndex(u=>MOB?u===target:u.includes(target)));return;}
   const a=e.target.closest('[data-alb]');if(a){lbOpen(a.dataset.alb,20,0);return;}
@@ -1286,9 +1333,9 @@ function insert(t){const dk=document.querySelector('#base .deck');if(!dk)return;
   s.innerHTML='<div class="idle on">▲ 投影中</div>';
   const n=t.dataset.k==='v'?0:(parseInt(t.dataset.d)||8);
   $('#ptt').textContent=(t.dataset.k==='v'?'▶ ':'▦ ')+t.dataset.t+(n?' · '+n+' 張':'');
-  const tg=TAPEGAL[t.dataset.t];$('#pscr').innerHTML=tg?`<div class="pgal">${GAL[tg].map(v=>`<div class="ph img" data-l="${v[1]}" data-src="${v[0]}" data-g="${tg}" style="background-image:url(img/IMG_${v[0]}.webp)"></div>`).join('')}</div>`:t.dataset.k==='v'?`<div class="ph w" data-l="「${t.dataset.t}」的影片之後放上" style="--ph1:#1d2340;--ph2:#3c1d3a"></div><div class="bar"><i></i></div>`:`<div class="pgal">${Array.from({length:n},(_,i)=>`<div class="ph" data-l="${i+1}" style="--ph1:${t.style.getPropertyValue('--tc')};--ph2:#d9d4e8"></div>`).join('')}</div>`;
+  const tg=TAPEGAL[t.dataset.t],tv=TAPEVID[t.dataset.t];$('#pscr').innerHTML=tv?`<video src="vid/IMG_${tv}.mp4" poster="vid/IMG_${tv}.jpg" controls autoplay playsinline class="vidfill" style="object-fit:contain;background:#000"></video>`:tg?`<div class="pgal">${GAL[tg].map(v=>`<div class="ph img" data-l="${v[1]}" data-src="${v[0]}" data-g="${tg}" style="background-image:url(img/IMG_${v[0]}.webp)"></div>`).join('')}</div>`:t.dataset.k==='v'?`<div class="ph w" data-l="「${t.dataset.t}」的影片之後放上" style="--ph1:#1d2340;--ph2:#3c1d3a"></div><div class="bar"><i></i></div>`:`<div class="pgal">${Array.from({length:n},(_,i)=>`<div class="ph" data-l="${i+1}" style="--ph1:${t.style.getPropertyValue('--tc')};--ph2:#d9d4e8"></div>`).join('')}</div>`;
   $('#stage').classList.add('proj');document.body.classList.add('pj');}
-function eject(){$('#stage').classList.remove('proj');document.body.classList.remove('pj');const dk=document.querySelector('#base .deck');if(!dk)return;dk.classList.remove('on');$('#dk').textContent='— EMPTY —';dk.querySelector('.scrn').innerHTML='<div class="idle">選一捲卡帶<br>放進播放機</div>';document.querySelectorAll('#base .tape').forEach(x=>x.classList.remove('out'));}
+function eject(){$('#pscr').innerHTML='';$('#stage').classList.remove('proj');document.body.classList.remove('pj');const dk=document.querySelector('#base .deck');if(!dk)return;dk.classList.remove('on');$('#dk').textContent='— EMPTY —';dk.querySelector('.scrn').innerHTML='<div class="idle">選一捲卡帶<br>放進播放機</div>';document.querySelectorAll('#base .tape').forEach(x=>x.classList.remove('out'));}
 addEventListener('resize',()=>{const _ti=TI;setTimeout(()=>{const B=document.querySelector('#base');if(B&&B.querySelector('.tr2'))trainSet(B,_ti);},50);const wasMob=MOB;const U0=UNITS(),cur=U0[I];size();if(wasMob!==MOB){const U=UNITS();I=MOB?Math.max(0,U.indexOf(cur.find(k=>k!=='none'))):U.findIndex(u=>u.includes(cur));if(I<0)I=0;}show();});
 
 // 色票：[名稱, 紙, 字, 重點色, 是否深色]
