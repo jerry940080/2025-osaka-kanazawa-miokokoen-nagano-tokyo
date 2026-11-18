@@ -6,7 +6,7 @@
    改了這支檔案要把 V 的版本號加一，舊快取才會被清掉。
    網頁的 fetch 加 cache:'no-cache'，否則 GitHub Pages 的 10 分鐘 HTTP 快取會讓使用者一直看到舊版。 */
 // V：每個行程換一個前綴；同網域的其他行程網站也有快取，activate 時只清掉自己前綴的舊版本。改這支檔案就把數字加一
-const V='hkr-v2', PAGE='./', CORE=['./','manifest.webmanifest','icons/icon-192.png','icons/icon-512.png','icons/apple-touch-icon.png'];
+const V='hkr-v3', PAGE='./', CORE=['./','manifest.webmanifest','icons/icon-192.png','icons/icon-512.png','icons/apple-touch-icon.png'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(V).then(c=>c.addAll(CORE)).then(()=>self.skipWaiting()));});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k.startsWith('hkr-')&&k!==V).map(k=>caches.delete(k)))).then(()=>self.clients.claim()));});
 const isMedia=u=>/(^|\.)upload\.wikimedia\.org$/.test(u.hostname)||/fonts\.(googleapis|gstatic)\.com$/.test(u.hostname);
@@ -30,7 +30,10 @@ async function networkFirst(req){
 self.addEventListener('fetch',e=>{
   const req=e.request;if(req.method!=='GET')return;
   const u=new URL(req.url);
-  if(req.mode==='navigate'&&u.origin===location.origin){e.respondWith(pageFirstNetwork(req));return;}
+  // 只有首頁（書）走 pageFirstNetwork；plan.html 等其他網頁直接走網路，不能被當成首頁存起來
+  if(req.mode==='navigate'&&u.origin===location.origin){const sc=new URL(self.registration.scope);
+    if(u.pathname===sc.pathname||u.pathname===sc.pathname+'index.html'){e.respondWith(pageFirstNetwork(req));return;}
+    return;}
   if(u.origin===location.origin){e.respondWith(cacheFirst(req));return;}
   if(isWikiApi(u)){e.respondWith(networkFirst(req));return;}
   if(isMedia(u)){e.respondWith(cacheFirst(req));return;}
