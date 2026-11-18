@@ -19,7 +19,7 @@
 *{box-sizing:border-box}
 html,body{height:100%}
 body{margin:0;background:radial-gradient(ellipse at 50% 40%,#3a3530 0%,var(--desk) 70%);color:#eee;font:15px/1.7 var(--sans);overflow:hidden;-webkit-tap-highlight-color:transparent}
-#stage{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;perspective:2200px;padding:calc(env(safe-area-inset-top,0px) + 10px) 0 calc(env(safe-area-inset-bottom,0px) + 52px)}
+#stage{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;perspective:2200px;padding:calc(env(safe-area-inset-top,0px) + 16px) 0 calc(env(safe-area-inset-bottom,0px) + 22px)}
 #book{position:relative;width:calc(var(--W)*2);height:var(--H);transform-style:preserve-3d;transition:transform .9s cubic-bezier(.3,.7,.2,1)}
 #stage.tilt #book{transform:translateY(6%) rotateX(34deg)}
 #base{position:absolute;inset:0;transform-style:preserve-3d}
@@ -713,11 +713,52 @@ html.big .txt{font-size:19px}html.big .one{font-size:21px}html.big h2{font-size:
 .nr2 .play{position:absolute;inset:0;z-index:1}
 @media (prefers-reduced-motion:reduce){.nr2 .stm2 i{animation:none;opacity:.5}}
 </style>
+<style>
+/* ===== 2026-11-18：拿掉底部翻頁列；點書的左右兩側翻頁；右上角書籤 ===== */
+#nav{display:none!important}
+.pg.R .rh{right:84px}.m .pg .rh{right:66px}.sp .k{padding-right:0}
+.tz{position:absolute;top:0;bottom:0;width:clamp(26px,5%,56px);z-index:30;transform:translateZ(3px);border:0;padding:0;margin:0;background:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .25s}
+.tz.l{left:calc(var(--bl,4px) - 4px);border-radius:6px 0 0 6px}.tz.r{right:calc(var(--br,4px) - 4px);border-radius:0 6px 6px 0}
+.tz::before{font:300 34px/1 var(--sans);color:#fff;opacity:0;transition:opacity .25s;text-shadow:0 1px 6px rgba(0,0,0,.6)}
+.tz.l::before{content:"‹"}.tz.r::before{content:"›"}
+.tz.l:hover{background:linear-gradient(90deg,rgba(0,0,0,.16),transparent)}.tz.r:hover{background:linear-gradient(270deg,rgba(0,0,0,.16),transparent)}
+.tz:hover::before{opacity:.85}
+@media (hover:none){.tz::before{opacity:.28;font-size:28px}}
+.tz.off{pointer-events:none}.tz.off::before{opacity:0!important}
+.tz:focus-visible{outline:2px solid #ffd27a;outline-offset:-4px}
+.bm{position:absolute;top:-12px;right:calc(var(--br,4px) + 26px);width:40px;height:82px;z-index:31;transform:translateZ(4px);border:0;padding:0 0 18px;cursor:pointer;background:var(--bmc,#c8452e);clip-path:polygon(0 0,100% 0,100% 100%,50% 80%,0 100%);display:flex;align-items:flex-end;justify-content:center;transition:height .25s,background .4s,right .75s cubic-bezier(.45,.05,.3,1)}
+.bm span{writing-mode:vertical-rl;font:600 13px var(--hand);color:#fff;letter-spacing:.2em;padding-bottom:4px}
+.bm:hover,.bm.on{height:96px}
+.bm:focus-visible{outline:2px solid #ffd27a}
+#stage.proj .bm,#stage.proj .tz,#stage.tilt .bm{opacity:0;pointer-events:none}
+.m .bm{right:18px;width:34px;height:70px}.m .bm:hover,.m .bm.on{height:80px}
+#bmp{position:fixed;z-index:45;top:calc(env(safe-area-inset-top,0px) + 70px);right:max(12px,env(safe-area-inset-right,0px));width:min(380px,calc(100vw - 24px));max-height:calc(100dvh - 100px);overflow:auto;background:#24211f;border:1px solid #4a4540;border-radius:12px;padding:14px 16px 16px;color:#eee;box-shadow:0 20px 50px rgba(0,0,0,.55);font:14px var(--sans)}
+#bmp[hidden]{display:none}
+#bmp .bmh{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+#bmp .bmh b{font:700 17px var(--serif)}
+#bmp button{font:inherit;color:#eee;background:#34302c;border:1px solid #57514a;border-radius:999px;padding:5px 12px;cursor:pointer}
+#bmp button:hover{background:#45403a}
+#bmp .bml{display:block;width:100%;text-align:left;border-radius:8px;padding:9px 12px;margin-bottom:12px;background:#3b2f28;border-color:#7a5a44}
+#bmp .bms{padding:4px 0 12px;border-bottom:1px solid #3a3633;margin-bottom:10px}
+#bmp .bms input{width:100%;accent-color:#ffd27a}
+#bmp .bmrl{display:flex;justify-content:space-between;gap:10px;font:13px var(--mono);color:#c9bfae}
+#bmp .bmrl b{font:600 14px var(--hand);color:#fff;text-align:right}
+#bmp .bmq{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+#bmp .bmc{padding:9px 0;border-top:1px solid #3a3633}
+#bmp .bmc>button{border:0;background:none;padding:0;border-radius:0;font:700 16px var(--serif);display:flex;align-items:center;gap:8px;text-align:left}
+#bmp .bmc>button:hover{background:none;color:#ffd27a}
+#bmp .bmc small{display:block;font:12px var(--sans);color:#a79e92;margin:2px 0 6px 17px}
+#bmp .bmc .dot{width:9px;height:9px;border-radius:50%;flex:none}
+#bmp .days{display:flex;flex-wrap:wrap;gap:6px;margin-left:17px}
+#bmp .days button{font:13px var(--mono);padding:3px 10px}
+#bmp .cur{border-color:#ffd27a!important;color:#ffd27a!important}
+</style>
 <style id="dyn"></style></head><body>
 <div id="pal"><button id="palb">🎨 選配色</button></div>
 <div id="pk" hidden><div class="pkh"><b>每一章選一個色票</b><button id="pkx">完成</button></div><div id="pkrows"></div><label class="pkband"><input type="checkbox" id="band"> 頁面上緣加一條章節色帶</label><div class="pkcur"><span id="pkcur"></span><button id="pkcp">複製</button></div></div>
 <div id="hint">← → 翻頁・點書頁右側往下翻</div>
-<div id="stage"><div id="proj"><div class="ptop"><span id="ptt"></span><button id="pstop">⏏ 停止，把書立起來</button></div><div class="pscr" id="pscr"></div><div class="beam"></div></div><div id="book"><div id="base"></div></div></div>
+<div id="stage"><div id="proj"><div class="ptop"><span id="ptt"></span><button id="pstop">⏏ 停止，把書立起來</button></div><div class="pscr" id="pscr"></div><div class="beam"></div></div><div id="book"><div id="base"></div><button class="tz l" aria-label="上一頁"></button><button class="tz r" aria-label="下一頁"></button><button class="bm" aria-label="書籤：快速翻頁"><span>書籤</span></button></div></div>
+<div id="bmp" hidden></div>
 <div id="nav"><button id="prev">‹ 上一頁</button><button id="tocb">目錄</button><span class="info" id="info"></span><button id="next">下一頁 ›</button></div>
 <div id="lb" hidden><div class="ph big" id="lbimg"></div><div class="row"><button id="lbp">‹</button><span id="lbn"></span><button id="lbn2">›</button><button id="lbx">關閉</button></div></div>
 <script>
@@ -921,6 +962,39 @@ function trainOpen(){lbOpen('はねうまライン',TRX.length,TI);}
 function trainInit(B){const tr=B.querySelector('.tr2');if(!tr)return;TI=0;tr.style.transition='none';trainSet(B,0);requestAnimationFrame(()=>{trainSet(B,0);requestAnimationFrame(()=>tr.style.transition='');});
   const ln=B.querySelector('.lane2');let x0=null;ln.addEventListener('touchstart',e=>{x0=e.touches[0].clientX;},{passive:true});
   ln.addEventListener('touchend',e=>{if(x0===null)return;const dx=e.changedTouches[0].clientX-x0;x0=null;if(Math.abs(dx)>40)trainSet(B,TI+(dx<0?1:-1));},{passive:true});}
+
+// ===== 書籤：快速翻頁 =====
+const DAYSTART={1:'s_arrive',2:'s_iccard',3:'s_market3',4:'s_uber',5:'s_day5',6:'t3',7:'t4',8:'s_plus',9:'op6'};
+const CHDAYS={ch1:[1],ch2:[2,3],ch3:[4,5],ch4:[6],ch5:[7,8],ch6:[9]};
+const NAMEK={cover:'封面',back:'封底',endp:'題詞',toc:'目錄',pre:'序',route:'路線',after:'後記',cass:'秋葉原・淺草的錄音帶'};
+function titleOf(k){if(NAMEK[k])return NAMEK[k];const p=P[k];if(!p)return '';if(/^q\d$/.test(k))return 'Day '+k.slice(1)+' 的一句話';
+  const h=typeof p.h==='function'?p.h():p.h;let m=h.match(/<h[23][^>]*>([\s\S]*?)<\/h[23]>/);if(/^t\d$/.test(k)){const b=[...h.matchAll(/<b>([^<]*)<\/b><small>/g)].map(x=>x[1].replace(/\s/g,''));if(b.length>1)return '車票：'+b[0]+' → '+b[1];}
+  return m?m[1].replace(/<[^>]+>/g,'').trim():'';}
+function keyAt(i){const u=UNITS()[i];return MOB?u:(u[0]==='none'?u[1]:u[0]);}
+function idxOf(k){const U=UNITS();return U.findIndex(u=>MOB?u===k:u.includes(k));}
+function bmGo(k){const i=idxOf(k);if(i>=0){bmClose();if(i!==I)jump(i);}}
+function bmOpen(){const U=UNITS(),cur=keyAt(I);let last=null;try{last=localStorage.getItem('hkr-book-mark');}catch(e){}
+  const chs=CH.slice(1).map(c=>{const op=Object.keys(P).find(k=>/^op\d$/.test(k)&&P[k].c===c.c);return `<div class="bmc"><button data-k="${op}"><span class="dot" style="background:${c.dot}"></span>${c.n}　${c.t}</button><small>${c.sub}・${c.d}</small><div class="days">${(CHDAYS[c.c]||[]).map(d=>`<button data-k="${DAYSTART[d]}">Day ${d}</button>`).join('')}</div></div>`;}).join('');
+  $('#bmp').innerHTML=`<div class="bmh"><b>書籤</b><button id="bmx">關閉</button></div>
+   <button class="bml" id="bmset">🔖 把書籤夾在這一頁：${titleOf(cur)||'（這一頁）'}</button>
+   ${last&&last!==cur&&P[last]?`<button class="bml" data-k="${last}">↩ 翻到夾書籤的那一頁：${titleOf(last)}</button>`:''}
+   <div class="bms"><input type="range" id="bmr" min="0" max="${U.length-1}" value="${I}" aria-label="拖拉跳頁"><div class="bmrl"><span id="bmn"></span><b id="bmt"></b></div></div>
+   <div class="bmq">${['cover','toc','pre','after','back'].map(k=>`<button data-k="${k}">${NAMEK[k]}</button>`).join('')}</div>${chs}`;
+  bmLabel(I);$('#bmp').hidden=false;$('.bm').classList.add('on');
+  $('#bmp').querySelectorAll('[data-k]').forEach(b=>{const i=idxOf(b.dataset.k);if(i===I)b.classList.add('cur');});}
+function bmLabel(i){const k=keyAt(i);$('#bmn').textContent=MOB?`第 ${i+1} / ${UNITS().length} 頁`:`第 ${i+1} / ${UNITS().length} 個跨頁`;$('#bmt').textContent=titleOf(k);}
+function bmClose(){$('#bmp').hidden=true;$('.bm').classList.remove('on');}
+document.addEventListener('input',e=>{if(e.target.id==='bmr')bmLabel(+e.target.value);});
+document.addEventListener('change',e=>{if(e.target.id==='bmr'){const i=+e.target.value;bmClose();if(i!==I)jump(i);}});
+document.addEventListener('click',e=>{
+  if(e.target.closest('.bm')){$('#bmp').hidden?bmOpen():bmClose();e.stopPropagation();return;}
+  if(e.target.closest('#bmp')){const t=e.target;if(t.id==='bmx'){bmClose();return;}
+    if(t.id==='bmset'){try{localStorage.setItem('hkr-book-mark',keyAt(I));}catch(err){}t.textContent='🔖 書籤夾好了';setTimeout(bmClose,600);return;}
+    const b=t.closest('[data-k]');if(b)bmGo(b.dataset.k);return;}
+  if(!$('#bmp').hidden&&!e.target.closest('#bmp'))bmClose();
+  const tz=e.target.closest('.tz');if(tz){flip(tz.classList.contains('l')?-1:1);}
+},true);
+
 let WI=0;
 function initSpecial(root){if(!root)return;
   root.querySelectorAll('.gl canvas').forEach(snowCanvas);}
@@ -1073,7 +1147,8 @@ function show(){const U=UNITS();I=Math.max(0,Math.min(I,U.length-1));const b=$('
 function after(){const U=UNITS(),u=U[I],k=MOB?u:u[0];WI=0;TRIES=0;initSpecial(document.querySelector('#base'));initSpecial2(document.querySelector('#base'));trainInit(document.querySelector('#base'));
   $('#stage').classList.toggle('tilt',!!P[k].pop);
   const pw=document.querySelector('#base .popw');if(pw){setTimeout(()=>pw.parentNode.classList.add('open'),MOB?250:650);}
-  $('#prev').disabled=I===0;$('#next').disabled=I===U.length-1;
+  $('#prev').disabled=I===0;$('#next').disabled=I===U.length-1;document.querySelector('.tz.l').classList.toggle('off',I===0);document.querySelector('.tz.r').classList.toggle('off',I===U.length-1);
+  {const pe=document.querySelector('#base .pg:not(.none),#base .full');if(pe)$('#book').style.setProperty('--bmc',getComputedStyle(pe).getPropertyValue('--acc').trim()||'#c8452e');}
   const lab=MOB?(NUM[k]?('第 '+NUM[k]+' 頁'):(k==='cover'?'封面':'封底')):(u.map(x=>NUM[x]).filter(Boolean).join('–')||'封面');
   $('#info').textContent=lab+' / '+pn;
   // 書的左緣偏移：封面只有右頁時，整本往左移半頁讓它置中
@@ -1096,11 +1171,11 @@ function doFlip(d){const U=UNITS(),A=U[I],B=U[I+d],b=$('#base');BUSY=true;
   requestAnimationFrame(()=>requestAnimationFrame(()=>{leaf.classList.add('go');leaf.style.transform=MOB?(d>0?'rotateY(-180deg)':'rotateY(0deg)'):(d>0?'rotateY(-180deg)':'rotateY(180deg)');}));
   setTimeout(()=>{leaf.remove();I+=d;show();BUSY=false;},780);}
 function jump(i){if(BUSY)return;$('#lb').hidden=true;$('#stage').classList.remove('proj');document.body.classList.remove('pj');I=i;show();}
-addEventListener('keydown',e=>{if(!$('#lb').hidden){if(e.key==='Escape')$('#lb').hidden=true;if(e.key==='ArrowRight')lbGo(1);if(e.key==='ArrowLeft')lbGo(-1);return;}const B=document.querySelector('#base');if(B&&B.querySelector('.tr2')&&(e.key==='ArrowRight'||e.key==='ArrowLeft')){const d=e.key==='ArrowRight'?1:-1;if(TI+d>=0&&TI+d<TRX.length){trainSet(B,TI+d);return;}}
+addEventListener('keydown',e=>{if(!$('#bmp').hidden){if(e.key==='Escape')bmClose();return;}if(!$('#lb').hidden){if(e.key==='Escape')$('#lb').hidden=true;if(e.key==='ArrowRight')lbGo(1);if(e.key==='ArrowLeft')lbGo(-1);return;}const B=document.querySelector('#base');if(B&&B.querySelector('.tr2')&&(e.key==='ArrowRight'||e.key==='ArrowLeft')){const d=e.key==='ArrowRight'?1:-1;if(TI+d>=0&&TI+d<TRX.length){trainSet(B,TI+d);return;}}
   if(e.key==='ArrowRight')flip(1);if(e.key==='ArrowLeft')flip(-1);});
 $('#next').onclick=()=>flip(1);$('#prev').onclick=()=>flip(-1);
 $('#tocb').onclick=()=>{const U=UNITS();jump(U.findIndex(u=>(MOB?u:u[1])==='toc'||(MOB?u:u[0])==='toc'));};
-let x0=null;addEventListener('touchstart',e=>{if(e.target.closest('.deck,.tape,#lb,.sps,input,#proj,#pk'))return;x0=e.touches[0].clientX;},{passive:true});
+let x0=null;addEventListener('touchstart',e=>{if(e.target.closest('.deck,.tape,#lb,.sps,input,#proj,#pk,#bmp'))return;x0=e.touches[0].clientX;},{passive:true});
 addEventListener('touchend',e=>{if(x0===null)return;const dx=e.changedTouches[0].clientX-x0;x0=null;if(Math.abs(dx)>50)flip(dx<0?1:-1);},{passive:true});
 // 燈箱（相簿）
 let LB={n:0,i:0,t:''};function lbOpen(t,n,i){LB={t,n,i:i||0};$('#lb').hidden=false;lbDraw();}
