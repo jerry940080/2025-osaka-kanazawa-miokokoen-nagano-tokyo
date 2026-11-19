@@ -294,6 +294,8 @@
   公開訪客用 Firestore REST 讀一次、成員在私人模組 onSnapshot 即時更新（`window.bpSet` 重畫）。**有設定的頁**照片區（`.pgr`／`.ph`／`.gpg`）換成版型：項目照 items 順序（`pub:` 公開、`pv:` 私人，沒登入的人看不到私人），
   影片格先拿影片（方向對的優先）、全景格拿全景，多的平均分到格子輪播（照片 4–5 秒淡入、影片播完換下一個）；沒有任何可顯示的項目就保留原本內容（插畫）。有設定的頁 `slideInit`、`gpRun` 會跳過。
   `bpDefPub(k)`＝這頁預設的公開照片。`book-media.json`（scratchpad `rt/bm2.js` 產生）給 trip-tools 用；`thumb/`＝231 張 240px 縮圖（公開照片＋影片封面，1.9 MB）。網址 `#pg=頁` 直接翻到那頁。
+  **刪除公開照片（同日）**：trip-tools 拖到「🗑 刪除」的公開項目存在 `bookpages/_trash.items`；書本 `bpTrash()` 先把它們從 `MEDIA`、`GPPUB`、`PUBALL` 拿掉（固定在頁上的 `PHOTO` 格子不會自動消失）。
+  **使用者說要刪時，Claude 讀 `https://firestore.googleapis.com/v1/projects/trip-tools-21847/databases/(default)/documents/trips/<TRIP>/bookpages/_trash`，刪 `img/`、`vid/`、`thumb/` 的檔，從 `MEDIA`／`PHOTO`／`GPPUB`／`SNOWBYE` 等拿掉，重產兩個 json，再請使用者把 `_trash` 清空（拖回或在 trip-tools 清掉）。**
   `?bpmock=版型` 測試用（把十頁假設成那個版型）。驗證 scratchpad `rt/bpt.js`（16 種版型 × 4 頁 × 電腦／手機：零錯誤、沒有溢出；`rt/bp-sheet.jpg`）。**改 `SEQ`、頁標題或公開照片後，`book-pages.json`、`book-media.json` 都要重產。**
 
 ## GitHub Pages 發布

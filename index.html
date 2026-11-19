@@ -1522,7 +1522,10 @@ function bpRun(B){if(!B)return;const U=UNITS(),u=U[I],keys=MOB?[u]:(P[u[0]]&&P[u
     const L=bpItems(k);if(!L.length)return;const m=col.querySelector(':scope>.gpm');if(m)m.remove();bpRender(k,area,L,BPG[k].layout||'auto');});}
 document.addEventListener('click',e=>{const c=e.target.closest('#base .bpc');if(!c||e.target.closest('.vsnd,.bpt'))return;e.stopPropagation();const k=c.dataset.k,L=bpItems(k);
   lbOpen(titleOf(k),0,Math.max(0,L.findIndex(x=>x[0]===c.dataset.id)),L.map(y=>[y[0],y[1],y[2],y[3]]));},true);
-window.bpSet=G=>{BPG=G||{};window.BPG=BPG;try{if(typeof show==='function'&&$('#base').children.length){show();}}catch(e){}};
+// trip-tools 拖到「🗑 刪除」的公開項目（bookpages/_trash）：Claude 從網站刪檔之前，先從相簿與排過的頁拿掉
+function bpTrash(){const T=new Set(((BPG._trash||{}).items||[]).map(x=>x.replace(/^pub:/,'')));if(!T.size)return;Object.values(MEDIA).forEach(a=>{for(let i=a.length-1;i>=0;i--)if(T.has(a[i][0]))a.splice(i,1);});
+  Object.keys(GPPUB).forEach(k=>{GPPUB[k]=GPPUB[k].filter(x=>!T.has(x));});Object.keys(PUBALL).forEach(x=>{if(T.has(x))delete PUBALL[x];});}
+window.bpSet=G=>{BPG=G||{};window.BPG=BPG;bpTrash();try{if(typeof show==='function'&&$('#base').children.length){show();}}catch(e){}};
 // 公開訪客：用 Firestore REST 讀一次（規則還沒更新或沒網路就照原本）
 fetch(`https://firestore.googleapis.com/v1/projects/trip-tools-21847/databases/(default)/documents/trips/${BPTRIP}/bookpages?pageSize=300`).then(r=>r.ok?r.json():null).then(j=>{if(!j||!j.documents||window.BPLIVE)return;const G={};
   j.documents.forEach(d=>{const k=d.name.split('/').pop(),f=d.fields||{};G[k]={layout:f.layout&&f.layout.stringValue||'',items:f.items&&f.items.arrayValue?(f.items.arrayValue.values||[]).map(v=>v.stringValue):null};});window.bpSet(G);}).catch(()=>{});
