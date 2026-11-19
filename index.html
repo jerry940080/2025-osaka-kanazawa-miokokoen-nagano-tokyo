@@ -1377,25 +1377,31 @@ const GPG={
   s_album:{pages:['g_shira1','g_shira2','g_shira3','g_shira4'],skip:(()=>{const g=MEDIA.s_album||[],ph=g.filter(x=>x[2]!=='v').slice(0,10),v=g.find(x=>x[2]==='v');return ph.concat(v?[v]:[]).map(x=>x[0]);})()}
 };
 const GPINFO={
-  g_tsu1:['ch2','金澤','DAY 2','12:23 · 金澤站','第一次看到雪（二）','鼓門一帶，到處都是雪。'],
+  g_tsu1:['ch2','金澤','DAY 2','12:23 · 金澤站','第一次看到雪（二）','鼓門和雪吊的松樹。'],
   g_tsu2:['ch2','金澤','DAY 2','下午 · 走去飯店','拖著行李箱的雪路','地圖說 15 分鐘，實際走了快半小時。'],
-  g_gate1:['ch2','金澤','DAY 2','14:20 · 金澤城公園','金澤城公園（二）','公園很大，城門、石垣、護城壕都積著雪。'],
-  g_gate2:['ch2','金澤','DAY 2','15:00 · 金澤城公園','金澤城公園（三）','雪吊的松樹和池塘，一路走到兼六園。'],
-  g_shibu1:['ch4','渋溫泉','DAY 6','下午 · 渋溫泉','渋溫泉街（一）','渋湯橋和紅欄杆，溫泉街的入口。'],
-  g_shibu2:['ch4','渋溫泉','DAY 6','下午 · 渋溫泉','渋溫泉街（二）','石板小巷、木造的金具屋、高處的藥師堂。'],
-  g_shibu3:['ch4','湯田中','DAY 6','傍晚 · 湯田中','傍晚的湯田中','泡完湯，太陽落到山稜後面。'],
+  g_gate1:['ch2','金澤','DAY 2','14:20 · 金澤城公園','玉泉院丸庭園','雪吊的松樹、池塘，和一整片雪原。'],
+  g_gate2:['ch2','金澤','DAY 2','15:00 · 金澤城公園','城門與石垣','鼠多門、菱櫓、石川門，石垣上都積著雪。'],
+  g_shibu1:['ch4','渋溫泉','DAY 6','下午 · 渋溫泉','渋湯橋','紅欄杆的渋湯橋，溫泉街的入口。'],
+  g_shibu2:['ch4','渋溫泉','DAY 6','下午 · 渋溫泉','金具屋與石板街','木造多層的金具屋，石板鋪的小巷。'],
+  g_shibu3:['ch4','湯田中','DAY 6','傍晚 · 湯田中','足湯與傍晚','足湯、藥師堂，泡完湯太陽落到山稜後面。'],
   g_night1:['ch3','赤倉溫泉','DAY 4','傍晚 · 夜間雪場','夜間雪場（二）','只滑了三分之一，兩個人乖乖走下山。'],
-  g_shira1:['ch2','白川鄉','DAY 3','14:30 · 白川鄉','雪中的合掌村（一）','下了巴士，雪厚到可以整個人栽進去。'],
-  g_shira2:['ch2','白川鄉','DAY 3','白川鄉','雪中的合掌村（二）','主街、合掌屋、屋簷下的冰柱。'],
-  g_shira3:['ch2','白川鄉','DAY 3','白川鄉','雪中的合掌村（三）','田裡的雪原，被雪埋到屋簷的合掌屋。'],
-  g_shira4:['ch2','白川鄉','DAY 3','16:27 · 白川鄉','雪中的合掌村（四）','庄川河岸和雪山，四點半左右離開。']};
+  g_shira1:['ch2','白川鄉','DAY 3','14:30 · 白川鄉','合掌屋與主街','主街、合掌屋、屋簷下的冰柱，還有雪中的小鳥居。'],
+  g_shira2:['ch2','白川鄉','DAY 3','白川鄉','被雪埋住的屋子','雪厚到可以整個人栽進去。'],
+  g_shira3:['ch2','白川鄉','DAY 3','白川鄉','雪原','田裡一整片雪原，遠處一排合掌屋。'],
+  g_shira4:['ch2','白川鄉','DAY 3','16:27 · 白川鄉','庄川與小雪人','河岸、雪山，欄杆上一排雪捏的小動物。四點半左右離開。']};
+// 2026-11-19 依主題分頁（使用者：擺放太隨意）：每頁的公開照片由 Claude 看過內容後指定，幾乎一樣的連拍只留一張。私人照片：指定到這頁的固定在這頁，留在來源頁的才自動平均分配。
+const GPPUB={g_tsu1:['0508','0506'],g_tsu2:['1866'],
+  g_gate1:['1872','1873','1883'],g_gate2:['0527','1884','1885','0546','1886','1889'],
+  g_shira1:['1961','1963','1965','1966','0680','1972','1978'],g_shira2:['0670','0668','0669','1979','1981','1985'],
+  g_shira3:['1962','1964','1980','1983','1982','1984','1989','1990','0684','1991','0671'],g_shira4:['0664','1977','0666','0685','1994','1995','0693','0694'],
+  g_shibu1:['0863','2136','2137','0911'],g_shibu2:['2139','0906','0907','0908','0909','0869','0870','2142'],g_shibu3:['0881','0888','2143','2144','2145','0914'],g_night1:[]};
 const GPSRC=new Set(Object.keys(GPG));const GPOF={};Object.entries(GPG).forEach(([s,g])=>g.pages.forEach((k,i)=>GPOF[k]={src:s,i,n:g.pages.length}));
 // 這一頁分到的項目：[id, 說明, 'i'|'v', 方向, 私人?]
 function gpItems(k){const o=GPOF[k];if(!o)return [];const g=GPG[o.src];
-  const pub=(MEDIA[o.src]||[]).filter(x=>!g.skip.includes(x[0]));
-  const PV=window.PVM||{};const priv=[...(PV[o.src]||[]),...(PV[k]||[])].map(m=>['pv:'+m.id,m.note||'',m.kind==='video'?'v':'i',m.h>m.w?'v':'h',1]);
+  const src=MEDIA[o.src]||[];const pub=(GPPUB[k]||[]).map(id=>src.find(x=>x[0]===id)).filter(Boolean);
+  const PV=window.PVM||{},pm=m=>['pv:'+m.id,m.note||'',m.kind==='video'?'v':'i',m.h>m.w?'v':'h',1];
   const cut=(L,i,n)=>{const a=Math.floor(L.length*i/n),b=Math.floor(L.length*(i+1)/n);return L.slice(a,b);};
-  return cut(pub,o.i,o.n).concat(cut(priv,o.i,o.n));}
+  return pub.concat((PV[k]||[]).map(pm),cut((PV[o.src]||[]).map(pm),o.i,o.n));}
 function gpSlots(L){const V=L.filter(x=>x[2]==='v'),Pi=L.filter(x=>x[2]!=='v');const S=Math.min(MOB?2:4,Pi.length+(V.length?1:0))||1;/* 手機一次兩格，照片才夠大 */const sl=Array.from({length:S},()=>[]);
   let s0=0;if(V.length){sl[0]=V;s0=1;}Pi.forEach((x,i)=>{const n=S-s0;if(n>0)sl[s0+(i%n)].push(x);});return sl.filter(a=>a.length);}
 const gpSrc=x=>x[4]?'':(x[2]==='v'?`vid/IMG_${x[0]}.jpg`:`img/IMG_${x[0]}.webp`);
