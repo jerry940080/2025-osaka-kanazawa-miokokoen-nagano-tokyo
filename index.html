@@ -2059,7 +2059,7 @@ function introRun(){try{if(sessionStorage.getItem('hkr-intro'))return;}catch(e){
   /* 等 bookpages 讀到（換了影片或關掉開場）再開始，最多等 0.8 秒 */
   let waited=0;const go=()=>{const H=new Set(((BPG._meta||{}).hidden)||[]);if(H.has('intro')){ov.remove();return;}if(window.BPLIVE||Object.keys(BPG).length||waited>=800){start();return;}waited+=100;setTimeout(go,100);};go();}
 /* ===== 2026-11-19 翻到某一頁時先全螢幕播一段影片（兼六園：石浦神社的千本鳥居，0.5 倍速），播完才看到那一頁 ===== */
-const PAGEINTRO={s_castle:{v:'0565',m:'15:20 · 石浦神社',s:'穿過千本鳥居，走進兼六園'}};
+const PAGEINTRO={};   /* 2026-11-19 使用者取消了兼六園的全螢幕鳥居；要給某頁加，寫成 {頁:{v:'影片編號',m:'小字',s:'副標'}} */
 let PI_LAST='';
 function pageIntro(){const U=UNITS(),u=U[I],keys=(Array.isArray(u)?u:[u]).filter(Boolean),sig=keys.join('|');if(sig===PI_LAST)return;const prev=PI_LAST;PI_LAST=sig;
   const k=keys.find(x=>PAGEINTRO[x]);if(!k||!prev||prev.split('|').includes(k))return;   /* 第一次載入（prev 空）或同一頁重畫不播 */
