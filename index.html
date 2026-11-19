@@ -433,6 +433,16 @@ html.pvw .bpa [data-n]::after{content:attr(data-n);position:absolute;left:6px;to
 @media (prefers-reduced-motion:reduce){.bpa.bp-sunset,.bp-sunset .ssun{animation:none}}
 /* 2026-11-19 自己排版的版型（.bpa） */
 .bpa{flex:1;min-height:0;display:grid;gap:6px;margin-top:4px;position:relative}
+/* 初雪：雪白的底、整頁飄小雪（兩層雪花速度不同），左上角小標 */
+.bpa.bp-hatsu{background:linear-gradient(160deg,#eef3f8,#cfdae6);padding:8px;border-radius:6px;gap:8px;overflow:hidden}
+.bpa.bp-hatsu>div{border-radius:4px;box-shadow:0 2px 6px rgba(40,60,90,.25);border:2px solid #fff}
+.bpa.bp-hatsu::before,.bpa.bp-hatsu::after{content:'';position:absolute;inset:0;z-index:4;pointer-events:none;
+  background-image:radial-gradient(circle,#fff 0 1.6px,transparent 2.2px),radial-gradient(circle,rgba(255,255,255,.85) 0 1.1px,transparent 1.6px);
+  background-size:70px 70px,43px 43px;background-position:0 0,21px 17px;animation:hsnow 11s linear infinite;opacity:.9}
+.bpa.bp-hatsu::after{background-size:110px 110px,61px 61px;background-position:30px 10px,5px 40px;animation:hsnow2 17s linear infinite;opacity:.75;filter:blur(.4px)}
+@keyframes hsnow{from{background-position:0 0,21px 17px}to{background-position:0 70px,21px 103px}}@keyframes hsnow2{from{background-position:30px 10px,5px 40px}to{background-position:30px 120px,5px 162px}}
+.bpa.bp-hatsu .htag{position:absolute;left:14px;top:14px;z-index:5;pointer-events:none;background:rgba(255,255,255,.88);color:#2c3e55;font:600 13px/1.6 var(--hand,serif);padding:1px 10px;border-radius:12px;letter-spacing:.12em}
+@media (prefers-reduced-motion:reduce){.bpa.bp-hatsu::before,.bpa.bp-hatsu::after{animation:none}}
 .bpa>div,.bpa .pf>div,.bpm{position:relative;overflow:hidden;border-radius:3px;background:#1d1a17;cursor:zoom-in;min-height:0}
 .bpc i{position:absolute;inset:0;background-position:center;transition:opacity .9s ease}.bpc i.b{background-size:cover;filter:blur(14px) brightness(.7);transform:scale(1.15)}.bpc i.f{background-size:contain;background-repeat:no-repeat}
 .bpc i.n{opacity:0}.bpc i.n.on{opacity:1}.bpc video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#111}
@@ -1529,6 +1539,7 @@ const BPL=[ // 版型：k、名稱、說明、適合、grid、格子（t：v 影
  {k:'vside',n:'直式影片＋旁邊照片',d:'左邊直式影片，右邊兩格照片',fit:'1 支直式影片＋照片',g:'"a b" "a c"',r:'1fr 1fr',c:'0.95fr 1fr',s:[['a','v','v'],['b','i'],['c','i']]},
  {k:'vtop',n:'橫式影片在上＋照片一排',d:'上面橫式影片，下面三格照片',fit:'1 支橫式影片＋照片',g:'"a a a" "b c d"',r:'1.5fr 1fr',c:'1fr 1fr 1fr',s:[['a','v','h'],['b','i'],['c','i'],['d','i']]},
  {k:'vduo',n:'兩支直式影片並排',d:'兩支直式影片左右並排',fit:'2 支直式影片',g:'"a b"',r:'1fr',c:'1fr 1fr',s:[['a','v','v'],['b','v','v']]},
+ {k:'hatsu',n:'初雪（一直三橫）',d:'左邊一支直式影片，右邊三支橫式影片上下疊，整頁飄著小雪',fit:'1 支直式＋2–3 支橫式影片',g:'"a b" "a c" "a d"',r:'1fr 1fr 1fr',c:'0.95fr 1fr',s:[['a','v','v'],['b','v','h'],['c','v','h'],['d','v','h']]},
  {k:'vfull',n:'影片優先單格',d:'一大格先播影片，再輪播照片',fit:'影片是主角',g:'"a"',r:'1fr',c:'1fr',s:[['a','v']]},
  {k:'pano',n:'全景在上',d:'上面放全景照片，下面兩格',fit:'有全景照片',g:'"a a" "b c"',r:'0.8fr 1.3fr',c:'1fr 1fr',s:[['a','*','p'],['b','*'],['c','*']]},
  {k:'film',n:'底片條',d:'一整排照原比例的底片，可以左右捲',fit:'張數多、想一次看到',sp:1},
@@ -1563,6 +1574,15 @@ function bpFit(c,list){if(!list.length)return;const g=list.map(x=>x[3]==='v'?'v'
   /* 縮小後往整個版面的中間靠（左邊的格子靠右、右邊的靠左），不會一左一右中間空一塊 */
   const bx=c.parentElement.getBoundingClientRect(),cr=c.getBoundingClientRect(),mx=(cr.left+cr.right)/2-(bx.left+bx.right)/2,my=(cr.top+cr.bottom)/2-(bx.top+bx.bottom)/2;
   if(t<r*0.85){c.style.width=Math.round(h*t)+'px';c.style.justifySelf=mx<-4?'end':mx>4?'start':'center';}else if(t>r/0.85){c.style.height=Math.round(w/t)+'px';c.style.alignSelf=my<-4?'end':my>4?'start':'center';}}
+/* 初雪（一直三橫）：照影片比例算出每格的實際大小，整塊置中，不留空白
+   電腦：直式在左、三支橫式疊在右邊；手機：直式＋兩支橫式並排，第三支橫式在下面一整排 */
+function hatsuSize(box){const g=8,P=16,W=box.clientWidth-P,H=box.clientHeight-P;if(W<60||H<60)return;const R=16/9,Q=9/16;let w,h,cols,rows;
+  if(!MOB){/* 高 t：直式寬 t*Q、右邊每格高 (t-2g)/3、寬 *R */const f=t=>t*Q+g+(t-2*g)/3*R;let t=H;if(f(t)>W)t=(W-g+2*g/3*R)/(Q+R/3);
+    const lh=(t-2*g)/3;cols=`${t*Q}px ${lh*R}px`;rows=`repeat(3,${lh}px)`;w=t*Q+g+lh*R;h=t;}
+  else{/* 上面高 t：直式寬 t*Q、旁邊兩格各高 (t-g)/2；下面一整排寬 = 上面總寬 */const fw=t=>t*Q+g+(t-g)/2*R;let t=(W-g+g/2*R)/(Q+R/2);
+    const th=t=>t+g+fw(t)/R;if(th(t)>H){const lo=[0,t];for(let i=0;i<30;i++){const m=(lo[0]+lo[1])/2;th(m)>H?lo[1]=m:lo[0]=m;}t=lo[0];}
+    const lh=(t-g)/2;w=fw(t);cols=`${t*Q}px ${lh*R}px`;rows=`${lh}px ${lh}px ${w/R}px`;h=t+g+w/R;}
+  Object.assign(box.style,{gridTemplateColumns:cols,gridTemplateRows:rows,flex:'0 0 auto',width:Math.floor(w+P)+'px',height:Math.floor(h+P)+'px',alignSelf:'center',marginInline:'auto'});box.dataset.hz=1;}
 /* 兩欄的版型：有一列是兩個單獨的格子、照片一直一橫時，欄寬照照片比例分（例如 0.75:1.33），格子就不會被縮得一大一小還留白 */
 function bpCols(box,cs,pl,sp){const cols=(sp.c||'').trim().split(/\s+/);if(cols.length!==2)return;const rows=(sp.g||'').match(/"[^"]*"/g)||[];
   for(const rw of rows){const a=rw.replace(/"/g,'').trim().split(/\s+/);if(a.length!==2||a[0]===a[1])continue;
@@ -1591,11 +1611,13 @@ function bpCell(c,list,k){const st={c,list,i:-1,k,t:null};c.classList.add('bpc')
     if(list.length>1&&!matchMedia('(prefers-reduced-motion: reduce)').matches)st.t=setTimeout(function w(){if(document.hidden||!$('#lb').hidden){st.t=setTimeout(w,1500);return;}next();},4200+Math.random()*1200);};
   show(0);return st;}
 function bpRender(k,area,L,lay){const l=BPLK[lay]||BPLK.auto;const box=document.createElement('div');box.className='bpa bp-'+l.k;box.dataset.k=k;
-  if(l.k==='auto'||!l.sp&&l.s){const sp=l.k==='auto'?bpAutoSpec(L):l;box.style.gridTemplateAreas=sp.g;box.style.gridTemplateRows=sp.r;box.style.gridTemplateColumns=sp.c;
+  if(l.k==='auto'||!l.sp&&l.s){let sp=l.k==='auto'?bpAutoSpec(L):l;
+    if(l.k==='hatsu'&&MOB)sp=Object.assign({},l,{g:'"a b" "a c" "d d"',r:'1fr 1fr 1.2fr',c:'1fr 1fr'});box.style.gridTemplateAreas=sp.g;box.style.gridTemplateRows=sp.r;box.style.gridTemplateColumns=sp.c;
     const cs=sp.s.map(s=>{const c=document.createElement('div');c.style.gridArea=s[0];box.appendChild(c);return c;});area.replaceWith(box);
+    if(l.k==='hatsu'&&L.filter(x=>x[2]==='v').length>=4)hatsuSize(box);
     const co=cs.map(c=>{const w=c.clientWidth,h=c.clientHeight;return !w||!h?'':w/h<0.9?'v':w/h>1.1?'h':'';});const pl=bpAssign(L,sp.s,co,!!(BPG[k]&&BPG[k].fixed));
-    bpCols(box,cs,pl,sp);
-    cs.forEach((c,i)=>{if(!pl[i].length){c.remove();return;}c.dataset.n=i+1;bpFit(c,pl[i]);bpCell(c,pl[i],k);});return;}
+    bpCols(box,cs,pl,sp);if(l.k==='hatsu'){const t=document.createElement('span');t.className='htag';t.textContent='はじめての雪';box.appendChild(t);}
+    cs.forEach((c,i)=>{if(!pl[i].length){c.remove();return;}c.dataset.n=i+1;if(!box.dataset.hz)bpFit(c,pl[i]);bpCell(c,pl[i],k);});return;}
   else if(l.k==='main'){box.innerHTML='<div class="bpm"></div><div class="bpt"></div>';const m=box.querySelector('.bpm');const st=bpCell(m,L,k);
     box.querySelector('.bpt').innerHTML=L.map((x,i)=>`<button data-i="${i}" style="${x[4]?'':`background-image:url(${x[2]==='v'?'vid':'img'}/IMG_${x[0]}.${x[2]==='v'?'jpg':'webp'})`}">${x[2]==='v'?'▶':x[4]?'🔒':''}</button>`).join('');
     box.querySelector('.bpt').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;e.stopPropagation();bpCell(m,L.slice(+b.dataset.i).concat(L.slice(0,+b.dataset.i)),k);},true);}
