@@ -450,7 +450,7 @@ html.pvw .bpa [data-n]::after{content:attr(data-n);position:absolute;left:6px;to
 .bpc .vsnd{position:absolute;right:6px;bottom:6px;z-index:4;width:30px;height:30px;border-radius:50%;border:0;background:rgba(0,0,0,.55);color:#fff;font-size:14px;line-height:30px;padding:0;cursor:pointer}
 .bp-main{display:flex;flex-direction:column;gap:6px}.bp-main .bpm{flex:1}.bpt{display:flex;gap:4px;overflow-x:auto;flex:none;height:52px}
 .bpt button{flex:none;width:52px;height:52px;border:0;border-radius:3px;background:#3a332c center/cover;color:#fff;font-size:14px;cursor:pointer}
-.bp-wall{display:flex;flex-wrap:wrap;align-content:flex-start;gap:4px;overflow:hidden}.bp-wall>div{flex-basis:28%;min-width:0;height:auto}
+.bp-wall{display:block;position:relative;overflow:hidden}
 .bp-film{display:flex;gap:6px;overflow-x:auto;align-items:stretch;padding:8px 0;background:#141210;border-radius:3px}.bp-film>div{flex:none!important;height:100%;border-radius:2px}
 .bp-pola{display:block}.bp-pola .pf{position:absolute;background:#fff;padding:6px 6px 18px;box-shadow:0 4px 12px rgba(0,0,0,.3)}.bp-pola .pf>div{aspect-ratio:1/1;width:100%}
 </style>
@@ -1583,6 +1583,16 @@ function hatsuSize(box){const g=8,P=16,W=box.clientWidth-P,H=box.clientHeight-P;
     const th=t=>t+g+fw(t)/R;if(th(t)>H){const lo=[0,t];for(let i=0;i<30;i++){const m=(lo[0]+lo[1])/2;th(m)>H?lo[1]=m:lo[0]=m;}t=lo[0];}
     const lh=(t-g)/2;w=fw(t);cols=`${t*Q}px ${lh*R}px`;rows=`${lh}px ${lh}px ${w/R}px`;h=t+g+w/R;}
   Object.assign(box.style,{gridTemplateColumns:cols,gridTemplateRows:rows,flex:'0 0 auto',width:Math.floor(w+P)+'px',height:Math.floor(h+P)+'px',alignSelf:'center',marginInline:'auto'});box.dataset.hz=1;}
+/* 原比例相片牆：照順序分成幾排（每種分法都試），每排高度讓照片剛好排滿一整排寬、不裁切；
+   整面牆太高就整體縮小置中。挑照片面積最大、各排高度差不多的分法 */
+function wallLay(box,cs,ar){const g=4,W=box.clientWidth,H=box.clientHeight,n=ar.length;if(!W||!H||!n)return;let best=null;
+  for(let m=0;m<1<<(n-1);m++){const rows=[[0]];for(let i=1;i<n;i++){if(m>>(i-1)&1)rows.push([i]);else rows[rows.length-1].push(i);}if(rows.length>4)continue;
+    const hs=rows.map(r=>(W-g*(r.length-1))/r.reduce((a,i)=>a+ar[i],0));const tot=hs.reduce((a,b)=>a+b,0),sc=Math.min(1,(H-g*(rows.length-1))/tot);
+    const area=hs.reduce((a,h,j)=>a+h*sc*(W-g*(rows[j].length-1))*sc,0),mx=Math.max(...hs),mn=Math.min(...hs),score=area*Math.pow(mn/mx,.8);
+    if(!best||score>best.score)best={score,rows,hs,sc};}
+  const {rows,hs,sc}=best,tH=hs.reduce((a,b)=>a+b*sc,0)+g*(rows.length-1);let y=Math.max(0,(H-tH)/2);
+  rows.forEach((r,j)=>{const h=hs[j]*sc,rw=r.reduce((a,i)=>a+ar[i]*h,0)+g*(r.length-1);let x=(W-rw)/2;
+    r.forEach(i=>{const w=ar[i]*h;Object.assign(cs[i].style,{position:'absolute',left:x+'px',top:y+'px',width:w+'px',height:h+'px'});x+=w+g;});y+=h+g;});}
 /* 兩欄的版型：有一列是兩個單獨的格子、照片一直一橫時，欄寬照照片比例分（例如 0.75:1.33），格子就不會被縮得一大一小還留白 */
 function bpCols(box,cs,pl,sp){const cols=(sp.c||'').trim().split(/\s+/);if(cols.length!==2)return;const rows=(sp.g||'').match(/"[^"]*"/g)||[];
   for(const rw of rows){const a=rw.replace(/"/g,'').trim().split(/\s+/);if(a.length!==2||a[0]===a[1])continue;
@@ -1628,7 +1638,10 @@ function bpRender(k,area,L,lay){const l=BPLK[lay]||BPLK.auto;const box=document.
   else if(l.k==='sunset'){box.innerHTML=`<div class="ssky"><i class="ssun"></i><svg class="sridge" viewBox="0 0 400 90" preserveAspectRatio="none"><path d="M0 70 L40 52 L78 62 L120 34 L160 50 L205 22 L250 46 L290 38 L330 56 L370 44 L400 58 V90 H0Z"/></svg></div><div class="srow"></div>`;
     const row=box.querySelector('.srow'),n=Math.min(3,Math.max(1,L.length)),V=L.filter(x=>x[2]==='v'),Pp=L.filter(x=>x[2]!=='v'),ord=V.length?[V[0],...Pp,...V.slice(1)]:L,pl=Array.from({length:n},()=>[]);ord.forEach((x,i)=>pl[i%n].push(x));
     area.replaceWith(box);pl.forEach((p,i)=>{const c=document.createElement('div');c.className='scell'+(i===0&&n>1?' big':'');row.appendChild(c);bpCell(c,p,k);});return;}
-  else if(l.k==='wall'||l.k==='film'){L.slice(0,l.k==='wall'?9:40).forEach(x=>{const c=document.createElement('div');c.style.flexGrow=bpAr(x);c.style.aspectRatio=bpAr(x);box.appendChild(c);bpCell(c,[x],k);});}
+  else if(l.k==='wall'){const W9=L.slice(0,9),ar=W9.map(x=>{const m=x[4]&&bpPv(String(x[0]).slice(3));return m&&m.w&&m.h?m.w/m.h:bpAr(x);}),cs=W9.map(x=>{const c=document.createElement('div');box.appendChild(c);return c;});area.replaceWith(box);
+    const go=()=>wallLay(box,cs,ar);go();cs.forEach((c,i)=>bpCell(c,[W9[i]],k));
+    /* 公開照片讀到真正的長寬比後再排一次 */W9.forEach((x,i)=>{if(x[4])return;const im=new Image();im.onload=()=>{const r=im.naturalWidth/im.naturalHeight;if(r&&Math.abs(r-ar[i])>.02){ar[i]=r;clearTimeout(box._wt);box._wt=setTimeout(go,60);}};im.src=x[2]==='v'?`vid/IMG_${x[0]}.jpg`:`img/IMG_${x[0]}.webp`;});return;}
+  else if(l.k==='film'){L.slice(0,40).forEach(x=>{const c=document.createElement('div');c.style.flexGrow=bpAr(x);c.style.aspectRatio=bpAr(x);box.appendChild(c);bpCell(c,[x],k);});}
   else if(l.k==='pola'){const n=Math.min(5,Math.max(1,L.length));const pos=[[4,6,52,-4],[46,2,50,5],[10,46,48,3],[50,44,46,-6],[28,26,44,2]];const pl=Array.from({length:n},()=>[]);L.forEach((x,i)=>pl[i%n].push(x));
     pl.forEach((p,i)=>{const f=document.createElement('div');f.className='pf';const [x,y,w,r]=pos[i];f.style.cssText=`left:${x}%;top:${y}%;width:${w}%;transform:rotate(${r}deg)`;const c=document.createElement('div');f.appendChild(c);box.appendChild(f);bpCell(c,p,k);});}
   area.replaceWith(box);}
