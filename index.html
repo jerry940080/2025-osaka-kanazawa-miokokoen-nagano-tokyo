@@ -668,6 +668,7 @@ h3{font-size:20px}
 .bag .food{position:absolute;left:10%;right:10%;top:8%;height:52%;border-radius:46% 46% 40% 40%;background:radial-gradient(circle at 40% 35%,#f6c66a,#d8913a 60%,#a8642a);transform:scale(calc(.9 + var(--o)*.12));box-shadow:0 6px 18px rgba(120,60,10,.35)}
 .bag .food::after{content:"特寫照片・飛驒牛可樂餅";position:absolute;left:0;right:0;bottom:-26px;text-align:center;font:12px var(--mono);color:#5a3b1c;opacity:var(--o)}
 .bag .food .ph{position:absolute;inset:0;border-radius:inherit;background:transparent;opacity:var(--o)}
+.bag .food.spf{border-radius:8px;background:#1d1a17;left:6%;right:6%;top:4%;height:60%}.bag .food.spf::after{content:none}.bag .food.spf .ph{border-radius:8px;background-size:cover}
 .bag .stm{position:absolute;left:20%;right:20%;top:-30%;height:46%;pointer-events:none;opacity:var(--o)}
 .bag .stm i{position:absolute;bottom:0;width:18%;height:100%;background:radial-gradient(ellipse at 50% 80%,rgba(255,255,255,.95),transparent 65%);filter:blur(6px);animation:rise 2.4s ease-in infinite}
 .bag .stm i:nth-child(2){left:40%;animation-delay:.8s}.bag .stm i:nth-child(3){left:72%;animation-delay:1.5s}
@@ -1086,7 +1087,7 @@ function specialClick2(e){const B=e.target.closest('#base');if(!B)return false;c
   if(t.closest('.car[data-i]')){lbOpen('はねうまライン',7,+t.closest('.car').dataset.i);return true;}
   const cel=t.closest('.cel');if(cel){B.querySelectorAll('.cel.on').forEach(x=>{if(x!==cel)x.classList.remove('on');});cel.classList.add('on');const c=CABS[+cel.dataset.r].cells[+cel.dataset.c];
     B.querySelector('.drw .dh').innerHTML=`<b>${CABS[+cel.dataset.r].n} · ${c.l}</b>　${c.ps.length} 項（點照片看大圖）`;B.querySelector('.dstrip').innerHTML=c.ps.length?c.ps.map((id,i)=>{const x=MBYID[id];return phHTML((x[3]==='v'?'v':'h'),x,'cabinet').replace('style="','style="--i:'+i+';');}).join(''):'<span class="spn">這一格還沒有照片</span>';return true;}
-  if(t.closest('.dstrip .ph:not(.vid)')){const a=[...t.closest('.dstrip').children];lbOpen('中野百老匯',a.length,a.indexOf(t.closest('.ph')));return true;}
+  if(t.closest('.dstrip .ph')){const a=[...t.closest('.dstrip').querySelectorAll('.ph')];lbOpen('中野百老匯',0,a.indexOf(t.closest('.ph')),a.map(p=>[p.dataset.src,p.dataset.l||'',p.classList.contains('vid')?'v':'i']));return true;}
   if(t.closest('.fopen')){const i=+B.querySelector('.fview').dataset.i||0;lbOpen(FOCUS[i].l,FOCUS[i].n,0);return true;}
   if(t.closest('.fview,.ring'))return true;
   if(t.closest('.itm')){t.closest('.itm').classList.toggle('on');return true;}
@@ -1302,9 +1303,9 @@ const GAL={
  s_sensoji:[['1007','淺草寺・寶藏門'],['1008','寶藏門正面'],['1221','奧山おまいりまち']],
 };
 const TAPEGAL={'淺草寺的夜景':'s_sensoji'};
-const SNOWX='1983',PANO='0518',COVER='1972';   // 封面 2026-11-19 使用者選 C：白川鄉雪中的鳥居
+let SNOWX='1983',PANO='0518';const COVER='1972';const GATESM=[['1872','玉泉院丸庭園'],['0527','鼠多門與木橋'],['1889','石川門・菱櫓']];var SPGAL={};   // 封面 2026-11-19 使用者選 C：白川鄉雪中的鳥居
 const FOCUSIMG=['0944','0941','2160'],FOCUSGAL=[[['0944','窗外的歌舞伎町']],[['2159','生牛肉膾'],['0941','烤網上的牛肉']],[['2160','厚切牛舌']]];
-const galOf=k=>MEDIA[k]||GAL[k];
+const galOf=k=>SPGAL[k]||MEDIA[k]||GAL[k];
 function cnt(k){const g=MEDIA[k]||[];const p=g.filter(x=>x[2]!=='v').length,v=g.length-p;return (p?p+' 張':'')+(p&&v?'・':'')+(v?v+' 支影片':'');}
 function phHTML(cls,v,key,extra=''){const isV=v[2]==='v';cls=cls.replace(/\bvid\b/g,'').trim();
   return `<div class="ph ${cls} img${isV?' vid':''}" data-l="${v[1]}" data-src="${v[0]}" data-g="${key}" style="background-image:url(${isV?'vid':'img'}/IMG_${v[0]}.${isV?'jpg':'webp'})">${extra}</div>`;}
@@ -1321,7 +1322,7 @@ P.s_shira.h=P.s_shira.h.replace('16:00 · 離開','16:27 · 離開').replace('�
 P.gate=Object.assign({},P.gate,{h:()=>sp({cls:'gate',k:'DAY 2 · 14:20 拉頁',t:'金澤城公園的全景',txt:['先逛金澤城公園，再逛兼六園。','金澤城公園場景很大，拍到了整個公園的全景。'],one:'按「拉開全景」，或點一下摺起來的頁。',
    btn:`<button class="spbtn gopen">↔ 拉開全景</button>`,
    stage:`<div class="gate"><div class="gf">${['c','l','r'].map(s=>`<div class="gp ${s}"><div class="fa gpan pimg" style="background-image:url(img/IMG_${PANO}.webp)"${s==='c'?' data-l="玉泉院丸庭園"':''}></div>${s==='c'?'':`<div class="bk2">${s==='l'?'← 拉開':'拉開 →'}</div>`}</div>`).join('')}</div>
-   <div class="gsm">${[['1872','玉泉院丸庭園'],['0527','鼠多門與木橋'],['1889','石川門・菱櫓']].map(v=>`<div class="ph h img" data-l="${v[1]}" data-src="${v[0]}" data-g="gate" style="background-image:url(img/IMG_${v[0]}.webp)"></div>`).join('')}</div></div>`})});
+   <div class="gsm">${GATESM.map(v=>`<div class="ph h img" data-l="${v[1]}" data-src="${v[0]}" data-g="sp:gate:sm" style="background-image:url(img/IMG_${v[0]}.webp)"></div>`).join('')}</div></div>`})});
 P.s_album={c:'ch2',h:()=>`${rh('','白川鄉','DAY 3')}<div class="col"><div class="meta">白川鄉 · 14:31–16:27</div><h3>雪中的合掌村</h3><div class="alb">${GAL.s_album.map(v=>`<div class="ph img" data-l="${v[1]}" data-src="${v[0]}" data-g="s_album" style="background-image:url(img/IMG_${v[0]}.webp)"></div>`).join('')}${ph('vid','影片')}</div><button class="more" data-alb="白川鄉">看全部 ${GAL.s_album.length} 張 →</button></div>`};
 // 套照片：每一頁的內容在輸出前換掉佔位
 const PHOTO_DONE=new Set();function applyPhotos(){Object.keys(PHOTO).forEach(k=>{if(PHOTO_DONE.has(k))return;const p=P[k];if(!p)return;PHOTO_DONE.add(k);const f=p.h;p.h=typeof f==='function'?()=>photoPatch(k,f()):photoPatch(k,f);});}applyPhotos();
@@ -1357,7 +1358,7 @@ P.s_album={c:'ch2',h:()=>{const g=MEDIA.s_album,ph11=g.filter(x=>x[2]!=='v').sli
   return `${rh('','白川鄉','DAY 3')}<div class="col"><div class="meta">白川鄉 · 14:31–16:27 · ${cnt('s_album')}</div><h3>雪中的合掌村</h3><div class="alb">${ph11.concat(v?[v]:[]).map(x=>phHTML('',x,'s_album')).join('')}</div><button class="more" data-alb="白川鄉">看全部 ${g.length} 項 →</button></div>`;}};
 // 隧道：出隧道之後，窗外播車窗影片
 {const f=P.tunnel.h;P.tunnel.h=()=>f().replace('<div class="ly vid" style="opacity:0"><div class="ph vid w" data-l="車窗影片・出隧道後的雪"></div></div>',`<div class="ly vid" style="opacity:0"><video class="tvid" src="vid/IMG_${TUNNELVID}.mp4" poster="vid/IMG_${TUNNELVID}.jpg" muted loop playsinline preload="metadata"></video></div>`);}
-const TUNNELVID='1849';
+let TUNNELVID='1849';
 // 卡帶影片帶
 const TAPEVID={'商店街的街頭表演':['1222','1223','1224','1225']};
 P.pop.h=P.pop.h.replace(' data-v="白川鄉的雪"','');
@@ -1446,7 +1447,7 @@ function gpVideo(st){const c=st.c;const play=i=>{const x=st.list[i];st.i=i;c.dat
   if(!(navigator.connection&&navigator.connection.saveData))play(0);}
 document.addEventListener('click',e=>{const c=e.target.closest('#base .gpc');if(!c||e.target.closest('.vsnd'))return;e.stopPropagation();const k=c.dataset.gp;const L=gpItems(k);const sl=gpSlots(L);const j=[...c.parentNode.children].indexOf(c);const x=sl[j][+c.dataset.j||0];
   lbOpen(titleOf(k),0,Math.max(0,L.indexOf(x)),L.map(y=>[y[0],y[1],y[2],y[3]]));},true);
-window.gpRefresh=()=>{try{gpRun(document.querySelector('#base'));if(typeof bpRun==='function')bpRun(document.querySelector('#base'));}catch(e){}};
+window.gpRefresh=()=>{try{if(typeof spApply==='function'&&spApply()){show();return;}gpRun(document.querySelector('#base'));if(typeof bpRun==='function')bpRun(document.querySelector('#base'));}catch(e){}};
 {const _a3=after;after=function(){_a3.apply(this,arguments);try{gpRun(document.querySelector('#base'));}catch(e){console.error(e);}};}
 
 // ===== 2026-11-19：自己排版（使用者在 trip-tools「📐 排版」設定每一頁的照片影片順序與版型）=====
@@ -1454,6 +1455,8 @@ window.gpRefresh=()=>{try{gpRun(document.querySelector('#base'));if(typeof bpRun
 // 有設定的頁：照片區換成版型（公開＋私人依設定順序；沒登入的人看不到私人項目）；沒設定的頁維持原本的樣子。
 const BPTRIP='2025-osaka-kanazawa-miokokoen-nagano-tokyo';
 const PUBALL={};Object.values(MEDIA).forEach(a=>a.forEach(x=>{PUBALL[x[0]]=x;}));
+/* 不在相簿裡、只用在特殊頁的公開影片（電車車窗 0770 切成四段） */
+[['0770a','窗外的雪山','v','v'],['0770b','屋頂上的厚雪','v','v'],['0770c','房子之間露出來的山','v','v'],['0770d','晴天的雪山','v','v']].forEach(x=>{if(!PUBALL[x[0]])PUBALL[x[0]]=x;});
 const BPL=[ // 版型：k、名稱、說明、適合、grid、格子（t：v 影片優先／i 照片／* 都可；o：v 直／h 橫／p 全景）
  {k:'auto',n:'自動',d:'依數量自動排（1、2、4 格），多的輪播',fit:'什麼都可以'},
  {k:'one',n:'單格輪播',d:'一大格，照片影片依序輪播',fit:'想一張一張看',g:'"a"',r:'1fr',c:'1fr',s:[['a','*']]},
@@ -1537,10 +1540,11 @@ document.addEventListener('click',e=>{const c=e.target.closest('#base .bpc');if(
 // trip-tools 拖到「🗑 刪除」的公開項目（bookpages/_trash）：Claude 從網站刪檔之前，先從相簿與排過的頁拿掉
 function bpTrash(){const T=new Set(((BPG._trash||{}).items||[]).map(x=>x.replace(/^pub:/,'')));if(!T.size)return;Object.values(MEDIA).forEach(a=>{for(let i=a.length-1;i>=0;i--)if(T.has(a[i][0]))a.splice(i,1);});
   Object.keys(GPPUB).forEach(k=>{GPPUB[k]=GPPUB[k].filter(x=>!T.has(x));});Object.keys(PUBALL).forEach(x=>{if(T.has(x))delete PUBALL[x];});}
-window.bpSet=G=>{BPG=G||{};window.BPG=BPG;bpTrash();try{if(typeof show==='function'&&$('#base').children.length){show();}}catch(e){}};
+window.bpSet=G=>{BPG=G||{};window.BPG=BPG;bpTrash();try{spApply();}catch(e){console.error(e);}try{if(typeof show==='function'&&$('#base').children.length){show();}}catch(e){}};
 // 公開訪客：用 Firestore REST 讀一次（規則還沒更新或沒網路就照原本）
 fetch(`https://firestore.googleapis.com/v1/projects/trip-tools-21847/databases/(default)/documents/trips/${BPTRIP}/bookpages?pageSize=300`).then(r=>r.ok?r.json():null).then(j=>{if(!j||!j.documents||window.BPLIVE)return;const G={};
-  j.documents.forEach(d=>{const k=d.name.split('/').pop(),f=d.fields||{};G[k]={layout:f.layout&&f.layout.stringValue||'',items:f.items&&f.items.arrayValue?(f.items.arrayValue.values||[]).map(v=>v.stringValue):null};});window.bpSet(G);}).catch(()=>{});
+  const fv=v=>v==null?null:'stringValue' in v?v.stringValue:'integerValue' in v?+v.integerValue:'doubleValue' in v?v.doubleValue:'booleanValue' in v?v.booleanValue:'arrayValue' in v?(v.arrayValue.values||[]).map(fv):'mapValue' in v?Object.fromEntries(Object.entries(v.mapValue.fields||{}).map(([a,b])=>[a,fv(b)])):null;
+  j.documents.forEach(d=>{const k=d.name.split('/').pop(),f=d.fields||{};const o={};Object.entries(f).forEach(([a,b])=>o[a]=fv(b));G[k]={...o,layout:o.layout||'',items:Array.isArray(o.items)?o.items:null};});window.bpSet(G);}).catch(()=>{});
 {const _a4=after;after=function(){_a4.apply(this,arguments);try{bpRun(document.querySelector('#base'));}catch(e){console.error(e);}};}
 // ?bpmock=版型：測試用，把幾頁假設成排過版
 if(new URLSearchParams(location.search).get('bpmock')){const L=new URLSearchParams(location.search).get('bpmock');BPG={s_castle:{layout:L},s_dinner2:{layout:L},s_noto:{layout:L},s_bus:{layout:L},g_shira3:{layout:L},g_shira4:{layout:L},s_shibu:{layout:L},s_sensoji:{layout:L},s_bookbed:{layout:L},s_motomura:{layout:L}};window.BPG=BPG;}
@@ -1640,7 +1644,7 @@ function insert(t){const dk=document.querySelector('#base .deck');if(!dk)return;
   s.innerHTML='<div class="idle on">▲ 投影中</div>';
   const n=t.dataset.k==='v'?0:(parseInt(t.dataset.d)||8);
   $('#ptt').textContent=(t.dataset.k==='v'?'▶ ':'▦ ')+t.dataset.t+(n?' · '+n+' 張':'');
-  const tg=TAPEGAL[t.dataset.t],tvl=[].concat(TAPEVID[t.dataset.t]||[]),tv=tvl[0];$('#pscr').innerHTML=tv?`<video src="vid/IMG_${tv}.mp4" poster="vid/IMG_${tv}.jpg" controls autoplay playsinline class="vidfill" style="object-fit:contain;background:#000" data-list="${tvl.join(',')}" data-i="0" onended="const l=this.dataset.list.split(','),i=+this.dataset.i+1;if(i<l.length){this.dataset.i=i;this.src='vid/IMG_'+l[i]+'.mp4';this.play();}"></video>`:tg?`<div class="pgal">${GAL[tg].map(v=>`<div class="ph img" data-l="${v[1]}" data-src="${v[0]}" data-g="${tg}" style="background-image:url(img/IMG_${v[0]}.webp)"></div>`).join('')}</div>`:t.dataset.k==='v'?`<div class="ph w" data-l="「${t.dataset.t}」的影片之後放上" style="--ph1:#1d2340;--ph2:#3c1d3a"></div><div class="bar"><i></i></div>`:`<div class="pgal">${Array.from({length:n},(_,i)=>`<div class="ph" data-l="${i+1}" style="--ph1:${t.style.getPropertyValue('--tc')};--ph2:#d9d4e8"></div>`).join('')}</div>`;
+  const tp=(typeof TAPES!=='undefined'?TAPES:[]).find(x=>x.t===t.dataset.t),tpv=tp&&tp.items.every(x=>x[2]==='v');const tg=tp?null:TAPEGAL[t.dataset.t],tvl=tp?(tpv?tp.items.map(x=>x[0]):[]):[].concat(TAPEVID[t.dataset.t]||[]),tv=tvl[0];$('#pscr').innerHTML=tv?`<video src="vid/IMG_${tv}.mp4" poster="vid/IMG_${tv}.jpg" controls autoplay playsinline class="vidfill" style="object-fit:contain;background:#000" data-list="${tvl.join(',')}" data-i="0" onended="const l=this.dataset.list.split(','),i=+this.dataset.i+1;if(i<l.length){this.dataset.i=i;this.src='vid/IMG_'+l[i]+'.mp4';this.play();}"></video>`:tp?`<div class="pgal">${tp.items.map((x,i)=>`<div class="ph img${x[2]==='v'?' vid':''}" data-l="${x[1]||''}" data-src="${x[0]}" data-g="tape:${tp.t}" style="background-image:url(${x[2]==='v'?'vid':'img'}/IMG_${x[0]}.${x[2]==='v'?'jpg':'webp'})"></div>`).join('')}</div>`:tg?`<div class="pgal">${GAL[tg].map(v=>`<div class="ph img" data-l="${v[1]}" data-src="${v[0]}" data-g="${tg}" style="background-image:url(img/IMG_${v[0]}.webp)"></div>`).join('')}</div>`:t.dataset.k==='v'?`<div class="ph w" data-l="「${t.dataset.t}」的影片之後放上" style="--ph1:#1d2340;--ph2:#3c1d3a"></div><div class="bar"><i></i></div>`:`<div class="pgal">${Array.from({length:n},(_,i)=>`<div class="ph" data-l="${i+1}" style="--ph1:${t.style.getPropertyValue('--tc')};--ph2:#d9d4e8"></div>`).join('')}</div>`;
   $('#stage').classList.add('proj');document.body.classList.add('pj');}
 function eject(){$('#pscr').innerHTML='';$('#stage').classList.remove('proj');document.body.classList.remove('pj');const dk=document.querySelector('#base .deck');if(!dk)return;dk.classList.remove('on');$('#dk').textContent='— EMPTY —';dk.querySelector('.scrn').innerHTML='<div class="idle">選一捲卡帶<br>放進播放機</div>';document.querySelectorAll('#base .tape').forEach(x=>x.classList.remove('out'));}
 addEventListener('resize',()=>{const _ti=TI;setTimeout(()=>{const B=document.querySelector('#base');if(B&&B.querySelector('.tr2'))trainSet(B,_ti);},50);const wasMob=MOB;const U0=UNITS(),cur=U0[I];size();if(wasMob!==MOB){const U=UNITS();I=MOB?Math.max(0,U.indexOf(cur.find(k=>k!=='none'))):U.findIndex(u=>u.includes(cur));if(I<0)I=0;}show();});
@@ -1817,6 +1821,82 @@ function tunnelAuto(B){if(TUN){cancelAnimationFrame(TUN.r);TUN=null;}if(!B)retur
     if(+r.value!==v){r.value=v;tunnelSet(B,v);}if(x<1)st.r=requestAnimationFrame(tick);};st.r=requestAnimationFrame(tick);}
 {const _a2=after;after=function(){_a2.apply(this,arguments);try{tunnelAuto(document.querySelector('#base'));}catch(e){console.error(e);}};}
 
+
+/* ===== 2026-11-19 特殊頁的格子：trip-tools 📐 排版可以換照片影片（bookpages/{頁}.slots、卡帶 bookpages/cass.tapes） =====
+   每個格子是 'pub:編號' 或 'pv:私人 id' 的清單；沒設定、或沒登入看不到任何一項時，用原本的內容。
+   私人項目的網址先寫成 img/IMG_pv:<id>.webp 這種樣子，下面的 MutationObserver 再換成分塊組回來的 Blob URL。 */
+const SPSLOT={
+ tunnel:{t:'隧道',s:[['v','出隧道後窗外的影片','v',1]]},
+ gate:{t:'金澤城拉頁',s:[['pano','拉開後的全景照片','i',1],['sm','下面三張小圖','i',3]]},
+ snowx:{t:'撥雪',s:[['bg','雪撥開後的照片','i',1]]},
+ pop:{t:'立體書',s:[['m','立起來的那一格','*',1]]},
+ korokke:{t:'可樂餅',s:[['m','紙袋拉開後','*',1]]},
+ trainx:{t:'電車',s:[['cars','車廂（一節放一項，依序排）','*',12]]},
+ noren:{t:'暖簾',s:[['in','暖簾拉開後','*',1],['mini','下面一排小圖','*',4]]},
+ cabinet:{t:'展示櫃',s:[['r0','第一層','*',6],['r1','第二層','*',6],['r2','第三層','*',6],['r3','第四層','*',6]]},
+ focus:{t:'對焦環',s:[['far','遠（第一張照片是對焦的畫面，其餘點開看）','*',8],['mid','中','*',8],['near','近','*',8]]},
+ cass:{t:'卡帶',tapes:1}};
+const TAPECOL=['#2b3550','#3b2b45','#4a2b2b','#2b4a3e','#45402b','#2b3a4a'];
+const SPDEF={tunnel:{v:[TUNNELVID]},gate:{pano:[PANO],sm:GATESM.map(v=>v[0])},snowx:{bg:[SNOWX]},pop:{m:['1954']},korokke:{m:[]},
+ trainx:{cars:TRX.map(c=>c[2])},noren:{in:[],mini:['0862','0891','0866','0913']},
+ cabinet:Object.fromEntries(CABS.map((r,i)=>['r'+i,[...new Set(r.cells.flatMap(c=>c.ps))]])),
+ focus:{far:['0944'],mid:['0941','2159'],near:['2160','2161','2162']},
+ cass:{tapes:[{t:'商店街的街頭表演',items:['1222','1223','1224','1225']},{t:'淺草寺的夜景',items:(GAL.s_sensoji||[]).map(v=>v[0])},
+   {t:'淺草寺的夜',items:[]},{t:'秋葉原一整天',items:[]},{t:'AmiAmi 的戰利品',items:[]},{t:'交誼廳聊到五點',items:[]}]}};
+SPSLOT.cabinet.s.forEach((x,i)=>{if(CABS[i])x[1]=`第${'一二三四'[i]}層・${CABS[i].n}`;});
+const SPD0={TRX:TRX.map(c=>c.slice()),CABS:JSON.parse(JSON.stringify(CABS)),FOCUSIMG:FOCUSIMG.slice(),FOCUSGAL:JSON.parse(JSON.stringify(FOCUSGAL)),FOCUSN:FOCUS.map(f=>f.n),GATESM:GATESM.map(v=>v.slice())};
+const spSet=(k,s)=>{const c=BPG[k]&&BPG[k].slots;return !!(c&&Array.isArray(c[s]));};
+const spPre=id=>/^(pub|pv):/.test(id)?id:'pub:'+id;
+const spCap=x=>{const c=(x[1]||'').trim();return c;};
+/* 一個格子目前要顯示的項目：[模板用的編號（公開是 0759、私人是 pv:xxx）, 說明, 'i'|'v', 'h'|'v'|'p', 私人?] */
+function spRes(k,slot){const c=BPG[k]&&BPG[k].slots,set=c&&Array.isArray(c[slot]);const ids=set?c[slot]:((SPDEF[k]||{})[slot]||[]);
+  let L=ids.map(id=>bpItem(spPre(id))).filter(Boolean);if(!L.length&&set)L=((SPDEF[k]||{})[slot]||[]).map(id=>bpItem(spPre(id))).filter(Boolean);
+  const mx=((SPSLOT[k]||{}).s||[]).find(z=>z[0]===slot);return mx?L.slice(0,mx[3]):L;}
+let TAPES=[],SPX={},SPSIG='';
+function spApply(){const sig=JSON.stringify(Object.keys(SPSLOT).map(k=>BPG[k]||null))+'|'+Object.keys(window.PVALL||{}).length;if(sig===SPSIG)return false;SPSIG=sig;
+  const one=(k,s,kind)=>{const L=spRes(k,s).filter(x=>kind==='v'?x[2]==='v':x[2]!=='v');return L[0]||null;};
+  {const x=one('tunnel','v','v');TUNNELVID=x?x[0]:SPDEF.tunnel.v[0];}
+  {const x=one('gate','pano','i');PANO=x?x[0]:SPDEF.gate.pano[0];const L=spSet('gate','sm')?spRes('gate','sm').filter(x=>x[2]!=='v'):[];GATESM.splice(0,GATESM.length,...(L.length?L.map(x=>[x[0],spCap(x)]):SPD0.GATESM.map(v=>v.slice())));}
+  {const x=one('snowx','bg','i');SNOWX=x?x[0]:SPDEF.snowx.bg[0];}
+  {const L=spSet('trainx','cars')?spRes('trainx','cars'):[];TRX.splice(0,TRX.length,...(L.length?L.map(x=>[spCap(x)||(x[2]==='v'?'影片':'照片'),x[2]==='v'?1:0,x[0]]):SPD0.TRX.map(c=>c.slice())));}
+  CABS.splice(0,CABS.length,...SPD0.CABS.map((r,i)=>{const c=BPG.cabinet&&BPG.cabinet.slots;if(!(c&&Array.isArray(c['r'+i])))return JSON.parse(JSON.stringify(r));const L=spRes('cabinet','r'+i);
+    if(!L.length)return JSON.parse(JSON.stringify(r));L.forEach(x=>{if(!MBYID[x[0]])MBYID[x[0]]=[x[0],x[1],x[2],x[3]];});const n=Math.min(3,L.length);
+    const cells=Array.from({length:n},(_,j)=>{const ps=L.filter((_,q)=>q%n===j).map(x=>x[0]),f=L[j];return {w:n===1?'wide':(f[2]==='v'&&f[3]==='v'?'tall':''),l:spCap(f)||r.n,ps};});return {n:r.n,cells};}));
+  ['far','mid','near'].forEach((s,i)=>{const c=BPG.focus&&BPG.focus.slots,set=c&&Array.isArray(c[s]);const L=set?spRes('focus',s):[];const ph=L.find(x=>x[2]!=='v');
+    if(L.length&&ph){FOCUSIMG[i]=ph[0];FOCUSGAL[i]=[ph,...L.filter(x=>x!==ph)].map(x=>[x[0],spCap(x),x[2]]);FOCUS[i].n=L.length;}else{FOCUSIMG[i]=SPD0.FOCUSIMG[i];FOCUSGAL[i]=JSON.parse(JSON.stringify(SPD0.FOCUSGAL[i]));FOCUS[i].n=SPD0.FOCUSN[i];}});
+  {const src=(BPG.cass&&Array.isArray(BPG.cass.tapes))?BPG.cass.tapes:SPDEF.cass.tapes;
+    const mk=a=>a.map(tp=>({t:String(tp.t||'').trim()||'未命名',items:(tp.items||[]).map(id=>bpItem(spPre(id))).filter(Boolean)})).filter(tp=>tp.items.length);
+    TAPES=mk(src);if(!TAPES.length)TAPES=mk(SPDEF.cass.tapes);TAPES.forEach((tp,i)=>tp.c=TAPECOL[i%TAPECOL.length]);}
+  SPX={pop:spRes('pop','m')[0]||null,korokke:spRes('korokke','m')[0]||null,noren_in:spRes('noren','in')[0]||null,noren_mini:spRes('noren','mini')};
+  SPGAL={};const sg=(key,L)=>{SPGAL[key]=L.map(x=>[x[0],spCap(x),x[2]]);};
+  sg('sp:gate:sm',GATESM.map(v=>bpItem(spPre(v[0]))||[v[0],v[1],'i']));sg('sp:noren:mini',SPX.noren_mini);
+  TAPES.forEach(tp=>sg('tape:'+tp.t,tp.items));
+  return true;}
+/* 卡帶：架子上的帶子照 TAPES 排（左邊前一半、右邊後一半） */
+{const f=P.cass.h;P.cass.h=()=>{let n=0;const h=typeof f==='function'?f():f,half=Math.ceil(TAPES.length/2);
+  return h.replace(/<div class="shelf">[\s\S]*?<\/div>/g,()=>{const part=n++===0?TAPES.slice(0,half):TAPES.slice(half);
+    return `<div class="shelf">${part.map(tp=>{const v=tp.items.every(x=>x[2]==='v'),nv=tp.items.length;return tape(v?'v':'g',tp.t,v?(nv>1?nv+' 段':'影片'):nv+' 張',tp.c);}).join('')}</div>`;});};}
+/* 立體書、可樂餅、暖簾：畫完之後把格子換成設定的照片或影片 */
+function spPut(el,x,g){if(!el||!x)return;el.querySelectorAll('video,.vsnd').forEach(v=>v.remove());el.innerHTML='';el.classList.remove('ill','auto','play');el.classList.add('img','spd');el.classList.toggle('vid',x[2]==='v');
+  el.dataset.src=x[0];el.dataset.l=spCap(x);el.dataset.g=g;el.style.backgroundImage=`url(${x[2]==='v'?'vid':'img'}/IMG_${x[0]}.${x[2]==='v'?'jpg':'webp'})`;el.style.backgroundSize='cover';el.style.backgroundPosition='center';}
+function spDom(B){if(!B)return;let ch=0;
+  if(SPX.pop){const el=B.querySelector('.popw .pl.scr .ph');if(el){spPut(el,SPX.pop,'sp:pop');SPGAL['sp:pop']=[[SPX.pop[0],spCap(SPX.pop),SPX.pop[2]]];ch=1;}}
+  if(SPX.korokke){const el=B.querySelector('.bagw .food .ph');if(el){spPut(el,SPX.korokke,'sp:korokke');el.closest('.food').classList.add('spf');SPGAL['sp:korokke']=[[SPX.korokke[0],spCap(SPX.korokke),SPX.korokke[2]]];ch=1;}}
+  if(SPX.noren_in){const el=B.querySelector('.nr2>.ph');if(el){spPut(el,SPX.noren_in,'sp:noren:in');SPGAL['sp:noren:in']=[[SPX.noren_in[0],spCap(SPX.noren_in),SPX.noren_in[2]]];ch=1;}}
+  const nc=BPG.noren&&BPG.noren.slots;if(nc&&Array.isArray(nc.mini)&&SPX.noren_mini.length){const els=[...B.querySelectorAll('.nmini>.ph')];els.forEach((el,i)=>{const x=SPX.noren_mini[i];if(x)spPut(el,x,'sp:noren:mini');else el.style.display='none';});ch=1;}
+  if(ch)autoVids(B);}
+{const _a5=after;after=function(){try{spDom(document.querySelector('#base'));}catch(e){console.error(e);}_a5.apply(this,arguments);};}
+/* 私人項目的網址：img/IMG_pv:<id>.webp、vid/IMG_pv:<id>.mp4／.jpg → 分塊組回來的 Blob URL */
+{const RX=/(img|vid)\/IMG_pv:([^.'")\s]+)\.(webp|jpg|mp4)/;const SEL='[style*="IMG_pv:"],[src*="IMG_pv:"],[poster*="IMG_pv:"]';
+  const fix=el=>{if(!window.PVALL||!window.pvUrl)return;
+    const one=(str,set)=>{const m=RX.exec(str||'');if(!m)return;const it=window.PVALL[m[2]];if(!it)return;window.pvUrl(it,m[3]==='jpg'?'p':'f').then(u=>{if(RX.test(String(set.cur()||'')))set.put(u);}).catch(()=>{});};
+    if((el.getAttribute('style')||'').includes('IMG_pv:'))one(el.style.backgroundImage,{cur:()=>el.style.backgroundImage,put:u=>{el.style.backgroundImage=`url(${u})`;}});
+    if((el.getAttribute('poster')||'').includes('IMG_pv:'))one(el.getAttribute('poster'),{cur:()=>el.getAttribute('poster'),put:u=>{el.poster=u;}});
+    if((el.getAttribute('src')||'').includes('IMG_pv:'))one(el.getAttribute('src'),{cur:()=>el.getAttribute('src'),put:u=>{const p=el.tagName==='VIDEO'&&(!el.paused||el.autoplay||el.classList.contains('autov'));el.src=u;if(p)el.play().catch(()=>{});}});};
+  window.spHydrate=root=>{(root||document).querySelectorAll(SEL).forEach(fix);};
+  new MutationObserver(rs=>{if(!window.PVALL)return;rs.forEach(r=>{if(r.type==='attributes'){fix(r.target);return;}r.addedNodes.forEach(n=>{if(n.nodeType!==1)return;if(n.matches(SEL))fix(n);n.querySelectorAll(SEL).forEach(fix);});});})
+    .observe(document.documentElement,{subtree:true,childList:true,attributes:true,attributeFilter:['style','src','poster']});}
+try{spApply();}catch(e){console.error(e);}
 // 2026-11-19：網址 #pg=頁 key 直接翻到那一頁（trip-tools「在書裡看」用）
 function pgHash(){const m=/^#pg=([\w-]+)/.exec(location.hash);if(!m)return;const i=idxOf(m[1]);if(i>=0&&i!==I){if(typeof BUSY!=='undefined'&&BUSY)return;jump(i);}}
 addEventListener('hashchange',pgHash);

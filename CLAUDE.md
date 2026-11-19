@@ -310,6 +310,12 @@
   改成：格子先放進頁面、量出每格是直還是橫，`bpAssign(L,slots,co)` 把直的照片優先分到直格、橫的分到橫格（沒有同方向的格子才平均分）；
   「自動」版型改用 `bpAutoSpec`：直的多就左右並排（2 格左右、3 格一排），橫的多就上下疊；`bpFit` 讓一格裡全是同方向的照片時，格子縮成照片的比例置中，不留墊底。`bpAr` 影片改用 9:16／16:9。
   驗證 scratchpad `sp/fit.js`（`?privmock=1&bpmock=` 10 種版型 × 10 頁）：電腦方向不合的格子 147 → 個位數，手機也是；沒有溢出、零錯誤。`sw.js` `hkr-v21`。
+- **特殊頁的格子（2026-11-19，使用者選「做法 A」：特殊頁也在 trip-tools 排）**：`SPSLOT`（每個特殊頁的格子：id、名稱、只放影片 v／只放照片 i／都可 *、最多幾項）＋`SPDEF`（原本的內容）。
+  設定存 `bookpages/{特殊頁}.slots={格子:['pub:編號'|'pv:私人 id',…]}`，卡帶存 `bookpages/cass.tapes=[{t 名稱, items}]`。`spApply()`（`bpSet`、`gpRefresh` 時跑）把設定套進 `TUNNELVID`、`PANO`、`GATESM`、`SNOWX`、`TRX`、`CABS`、`FOCUSIMG`／`FOCUSGAL`、`TAPES`；
+  立體書、可樂餅、暖簾在畫完後由 `spDom()` 換掉格子。**沒設定、或沒登入的人看不到格子裡任何一項時，用原本的內容**（所以公開版不會變空）。空的卡帶不出現；卡帶全是影片＝依序連播，否則＝照片牆。
+  私人項目在模板裡先寫成 `img/IMG_pv:<id>.webp`／`vid/IMG_pv:<id>.mp4`／`.jpg`，一個 MutationObserver 再換成分塊組回的 Blob URL（成員的瀏覽器會先對這些假網址發一次 404，沒影響）。
+  REST 讀 bookpages 改成整份文件都解（`mapValue`／`arrayValue`）。電車車窗 0770a–d 不在 `MEDIA`，另外登記進 `PUBALL`，`thumb/` 補了 4 張縮圖。`book-media.json` 多 `sp`（給 trip-tools 的格子清單與預設內容）。
+  驗證 scratchpad `sp/slot.js`（假的 bookpages：10 頁都照設定換、卡帶照片牆與連播、燈箱）、`sp/slot_pv.js`（`?privmock=1` 登入後私人照片影片都換成 Blob URL）、`del/t.js`（整本零錯誤、沒有溢出）。`sw.js` `hkr-v22`。
 
 ## GitHub Pages 發布
 - Settings → Pages → Deploy from a branch → 選分支 / `(root)`。
