@@ -428,8 +428,8 @@ html.pvw .bpa [data-n]::after{content:attr(data-n);position:absolute;left:6px;to
 .bp-sunset .ssky{position:absolute;inset:0;background:transparent;overflow:visible;cursor:default}.bp-sunset .srow{background:transparent!important;overflow:visible!important;cursor:default!important}.bp-sunset .ssun{position:absolute;left:62%;top:18%;width:16%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,#fff6d6 0,#ffd27a 45%,#ff9a3c 70%,rgba(255,140,60,0) 72%);box-shadow:0 0 40px 18px rgba(255,170,90,.55);animation:sunset 14s ease-in-out infinite alternate}
 @keyframes sunset{0%{transform:translateY(0)}100%{transform:translateY(160%)}}
 .bp-sunset .sridge{position:absolute;left:0;right:0;bottom:0;width:100%;height:42%}.bp-sunset .sridge path{fill:#2a1a26}
-.bp-sunset .srow{position:absolute;left:4%;right:4%;top:8%;bottom:12%;display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:3%;align-items:end}
-.bp-sunset .scell{position:relative;height:72%;border-radius:8px;overflow:hidden;box-shadow:0 6px 18px rgba(40,10,20,.45);border:3px solid rgba(255,236,210,.85);cursor:zoom-in;background:#1d1a17}.bp-sunset .scell.big{height:100%;grid-column:span 1}
+.bp-sunset .srow{position:absolute;left:4%;right:4%;top:30%;bottom:8%;display:block}
+.bp-sunset .scell{position:absolute;border-radius:8px;overflow:hidden;box-shadow:0 6px 18px rgba(40,10,20,.45);border:3px solid rgba(255,236,210,.85);cursor:zoom-in;background:#1d1a17}.bp-sunset .scell.big{height:100%;grid-column:span 1}
 @media (prefers-reduced-motion:reduce){.bpa.bp-sunset,.bp-sunset .ssun{animation:none}}
 /* 2026-11-19 自己排版的版型（.bpa） */
 .bpa{flex:1;min-height:0;display:grid;gap:6px;margin-top:4px;position:relative}
@@ -1558,7 +1558,7 @@ const BPL=[ // 版型：k、名稱、說明、適合、grid、格子（t：v 影
  {k:'pano',n:'全景在上',d:'上面放全景照片，下面兩格',fit:'有全景照片',g:'"a a" "b c"',r:'0.8fr 1.3fr',c:'1fr 1fr',s:[['a','*','p'],['b','*'],['c','*']]},
  {k:'film',n:'底片條',d:'一整排照原比例的底片，可以左右捲',fit:'張數多、想一次看到',sp:1},
  {k:'eki',n:'月台',d:'站名牌＋月台黃線，照片像列車一班一班進站（標題寫「A→B」會變成站名）',fit:'車站、搭車',sp:1},
- {k:'sunset',n:'日落',d:'夕陽的天空漸層、太陽慢慢落到山後面，照片排在山稜上',fit:'傍晚、夕陽',sp:1}];
+ {k:'sunset',n:'日落',d:'夕陽的天空漸層、太陽慢慢落到山後面，照片影片照原比例排在山稜上（最多 6 格，例如 2 直 4 橫）',fit:'傍晚、夕陽',sp:1}];
 const BPLK={};BPL.forEach(l=>BPLK[l.k]=l);
 let BPG=window.BPG||{};
 const bpPv=id=>(window.PVALL||{})[id];
@@ -1607,12 +1607,12 @@ function busLay(box,cs,ar){const g=8,W=box.clientWidth,H=box.clientHeight,n=ar.l
     r.forEach(i=>{const w=ar[i]*h;Object.assign(cs[i].style,{position:'absolute',left:x+'px',top:y+'px',width:w+'px',height:h+'px'});x+=w+g;});y+=h+g;});}
 /* 原比例相片牆：照順序分成幾排（每種分法都試），每排高度讓照片剛好排滿一整排寬、不裁切；
    整面牆太高就整體縮小置中。挑照片面積最大、各排高度差不多的分法 */
-function wallLay(box,cs,ar){const g=4,W=box.clientWidth,H=box.clientHeight,n=ar.length;if(!W||!H||!n)return;let best=null;
-  for(let m=0;m<1<<(n-1);m++){const rows=[[0]];for(let i=1;i<n;i++){if(m>>(i-1)&1)rows.push([i]);else rows[rows.length-1].push(i);}if(rows.length>4)continue;
+function wallLay(box,cs,ar,va,maxR){const g=va?8:4,W=box.clientWidth,H=box.clientHeight,n=ar.length;if(!W||!H||!n)return;let best=null;
+  for(let m=0;m<1<<(n-1);m++){const rows=[[0]];for(let i=1;i<n;i++){if(m>>(i-1)&1)rows.push([i]);else rows[rows.length-1].push(i);}if(rows.length>(maxR||4))continue;
     const hs=rows.map(r=>(W-g*(r.length-1))/r.reduce((a,i)=>a+ar[i],0));const tot=hs.reduce((a,b)=>a+b,0),sc=Math.min(1,(H-g*(rows.length-1))/tot);
     const area=hs.reduce((a,h,j)=>a+h*sc*(W-g*(rows[j].length-1))*sc,0),mx=Math.max(...hs),mn=Math.min(...hs),score=area*Math.pow(mn/mx,.8);
     if(!best||score>best.score)best={score,rows,hs,sc};}
-  const {rows,hs,sc}=best,tH=hs.reduce((a,b)=>a+b*sc,0)+g*(rows.length-1);let y=Math.max(0,(H-tH)/2);
+  const {rows,hs,sc}=best,tH=hs.reduce((a,b)=>a+b*sc,0)+g*(rows.length-1);let y=Math.max(0,va==='end'?H-tH:(H-tH)/2);
   rows.forEach((r,j)=>{const h=hs[j]*sc,rw=r.reduce((a,i)=>a+ar[i]*h,0)+g*(r.length-1);let x=(W-rw)/2;
     r.forEach(i=>{const w=ar[i]*h;Object.assign(cs[i].style,{position:'absolute',left:x+'px',top:y+'px',width:w+'px',height:h+'px'});x+=w+g;});y+=h+g;});}
 /* 兩欄的版型：有一列是兩個單獨的格子、照片一直一橫時，欄寬照照片比例分（例如 0.75:1.33），格子就不會被縮得一大一小還留白 */
@@ -1658,8 +1658,12 @@ function bpRender(k,area,L,lay){const l=BPLK[lay]||BPLK.auto;const box=document.
     box.innerHTML=`<div class="eks"><b>${cpEsc(a)}</b>${b?`<i class="ekb"><span></span><span>${cpEsc(b)} ▸</span></i>`:'<i class="ekb"><span></span><span></span></i>'}</div><div class="ekw"><div class="ekc"></div><span class="ekt"></span></div><div class="ekl"><i></i></div><div class="ekr"></div>`;
     const c=box.querySelector('.ekc');area.replaceWith(box);bpCell(c,L,k);return;}
   else if(l.k==='sunset'){box.innerHTML=`<div class="ssky"><i class="ssun"></i><svg class="sridge" viewBox="0 0 400 90" preserveAspectRatio="none"><path d="M0 70 L40 52 L78 62 L120 34 L160 50 L205 22 L250 46 L290 38 L330 56 L370 44 L400 58 V90 H0Z"/></svg></div><div class="srow"></div>`;
-    const row=box.querySelector('.srow'),n=Math.min(3,Math.max(1,L.length)),V=L.filter(x=>x[2]==='v'),Pp=L.filter(x=>x[2]!=='v'),ord=V.length?[V[0],...Pp,...V.slice(1)]:L,pl=Array.from({length:n},()=>[]);ord.forEach((x,i)=>pl[i%n].push(x));
-    area.replaceWith(box);pl.forEach((p,i)=>{const c=document.createElement('div');c.className='scell'+(i===0&&n>1?' big':'');row.appendChild(c);bpCell(c,p,k);});return;}
+    /* 2026-11-19：最多 6 格（例如 2 直 4 橫），每格照影片／照片原本的比例，排在山稜上（靠下對齊）；超過 6 項照方向輪播 */
+    const row=box.querySelector('.srow'),n=Math.min(6,Math.max(1,L.length)),pl=L.slice(0,n).map(x=>[x]),og=x=>x[3]==='v'?'v':'h';
+    L.slice(n).forEach((x,i)=>{const M=pl.filter(q=>og(q[0])===og(x)),C=M.length?M:pl;C[i%C.length].push(x);});
+    const ar=pl.map(q=>{const x=q[0],m=x[4]&&bpPv(String(x[0]).slice(3));return m&&m.w&&m.h?m.w/m.h:bpAr(x);});
+    area.replaceWith(box);const cs=pl.map(()=>{const c=document.createElement('div');c.className='scell';row.appendChild(c);return c;});
+    wallLay(row,cs,ar,'end',3);cs.forEach((c,i)=>{c.dataset.n=i+1;bpCell(c,pl[i],k);});return;}
   else if(l.k==='bus'){const ttl=((area.closest('.col')||document).querySelector('h2,h3')||{}).textContent||'';const dst=/白川/.test(ttl+k)?'白川郷 行き':(ttl.replace(/^往|的巴士$/g,'')||'巴士');
     box.innerHTML=`<div class="bsg"><b>${cpEsc(dst)}</b></div><div class="bbd"><div class="bwn"></div><i class="bst"></i></div><div class="brd"><i></i></div>`;area.replaceWith(box);
     const V=L.filter(x=>x[3]==='v'),Hh=L.filter(x=>x[3]!=='v');let pl;
