@@ -307,6 +307,13 @@ button{font:inherit;color:inherit}
 .ills .sun{animation:ilSun 8s ease-out infinite}@keyframes ilSun{0%{transform:translateY(20px)}100%{transform:translateY(-14px)}}
 .ills .fly{animation:ilFly 8s ease-in infinite}@keyframes ilFly{0%,15%{transform:translate(0,0) rotate(0)}35%{transform:translate(50px,-4px) rotate(-8deg)}100%{transform:translate(230px,-90px) rotate(-14deg)}}
 @media (prefers-reduced-motion:reduce){.ills *{animation:none!important}}
+/* 再見，雪國 */
+.sbye{flex:1;min-height:0;display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(2,1fr);gap:4px;margin-top:8px}
+.m .sbye{grid-template-columns:repeat(2,1fr);grid-template-rows:repeat(4,1fr)}
+.sbye .ph{aspect-ratio:auto;height:100%;min-height:0}.sbye .ph::after{font-size:9px}
+.sbye.pvv{display:block;position:relative;background:#111;border-radius:3px;overflow:hidden}
+.sbye.pvv video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#111;cursor:zoom-in}
+.sbye.pvv .vsnd{position:absolute;right:8px;bottom:8px;z-index:4;width:36px;height:36px;border-radius:50%;border:0;background:rgba(0,0,0,.55);color:#fff;font-size:16px;line-height:36px;padding:0;cursor:pointer}
 </style>
 <style>
 .slots{display:flex;gap:6px;margin-bottom:6px}
@@ -1286,11 +1293,14 @@ P.pop.h=P.pop.h.replace(' data-v="白川鄉的雪"','');
 Object.keys(PHOTO).forEach(k=>{if(P[k]&&typeof P[k].h==='string')P[k].h=photoPatch(k,P[k].h);});
 
 // 書的順序：一般頁兩頁一個跨頁；特殊頁自己佔一個跨頁；車票一定在左頁（後面接章扉頁）；湊不成對時補一張留白頁
+// ===== 2026-11-19：長野章節結尾「再見，雪國」：公開版是 Day 2–6 的雪景拼貼；成員登入後，指定到這頁的私人直式影片取代拼貼 =====
+const SNOWBYE=[['1848','t1'],['0508','s_tsuzumi'],['1872','gate'],['0645','s_album'],['0777','s_okayama'],['2124','t3'],['2136','noren'],['0918','s_shibu']];
+P.s_snowbye={c:'ch4',h:()=>`${rh('','雪國','DAY 2–6')}<div class="col"><div class="meta">DAY 2–6 · 敦賀 → 湯田中</div><h3>再見，雪國</h3><p class="txt">從往敦賀的路上出了隧道開始，到湯田中為止，這五天幾乎都在雪裡。明天就到東京了。</p><div class="sbye">${SNOWBYE.map(([id,k])=>{const v=(MEDIA[k]||[]).find(x=>x[0]===id)||[id,''];return phHTML('',[v[0],v[1],'i',v[3]||'h'],k);}).join('')}</div></div>`};
 const SEQ=['endp','toc','pre','route',
  'op1','s_arrive','s_dinner1','s_taiyo','q1','s_iccard',
  't1','op2','tunnel','s_tsuzumi','s_hotel2','s_lunch2','gate','s_castle','s_dinner2','q2','s_market3','s_noto','s_bus','snowx','pop','korokke','s_album','s_shira','s_unagi','q3','s_uber',
  't2','op3','trainx','s_kogen','s_okayama','s_night','s_ninja','q4','s_day5','s_koyama','s_bath5','s_taco','q5',
- 't3','op4','s_soba','s_dentetsu','noren','s_shibu','s_nagano','q6',
+ 't3','op4','s_soba','s_dentetsu','noren','s_shibu','s_nagano','q6','s_snowbye',
  't4','op5','s_bookbed','s_motomura','cabinet','focus','s_kabuki','q7','s_plus','s_akiba','s_kanda','s_ichiran','s_sensoji','cass','suitcase','q8',
  'op6','after'];
 const CHNO={ch1:'01',ch2:'02',ch3:'03',ch4:'04',ch5:'05',ch6:'終'};
@@ -1549,7 +1559,7 @@ function setNotes(rows){PN={};rows.filter(n=>n.page).forEach(n=>(PN[n.page]=PN[n
 function mockData(){const mk=(id,page,src,kind,w,h,extra={})=>({id,page,src,kind,w,h,ready:true,bytes:1,nf:1,...extra});
   setMedia([mk('M1','s_unagi','0494','photo',1600,1200,{note:'（模擬）晚餐',focus:{x:30,y:60}}),mk('M2','s_unagi','0506','photo',1600,1200),
     mk('M3','s_ninja','0501','video',720,1280,{dur:12}),mk('M4','s_ninja','0518','photo',3600,1000),mk('M5','trainx','0509','photo',1600,1200),mk('M6','noren','0526','photo',1600,1200,{note:'（模擬）湯'}),mk('M8','noren','0501','video',720,1280,{dur:12,note:'（模擬）影片'}),
-    mk('M7','s_arrive','0527','photo',1200,1600)]);
+    mk('M7','s_arrive','0527','photo',1200,1600),mk('M9','s_snowbye','0501','video',720,1280,{dur:12,note:'（模擬）雪國的這幾天'})]);
   setNotes([{id:'n1',page:'s_uber',title:'（模擬）私人文字的標題',text:'第一段。\n\n第二段，只有成員看得到。'}]);}
 
 /* ── 登入 ── */
@@ -1594,6 +1604,15 @@ function decorate(){
     el.querySelectorAll('.ph:not([data-src])').forEach(ph=>{const l=ph.dataset.ol||ph.dataset.l||'';if(ph.classList.contains('pvf')||!(LABV.test(l)||LABP.test(l)))return;
       const wantV=LABV.test(l),tall=/直/.test(l);
       const pick=L.filter(m=>!used.has(m.id)).sort((a,b)=>((a.kind==='video')!==wantV)-((b.kind==='video')!==wantV)||((a.h>a.w)!==tall)-((b.h>b.w)!==tall))[0];if(!pick)return;used.add(pick.id);fill(ph,pick,k,auto++<2);});
+    // 「再見，雪國」：私人影片取代雪景拼貼（直式影片，靜音循環，右下角開聲音，點了開大畫面）
+    const sb=el.querySelector('.sbye');const sv=L.find(m=>m.kind==='video');
+    if(sb&&sv&&!sb.classList.contains('pvv')){sb.classList.add('pvv');sb.innerHTML='<div class="pvld" style="color:#ccc;position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:13px">讀取中…</div>';
+      used.add(sv.id);
+      urlOf(sv,'p').then(pu=>{if(!sb.isConnected)return;urlOf(sv,'f').then(vu=>{if(!sb.isConnected)return;
+        sb.innerHTML=`<video class="autov" muted loop playsinline autoplay poster="${pu}" src="${vu}" data-pvid="${esc(sv.id)}" data-pk="${esc(k)}"></video><button class="vsnd" type="button" title="開聲音">🔇</button>`;
+        const v=sb.querySelector('video');v.play().catch(()=>{});
+        sb.querySelector('.vsnd').onclick=e=>{e.stopPropagation();v.muted=!v.muted;e.currentTarget.textContent=v.muted?'🔇':'🔊';if(!v.muted)v.play().catch(()=>{});};
+        v.onclick=e=>{e.stopPropagation();const LL=listOf(k);lbOpen(titleOf(k),0,Math.max(0,LL.findIndex(x=>x[0]==='pv:'+sv.id)),LL);};}).catch(()=>{});}).catch(()=>{});}
     // 2) 左上角的入口
     const box=document.createElement('div');box.className='pvb';
     const p=L.filter(m=>m.kind!=='video').length,v=L.length-p;
