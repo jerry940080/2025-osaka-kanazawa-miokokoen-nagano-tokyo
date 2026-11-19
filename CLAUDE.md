@@ -224,8 +224,11 @@
   拖資料夾進去 → 第一次下載 BtbN（備援 gyan.dev）免安裝 ffmpeg → 照片 1600 px WebP（全景 3600）q78＋480 px 縮圖、影片 720p H.264 CRF 28／AAC 96k／faststart＋封面 JPG＋縮圖，全部 `-map_metadata -1`；
   `輸出/manifest.json`：每項 `id／kind／src／num（檔名編號）／file／thumb／poster／w／h／tall／dur／audio／bytes／taken／takenReliable／lat／lon／note`。影片時間只有 `creation_time`（匯出日期）時 `takenReliable=false`。
   ffmpeg 指令在這裡用公開檔案測過；**PowerShell 部分沒辦法在雲端環境執行，使用者第一次跑就是實測**（PS 5.1：外部程式 stderr 在 Stop 模式會變錯誤，所以 `Run-FF`／`Probe` 暫時改 Continue）。
-- **第 3 步（待做）trip-tools「匯入回憶錄媒體」**（主辦人）：選工具的「輸出」資料夾 → 二進位分塊（約 512 KiB／塊，大欄位設索引豁免）上傳 → 依時間、GPS、檔名編號產生對頁草稿，使用者在預覽裡確認與調整 → 全部分塊成功才發布 → 刪除時連分塊一起清。
+- **第 3 步（2026-11-19 完成，trip-tools `book.js`，見 trip-tools 的 CLAUDE.md）trip-tools「📚 回憶錄」分頁**（主辦人）：選工具的「輸出」資料夾 → 二進位分塊（約 512 KiB／塊，大欄位設索引豁免）上傳 → 依時間、GPS、檔名編號產生對頁草稿，使用者在預覽裡確認與調整 → 全部分塊成功才發布 → 刪除時連分塊一起清。
   另外：每張照片可寫說明、可點選「主角在哪」（裁切焦點）、兩段不愉快經驗的文字（成員限定的兩筆文件）、Firestore 規則每個子集合都要寫（使用者要貼到主控台）。
+- **壓縮結果（使用者 2026-11-19 實跑）**：照片 113 張 30.7 MB、影片 30 支 53.4 MB，合計 84.2 MB（原檔 253.9 MB）。**私人照片的 manifest 都沒有 GPS**（影片有）——可能匯出時拿掉了，也可能新版 ffmpeg 的 EXIF 欄位名稱不同，未確認；照片時間都可靠，對頁不受影響。
+- **對頁草稿**（scratchpad `private/draft.py` → 給使用者的 `draft.json`，放進「輸出」資料夾）：依公開照片已知的頁，前後同頁或差 20 分內＝高（118 項），其餘依行程時間推（25 項）。使用者確認 IMG_0766–0769（Day 4 12:10）是はねうまライン車窗 → `trainx`。
+- `book-pages.json`：書的頁清單 `{pages:[{k, t(titleOf), d(Day), sp(特殊頁)}]}`，給 trip-tools 的頁下拉用；改 `SEQ` 或標題後要重產（scratchpad `private/pages.js`）。
 - **第 4 步（待做）書本**：右上「私人」登入；書頁只記媒體編號，共用一個讀取函式（以後換 Cloudflare R2 只改這裡）；用到哪支才下載（卡帶插入、電車窗內）；影片只存在這次開書的記憶體（Blob URL），不存離線快取；私人照片預設不裁切，有焦點時以焦點裁切。
 - **版面怎麼決定**（使用者選）：Claude 只用 manifest 的時間、GPS、形狀排草稿 →**主要由使用者在 trip-tools 預覽看真正的畫面調整**；使用者用文字補充（例如「0927 最想放大」）；使用者也可以主動挑幾張縮圖給 Claude 看（只限給的那幾張）。
 - **擴充**：Firestore 用到 600–700 MiB 時重新評估，再搬到 Cloudflare R2（Worker 驗證成員）。
