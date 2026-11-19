@@ -1419,4 +1419,146 @@ if('serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceW
 const q=new URLSearchParams(location.search).get('p');if(q)I=+q;
 show();
 </script>
+<style>
+/* 2026-11-19 私人照片影片與文字：只有 trip-tools 這趟的成員登入後看得到 */
+#pvbtn{position:fixed;left:8px;top:8px;z-index:45;border:0;border-radius:99px;background:rgba(255,250,242,.82);color:#3a2f26;font-size:12px;padding:5px 9px;box-shadow:0 1px 4px rgba(0,0,0,.18);cursor:pointer;backdrop-filter:blur(3px)}
+#pvbtn.ok{background:#3d5a45;color:#fff}#pvbtn.deny{background:#7a3b2e;color:#fff}
+#pvmenu{position:fixed;left:8px;top:40px;z-index:46;background:#fffaf2;border-radius:12px;box-shadow:0 6px 20px rgba(0,0,0,.25);padding:10px 12px;font-size:13px;line-height:1.6;max-width:260px;color:#3a2f26}
+#pvmenu button{display:block;margin-top:6px;border:0;background:#eadfcb;border-radius:8px;padding:6px 10px;cursor:pointer;width:100%}
+.pvb{position:absolute;left:12px;top:7px;z-index:6;display:flex;flex-direction:column;gap:4px;align-items:flex-start}
+.pvb button{border:0;border-radius:99px;background:#3d5a45;color:#fff;font-size:12px;padding:4px 10px;box-shadow:0 1px 4px rgba(0,0,0,.25);cursor:pointer;max-width:240px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pvb button.nt{background:#7a5b2e}
+.m .pvb{left:auto;right:72px;align-items:flex-end}.m .pvb button{font-size:11px;padding:3px 9px;max-width:200px}
+.ph.pvf{background-color:#e9e1d2;cursor:zoom-in}.ph.pvf.ctn{background-size:contain!important;background-repeat:no-repeat;background-color:#2a2420}
+.ph.pvf::before{content:'🔒';position:absolute;right:6px;top:6px;font-size:11px;z-index:3;background:rgba(0,0,0,.45);border-radius:99px;padding:1px 5px}
+.ph.pvf video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+#lbimg .pvld{color:#ddd;font-size:14px;position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+#pvn{position:fixed;inset:0;z-index:55;background:rgba(10,10,12,.7);display:flex;align-items:center;justify-content:center;padding:16px}
+#pvn[hidden]{display:none}
+#pvn .pp{background:#fbf6ec;color:#2f261e;border-radius:6px;max-width:560px;width:100%;max-height:86vh;overflow:auto;padding:28px 26px;box-shadow:0 10px 40px rgba(0,0,0,.4);font-family:var(--hand,serif)}
+#pvn small{display:block;color:#8a7a68;font-size:12px;letter-spacing:.05em}#pvn h3{margin:6px 0 14px;font-size:22px}
+#pvn .tx{white-space:pre-wrap;line-height:1.95;font-size:17px}#pvn button{margin-top:18px;border:0;background:#eadfcb;border-radius:8px;padding:8px 14px;cursor:pointer}
+</style>
+<button id="pvbtn" type="button" title="同行成員登入後可以看私人的照片、影片與文字">🔒</button>
+<div id="pvmenu" hidden></div>
+<div id="pvn" hidden><div class="pp"><small id="pvnp"></small><h3 id="pvnt"></h3><div class="tx" id="pvnx"></div><button type="button" id="pvnc">闔上</button></div></div>
+<script type="module">
+// 私人照片影片與文字（2026-11-19）
+// 存在 trip-tools 的 Firestore：trips/<TRIP>/media/{id}（索引）＋ media/{id}/chunks/{t|p|f0…}（512 KiB 分塊）、trips/<TRIP>/notes。
+// 只有這趟的成員讀得到（firestore.rules）。上傳與排頁在 trip-tools「📚 回憶錄」分頁。
+// 這裡：右上角以外的左上「🔒」登入 → 讀索引 → 每一頁有私人內容時左上出現「🔒 私人 N 張」與私人文字按鈕；
+// 頁上還空著的佔位（沒有公開照片的）用私人照片／影片補上。檔案用到才下載，只存在這次開書的記憶體（不進離線快取）。
+// ?privmock=1：不連 Firebase，用公開照片假扮私人內容看版面。
+const TRIP='2025-osaka-kanazawa-miokokoen-nagano-tokyo';
+const CFG={apiKey:'AIzaSyBL1D01Tdjqd1_gjJtXFaJdEo0GsLgz-7M',authDomain:'trip-tools-21847.firebaseapp.com',projectId:'trip-tools-21847',storageBucket:'trip-tools-21847.firebasestorage.app',messagingSenderId:'877309827746',appId:'1:877309827746:web:6995a142e468b3a53a55fb'};
+const V='https://www.gstatic.com/firebasejs/10.12.2/';
+const MOCK=new URLSearchParams(location.search).has('privmock');
+const $=s=>document.querySelector(s);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let F=null,user=null,ST='off',ERR='',PM={},PN={},ALL={},unsub=[];
+const URLS=new Map();   // id+which → objectURL（最多 14 個，舊的釋放）
+const btn=$('#pvbtn'),menu=$('#pvmenu');
+
+/* ── 讀檔 ── */
+async function chunk(id,name){
+  if(MOCK){const m=ALL[id];const u=name==='p'?`vid/IMG_${m.src}.jpg`:name==='t'?(m.kind==='video'?`vid/IMG_${m.src}.jpg`:`img/IMG_${m.src}.webp`):(m.kind==='video'?`vid/IMG_${m.src}.mp4`:`img/IMG_${m.src}.webp`);
+    if(name!=='t'&&name!=='p'&&name!=='f0')return new Uint8Array(0);return new Uint8Array(await (await fetch(u)).arrayBuffer());}
+  const s=await F.getDoc(F.doc(F.db,'trips',TRIP,'media',id,'chunks',name));if(!s.exists())throw new Error('缺少分塊 '+name);return s.data().d.toUint8Array();}
+async function urlOf(m,which){   // which：f 本體、p 影片封面
+  const k=m.id+'@'+(m.bytes||0)+which;if(URLS.has(k)){const u=URLS.get(k);URLS.delete(k);URLS.set(k,u);return u;}
+  let parts;if(which==='p')parts=[await chunk(m.id,'p')];
+  else{const n=Math.max(1,m.nf||1);parts=new Array(n);let i=0;await Promise.all(Array.from({length:Math.min(4,n)},async()=>{while(i<n){const j=i++;parts[j]=await chunk(m.id,'f'+j);}}));}
+  const u=URL.createObjectURL(new Blob(parts,{type:which==='p'?'image/jpeg':(m.mime||(m.kind==='video'?'video/mp4':'image/webp'))}));
+  URLS.set(k,u);while(URLS.size>14){const [k0,u0]=URLS.entries().next().value;URLS.delete(k0);URL.revokeObjectURL(u0);}
+  return u;}
+
+/* ── 資料 ── */
+function setMedia(rows){PM={};ALL={};rows.filter(m=>m.ready&&m.page).forEach(m=>{ALL[m.id]=m;(PM[m.page]=PM[m.page]||[]).push(m);});
+  for(const k in PM)PM[k].sort((a,b)=>(a.order??1e9)-(b.order??1e9)||String(a.ts||'').localeCompare(String(b.ts||''))||(a.num||0)-(b.num||0));refresh();}
+function setNotes(rows){PN={};rows.filter(n=>n.page).forEach(n=>(PN[n.page]=PN[n.page]||[]).push(n));for(const k in PN)PN[k].sort((a,b)=>(a.order||0)-(b.order||0));refresh();}
+function mockData(){const mk=(id,page,src,kind,w,h,extra={})=>({id,page,src,kind,w,h,ready:true,bytes:1,nf:1,...extra});
+  setMedia([mk('M1','s_unagi','0494','photo',1600,1200,{note:'（模擬）晚餐',focus:{x:30,y:60}}),mk('M2','s_unagi','0506','photo',1600,1200),
+    mk('M3','s_ninja','0501','video',720,1280,{dur:12}),mk('M4','s_ninja','0518','photo',3600,1000),mk('M5','trainx','0509','photo',1600,1200),mk('M6','noren','0526','photo',1600,1200,{note:'（模擬）湯'}),mk('M8','noren','0501','video',720,1280,{dur:12,note:'（模擬）影片'}),
+    mk('M7','s_arrive','0527','photo',1200,1600)]);
+  setNotes([{id:'n1',page:'s_uber',title:'（模擬）私人文字的標題',text:'第一段。\n\n第二段，只有成員看得到。'}]);}
+
+/* ── 登入 ── */
+async function loadFB(){if(F)return F;
+  const [a,au,fs]=await Promise.all([import(V+'firebase-app.js'),import(V+'firebase-auth.js'),import(V+'firebase-firestore.js')]);
+  const app=a.initializeApp(CFG,'book');const auth=au.getAuth(app);const db=fs.getFirestore(app);   // 不開離線快取：私人檔案只留在這次開書的記憶體
+  F={auth,db,GoogleAuthProvider:au.GoogleAuthProvider,signInWithPopup:au.signInWithPopup,signOut:au.signOut,onAuth:au.onAuthStateChanged,collection:fs.collection,onSnapshot:fs.onSnapshot,doc:fs.doc,getDoc:fs.getDoc};
+  F.onAuth(auth,u=>{user=u;unsub.forEach(f=>f());unsub=[];if(!u){ST='off';PM={};PN={};ALL={};refresh();return;}
+    ST='load';draw();try{localStorage.setItem('hkr-priv','1');}catch(e){}
+    const fail=e=>{ST=/permission/i.test(e.code||e.message||'')?'deny':'err';ERR=e.code||e.message||'';PM={};PN={};ALL={};refresh();};
+    unsub.push(F.onSnapshot(F.collection(F.db,'trips',TRIP,'media'),s=>{ST='ok';setMedia(s.docs.map(d=>({id:d.id,...d.data()})));},fail));
+    unsub.push(F.onSnapshot(F.collection(F.db,'trips',TRIP,'notes'),s=>setNotes(s.docs.map(d=>({id:d.id,...d.data()}))),()=>{}));});
+  return F;}
+async function signIn(){ST='load';draw();
+  try{await loadFB();if(!user)await F.signInWithPopup(F.auth,new F.GoogleAuthProvider());}
+  catch(e){ST='err';ERR=e&&e.code==='auth/popup-blocked'?'登入視窗被擋住了，請允許彈出視窗':e&&e.code==='auth/popup-closed-by-user'?'':(e.code||e.message||'');if(!ERR)ST='off';draw();}}
+async function signOut(){try{localStorage.removeItem('hkr-priv');}catch(e){}if(F&&user)await F.signOut(F.auth);ST='off';PM={};PN={};ALL={};menu.hidden=true;refresh();}
+
+/* ── 畫面 ── */
+const nP=()=>Object.values(ALL).filter(m=>m.kind!=='video').length,nV=()=>Object.values(ALL).filter(m=>m.kind==='video').length;
+function draw(){btn.className=ST;btn.textContent=ST==='ok'?`🔓 私人 ${nP()+nV()}`:ST==='load'?'🔒 …':ST==='deny'?'🔒 不是成員':ST==='err'?'🔒 ⚠':'🔒';}
+function openMenu(){
+  if(ST==='off'||(ST==='err'&&!user)){menu.innerHTML=`<b>私人照片與影片</b><div>同行的成員登入後，書裡會多出只有成員看得到的照片、影片與文字。</div>${ERR&&ST==='err'?`<div style="color:#a33">${esc(ERR)}</div>`:''}<button data-pv="in">用 Google 帳號登入</button>`;}
+  else if(ST==='deny')menu.innerHTML=`<b>這個帳號不是這趟的成員</b><div>${esc(user&&user.email||'')}</div><div>請主辦人在 trip-tools 產生邀請連結給你。</div><button data-pv="out">登出／換帳號</button>`;
+  else menu.innerHTML=`<b>已登入：${esc(user&&(user.displayName||user.email)||'')}</b><div>私人照片 ${nP()} 張・影片 ${nV()} 支・文字 ${Object.values(PN).flat().length} 段。<br>有私人內容的頁，左上角會出現綠色的「🔒」按鈕。</div>${ST==='err'?`<div style="color:#a33">${esc(ERR)}</div>`:''}<button data-pv="out">登出</button>`;
+  menu.hidden=false;}
+btn.addEventListener('click',e=>{e.stopPropagation();if(!menu.hidden){menu.hidden=true;return;}if(MOCK&&ST==='off'){user={displayName:'模擬成員'};ST='ok';mockData();return;}if(ST==='off'&&!F){signIn();return;}openMenu();});
+menu.addEventListener('click',e=>{const b=e.target.closest('[data-pv]');if(!b)return;e.stopPropagation();if(b.dataset.pv==='in'){menu.hidden=true;signIn();}else{if(MOCK){user=null;ST='off';PM={};PN={};ALL={};menu.hidden=true;refresh();return;}signOut();}});
+document.addEventListener('click',e=>{if(!menu.hidden&&!e.target.closest('#pvmenu'))menu.hidden=true;});
+
+// 目前這一面（手機一頁、電腦兩頁或一個跨頁）每一頁的 key 與元素
+function current(){const U=UNITS(),u=U[I];const keys=MOB?[u]:(P[u[0]].full?[u[0]]:u);
+  const els=[...document.querySelectorAll('#base .spread > .pg, #base .spread > .full')];return keys.map((k,i)=>[k,els[i]]).filter(x=>x[1]);}
+const LABV=/影片/,LABP=/照片/;
+function decorate(){
+  document.querySelectorAll('#base .pvb').forEach(x=>x.remove());
+  if(ST!=='ok')return;let auto=0;
+  for(const [k,el] of current()){
+    const L=PM[k]||[],N=PN[k]||[];if(!L.length&&!N.length)continue;
+    // 1) 還空著的佔位：照片佔位放私人照片、影片佔位放私人影片（找不到同類就放另一類）
+    const used=new Set();
+    el.querySelectorAll('.ph:not([data-src])').forEach(ph=>{const l=ph.dataset.l||'';if(ph.classList.contains('pvf')||!(LABV.test(l)||LABP.test(l)))return;
+      const wantV=LABV.test(l),tall=/直/.test(l);
+      const pick=L.filter(m=>!used.has(m.id)).sort((a,b)=>((a.kind==='video')!==wantV)-((b.kind==='video')!==wantV)||((a.h>a.w)!==tall)-((b.h>b.w)!==tall))[0];if(!pick)return;used.add(pick.id);fill(ph,pick,k,auto++<2);});
+    // 2) 左上角的入口
+    const box=document.createElement('div');box.className='pvb';
+    const p=L.filter(m=>m.kind!=='video').length,v=L.length-p;
+    if(L.length)box.insertAdjacentHTML('beforeend',`<button type="button" data-pvg="${esc(k)}">🔒 私人 ${p?p+' 張':''}${p&&v?'・':''}${v?v+' 支影片':''}</button>`);
+    N.forEach(n=>box.insertAdjacentHTML('beforeend',`<button type="button" class="nt" data-pvn="${esc(n.id)}" data-pk="${esc(k)}">🔒 ${esc(n.title||'私人的一段')}</button>`));
+    el.appendChild(box);}
+}
+function fill(ph,m,k,play){ph.classList.add('img','pvf');ph.dataset.pv=m.id;ph.dataset.pk=k;ph.dataset.l=m.note||'';ph.classList.toggle('vid',m.kind==='video');
+  if(m.kind!=='video'){if(m.focus){ph.style.backgroundSize='cover';ph.style.backgroundPosition=`${m.focus.x}% ${m.focus.y}%`;}else ph.classList.add('ctn');}
+  urlOf(m,m.kind==='video'?'p':'f').then(u=>{if(!ph.isConnected)return;ph.style.backgroundImage=`url(${u})`;
+    if(m.kind==='video'&&play&&!(navigator.connection&&navigator.connection.saveData))urlOf(m,'f').then(vu=>{if(!ph.isConnected||ph.querySelector('video'))return;const v=document.createElement('video');v.muted=true;v.loop=true;v.playsInline=true;v.setAttribute('playsinline','');v.className='autov';v.src=vu;ph.prepend(v);v.play().catch(()=>{});}).catch(()=>{});}).catch(()=>{});}
+function refresh(){draw();if(typeof UNITS==='function')decorate();}
+
+// 換頁後重新裝飾（原本的 after() 之後）
+const _after=window.after;window.after=function(){_after.apply(this,arguments);try{decorate();}catch(e){console.error(e);}};
+// 燈箱：私人項目的編號是 'pv:<id>'
+const _lbDraw=window.lbDraw;window.lbDraw=function(){const it=LB.list&&LB.list[LB.i];if(!it||!String(it[0]).startsWith('pv:'))return _lbDraw();
+  const m=ALL[it[0].slice(3)],im=$('#lbimg');im.innerHTML='<div class="pvld">讀取中…</div>';im.classList.add('img');im.style.background='';im.style.backgroundImage='';
+  $('#lbcap').textContent='🔒 '+(LB.t?LB.t+'　':'')+(it[1]||'');$('#lbn').textContent=(LB.i+1)+' / '+LB.n;if(!m)return;const at=LB.i;
+  urlOf(m,'f').then(u=>{if(LB.i!==at||$('#lb').hidden)return;if(m.kind==='video')im.innerHTML=`<video src="${u}" controls autoplay playsinline></video>`;else{im.innerHTML='';im.style.backgroundImage=`url(${u})`;}})
+    .catch(e=>{if(LB.i===at)im.innerHTML=`<div class="pvld">讀不到：${esc(e.message||e.code)}</div>`;});};
+const listOf=k=>(PM[k]||[]).map(m=>['pv:'+m.id,m.note||'',m.kind==='video'?'v':'i',m.h>m.w?'v':'h']);
+document.addEventListener('click',e=>{
+  const g=e.target.closest('#base [data-pvg]');if(g){e.stopPropagation();e.preventDefault();lbOpen(titleOf(g.dataset.pvg),0,0,listOf(g.dataset.pvg));return;}
+  const f=e.target.closest('#base .ph.pvf');if(f){e.stopPropagation();e.preventDefault();const L=listOf(f.dataset.pk);lbOpen(titleOf(f.dataset.pk),0,Math.max(0,L.findIndex(x=>x[0]==='pv:'+f.dataset.pv)),L);return;}
+  const n=e.target.closest('#base [data-pvn]');if(n){e.stopPropagation();e.preventDefault();const x=(PN[n.dataset.pk]||[]).find(y=>y.id===n.dataset.pvn);if(!x)return;
+    $('#pvnp').textContent='🔒 只有成員看得到・'+titleOf(n.dataset.pk);$('#pvnt').textContent=x.title||'';$('#pvnx').textContent=x.text||'';$('#pvn').hidden=false;return;}
+},true);
+$('#pvnc').onclick=()=>$('#pvn').hidden=true;$('#pvn').addEventListener('click',e=>{if(e.target.id==='pvn')$('#pvn').hidden=true;});
+addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('#pvn').hidden){$('#pvn').hidden=true;e.stopImmediatePropagation();}},true);
+['touchstart','touchend'].forEach(t=>$('#pvn').addEventListener(t,e=>e.stopPropagation()));
+
+// 登入過的成員：下次打開自動載入（Firebase 自己記得登入狀態）
+let was=false;try{was=localStorage.getItem('hkr-priv')==='1';}catch(e){}
+if(was&&!MOCK)loadFB().catch(()=>{});
+draw();
+</script>
 </body></html>
