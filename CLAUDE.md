@@ -185,7 +185,7 @@
   - `trip.json` 的 `cover` 填 `cover.jpg`（1983 裁成 640×400）。
   - 驗證 scratchpad `book/photo.js`：電腦、手機、小手機整本 58 張全部載入、沒有溢出，燈箱、拉頁、卡帶投影、對焦環都看過截圖。
 - **第二批（2026-11-18）：雲端硬碟改成 `照片／公開`、`照片／私人`、`影片／公開`、`影片／私人`**。公開照片共 195 張（新 137 張，18 張有路人臉已模糊，`photos/blur2.py`）、公開影片 33 支
-  （33 支都已處理；其中 6 支超過 10 MB 是另外下載的，見下方）。私人照片 113 張、影片 29 支**使用者自己用 trip-tools 上傳**（還沒做準備）。
+  （33 支都已處理；其中 6 支超過 10 MB 是另外下載的，見下方）。私人照片 113 張、影片 30 支，做法見下方「私人照片與影片」。
   - 影片：`vid/IMG_xxxx.mp4`（長邊 1280、h264 crf 28、AAC 96k、faststart、拿掉 metadata）＋封面 `vid/IMG_xxxx.jpg`，scratchpad `videos/enc.sh`。影片的 creation_time 是匯出日期，不可靠；用 GPS 和同系列檔名編號最近的照片時間排。
   - 使用者決定：拍到路人的影片（1223 街頭表演、1985 白川鄉雪原）**照用**；0565 石浦神社千本鳥居放進兼六園那頁。
   - **`MEDIA`**（`/* MEDIA-BEGIN */…/* MEDIA-END */`，scratchpad `media_build.py` 依 catalog 的天與站產生，別手改）：每一頁可以翻看的照片＋影片 `[編號, 說明, 'i'|'v', 'h'|'v'|'p']`，依時間排；
@@ -214,6 +214,22 @@
 - 字級：內文 16.5px、標題 31px、章扉頁 42px；手機頁高 < 600px（例如 360×640）時 `html.short` 再縮一級。照片在 `.col` 裡會吃掉剩下的高度，所以文字多的頁照片自動變小，不會超出頁面。
 - `sw.js` `hkr-v3`：只有首頁（`./`、`index.html`）走 pageFirstNetwork，`plan.html` 等其他網頁直接走網路（避免被存成首頁）。manifest 名稱改成「北陸・信州・東京 九日」。
 - 驗證：scratchpad `book/shoot8.js`（1280×760、390×800、360×640、1680×950 整本每一頁檢查文字溢出與橫向捲動、從頭翻到尾）、`shoot7.js`（每個特殊頁實際操作並截圖）、`repo.js`（本機伺服器：首頁、配色面板預設隱藏、後記連到 plan.html）。
+
+## 私人照片與影片（2026-11-19 定案，實作中）
+使用者把兩種做法（trip-tools 上傳／加密放進 repo）寫成分析文件（Claude Doc https://claude.ai/artifact/Wh7m2uArM9WjzB8VDSdXQk）給 ChatGPT 評估後，定案為**第三種：Firestore 分塊＋原生播放器**。
+- **原則**：私人內容只有這一趟的成員看得到（沿用 trip-tools 的 Google 登入與邀請）；**原檔不離開使用者的電腦，Claude 看不到私人照片影片的內容**；全部免費（Firebase Spark，不升 Blaze）；公開內容照舊放 GitHub Pages。
+- **不採用**：YouTube「不公開」（連結可轉傳）、加密檔放 repo（成員看過的鑰匙收不回、Git 歷史永久保留）、Drive OAuth（權限要兩邊同步）。
+- **數量（第 1 步，只讀 Drive 檔名與大小）**：`照片／私人` 113 張 JPEG 134 MB；`影片／私人` **30 支** MP4 132 MB（另有一個 `desktop.ini`），最大 IMG_0927 18.5 MB。壓縮後預估照片約 28 MB、影片約 80 MB。
+- **第 2 步：本機壓縮工具**（使用者 Windows、選免安裝 ffmpeg）：`回憶錄媒體壓縮工具.zip`＝`壓縮回憶錄媒體.bat`＋`pack.ps1`＋`說明.txt`（原始檔在 scratchpad `mp/tool/`，第 3 步時放進 trip-tools repo 的 `tools/media-pack/`）。
+  拖資料夾進去 → 第一次下載 BtbN（備援 gyan.dev）免安裝 ffmpeg → 照片 1600 px WebP（全景 3600）q78＋480 px 縮圖、影片 720p H.264 CRF 28／AAC 96k／faststart＋封面 JPG＋縮圖，全部 `-map_metadata -1`；
+  `輸出/manifest.json`：每項 `id／kind／src／num（檔名編號）／file／thumb／poster／w／h／tall／dur／audio／bytes／taken／takenReliable／lat／lon／note`。影片時間只有 `creation_time`（匯出日期）時 `takenReliable=false`。
+  ffmpeg 指令在這裡用公開檔案測過；**PowerShell 部分沒辦法在雲端環境執行，使用者第一次跑就是實測**（PS 5.1：外部程式 stderr 在 Stop 模式會變錯誤，所以 `Run-FF`／`Probe` 暫時改 Continue）。
+- **第 3 步（待做）trip-tools「匯入回憶錄媒體」**（主辦人）：選工具的「輸出」資料夾 → 二進位分塊（約 512 KiB／塊，大欄位設索引豁免）上傳 → 依時間、GPS、檔名編號產生對頁草稿，使用者在預覽裡確認與調整 → 全部分塊成功才發布 → 刪除時連分塊一起清。
+  另外：每張照片可寫說明、可點選「主角在哪」（裁切焦點）、兩段不愉快經驗的文字（成員限定的兩筆文件）、Firestore 規則每個子集合都要寫（使用者要貼到主控台）。
+- **第 4 步（待做）書本**：右上「私人」登入；書頁只記媒體編號，共用一個讀取函式（以後換 Cloudflare R2 只改這裡）；用到哪支才下載（卡帶插入、電車窗內）；影片只存在這次開書的記憶體（Blob URL），不存離線快取；私人照片預設不裁切，有焦點時以焦點裁切。
+- **版面怎麼決定**（使用者選）：Claude 只用 manifest 的時間、GPS、形狀排草稿 →**主要由使用者在 trip-tools 預覽看真正的畫面調整**；使用者用文字補充（例如「0927 最想放大」）；使用者也可以主動挑幾張縮圖給 Claude 看（只限給的那幾張）。
+- **擴充**：Firestore 用到 600–700 MiB 時重新評估，再搬到 Cloudflare R2（Worker 驗證成員）。
+- 上線前要測：未登入、已登入沒受邀、被移除的成員直接讀檔都被擋；iPhone Safari 最大一支影片的冷啟播時間。
 
 ## GitHub Pages 發布
 - Settings → Pages → Deploy from a branch → 選分支 / `(root)`。
