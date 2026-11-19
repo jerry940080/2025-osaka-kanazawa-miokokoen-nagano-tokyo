@@ -668,6 +668,7 @@ h3{font-size:20px}
 .bag .food{position:absolute;left:10%;right:10%;top:8%;height:52%;border-radius:46% 46% 40% 40%;background:radial-gradient(circle at 40% 35%,#f6c66a,#d8913a 60%,#a8642a);transform:scale(calc(.9 + var(--o)*.12));box-shadow:0 6px 18px rgba(120,60,10,.35)}
 .bag .food::after{content:"特寫照片・飛驒牛可樂餅";position:absolute;left:0;right:0;bottom:-26px;text-align:center;font:12px var(--mono);color:#5a3b1c;opacity:var(--o)}
 .bag .food .ph{position:absolute;inset:0;border-radius:inherit;background:transparent;opacity:var(--o)}
+.cpcol .cpg{flex:1;min-height:120px}
 .bag .food.spf{border-radius:8px;background:#1d1a17;left:6%;right:6%;top:4%;height:60%}.bag .food.spf::after{content:none}.bag .food.spf .ph{border-radius:8px;background-size:cover}
 .bag .stm{position:absolute;left:20%;right:20%;top:-30%;height:46%;pointer-events:none;opacity:var(--o)}
 .bag .stm i{position:absolute;bottom:0;width:18%;height:100%;background:radial-gradient(ellipse at 50% 80%,rgba(255,255,255,.95),transparent 65%);filter:blur(6px);animation:rise 2.4s ease-in infinite}
@@ -1447,7 +1448,7 @@ function gpVideo(st){const c=st.c;const play=i=>{const x=st.list[i];st.i=i;c.dat
   if(!(navigator.connection&&navigator.connection.saveData))play(0);}
 document.addEventListener('click',e=>{const c=e.target.closest('#base .gpc');if(!c||e.target.closest('.vsnd'))return;e.stopPropagation();const k=c.dataset.gp;const L=gpItems(k);const sl=gpSlots(L);const j=[...c.parentNode.children].indexOf(c);const x=sl[j][+c.dataset.j||0];
   lbOpen(titleOf(k),0,Math.max(0,L.indexOf(x)),L.map(y=>[y[0],y[1],y[2],y[3]]));},true);
-window.gpRefresh=()=>{try{if(typeof spApply==='function'&&spApply()){show();return;}gpRun(document.querySelector('#base'));if(typeof bpRun==='function')bpRun(document.querySelector('#base'));}catch(e){}};
+window.gpRefresh=()=>{try{const a=typeof spApply==='function'&&spApply(),b=typeof cpApply==='function'&&cpApply();if(a||b){show();return;}gpRun(document.querySelector('#base'));if(typeof bpRun==='function')bpRun(document.querySelector('#base'));}catch(e){}};
 {const _a3=after;after=function(){_a3.apply(this,arguments);try{gpRun(document.querySelector('#base'));}catch(e){console.error(e);}};}
 
 // ===== 2026-11-19：自己排版（使用者在 trip-tools「📐 排版」設定每一頁的照片影片順序與版型）=====
@@ -1540,7 +1541,7 @@ document.addEventListener('click',e=>{const c=e.target.closest('#base .bpc');if(
 // trip-tools 拖到「🗑 刪除」的公開項目（bookpages/_trash）：Claude 從網站刪檔之前，先從相簿與排過的頁拿掉
 function bpTrash(){const T=new Set(((BPG._trash||{}).items||[]).map(x=>x.replace(/^pub:/,'')));if(!T.size)return;Object.values(MEDIA).forEach(a=>{for(let i=a.length-1;i>=0;i--)if(T.has(a[i][0]))a.splice(i,1);});
   Object.keys(GPPUB).forEach(k=>{GPPUB[k]=GPPUB[k].filter(x=>!T.has(x));});Object.keys(PUBALL).forEach(x=>{if(T.has(x))delete PUBALL[x];});}
-window.bpSet=G=>{BPG=G||{};window.BPG=BPG;bpTrash();try{spApply();}catch(e){console.error(e);}try{if(typeof show==='function'&&$('#base').children.length){show();}}catch(e){}};
+window.bpSet=G=>{BPG=G||{};window.BPG=BPG;bpTrash();try{spApply();}catch(e){console.error(e);}try{cpApply();}catch(e){console.error(e);}try{if(typeof show==='function'&&$('#base').children.length){show();}}catch(e){}};
 // 公開訪客：用 Firestore REST 讀一次（規則還沒更新或沒網路就照原本）
 fetch(`https://firestore.googleapis.com/v1/projects/trip-tools-21847/databases/(default)/documents/trips/${BPTRIP}/bookpages?pageSize=300`).then(r=>r.ok?r.json():null).then(j=>{if(!j||!j.documents||window.BPLIVE)return;const G={};
   const fv=v=>v==null?null:'stringValue' in v?v.stringValue:'integerValue' in v?+v.integerValue:'doubleValue' in v?v.doubleValue:'booleanValue' in v?v.booleanValue:'arrayValue' in v?(v.arrayValue.values||[]).map(fv):'mapValue' in v?Object.fromEntries(Object.entries(v.mapValue.fields||{}).map(([a,b])=>[a,fv(b)])):null;
@@ -1563,6 +1564,30 @@ const SPREADS=pairUp(SEQ);
 const PAGES=SPREADS.flat().filter(k=>k!=='none'&&!P[k].spacer);
 const PAGEOF={};let pn=0;SPREADS.forEach(s=>s.forEach(k=>{if(k==='none'||P[k].spacer)return;pn++;const c=P[k].c;if(k.startsWith('op')&&!PAGEOF[c])PAGEOF[c]='p.'+pn;if(k==='after')PAGEOF.after='p.'+pn;}));
 const NUM={};pn=0;SPREADS.forEach(s=>s.forEach(k=>{if(k!=='none'&&!P[k].spacer)NUM[k]=++pn;}));
+/* ===== 2026-11-19 自己加的照片頁（trip-tools 📐「＋ 在這頁後面加一頁」）=====
+   bookpages/_custom＝{pages:[{k:'c_…', after:頁 key, t 標題, pl 地點, d Day, x 文字}]}；照片與版型跟一般頁一樣存在 bookpages/{k}。
+   有任何一項看得到才插進書裡（全是私人照片的頁，沒登入的人看不到整頁）。插好後重算 SPREADS／PAGES／NUM。 */
+const SEQ0=SEQ.slice();let CPSIG='',CPK=[];
+const cpEsc=t=>String(t==null?'':t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function cpApply(){const L=((BPG._custom||{}).pages||[]).filter(c=>c&&/^c_[\w-]+$/.test(c.k||''));
+  const vis=L.filter(c=>{try{return bpItems(c.k).length>0;}catch(e){return false;}});
+  const sig=JSON.stringify(vis.map(c=>[c.k,c.after,c.t,c.pl,c.d,c.x]));if(sig===CPSIG)return false;CPSIG=sig;
+  const cur=(()=>{try{return keyAt(I);}catch(e){return null;}})();
+  CPK.forEach(k=>delete P[k]);CPK=[];SEQ.splice(0,SEQ.length,...SEQ0);
+  const anc={};L.forEach(c=>anc[c.k]=c.after);
+  const place=c=>{let a=c.after,g=0;while(a&&!SEQ.includes(a)&&anc[a]!==undefined&&g++<20)a=anc[a];let i=SEQ.indexOf(a);if(i<0)return;if(/^t\d$/.test(a)){let j=i;while(j>0&&anc[SEQ[j-1]]!==undefined)j--;let q=j;while(q<i&&chainOf(SEQ[q],a))q++;SEQ.splice(i,0,c.k);return;}/* 車票頁一定接章扉：放在車票前面 */
+    while(i+1<SEQ.length&&anc[SEQ[i+1]]!==undefined&&SEQ.indexOf(SEQ[i+1])>i&&chainOf(SEQ[i+1],a))i++;SEQ.splice(i+1,0,c.k);};
+  const chainOf=(k,a)=>{let g=0;while(k&&g++<20){if(anc[k]===a)return true;k=anc[k];}return false;};
+  vis.forEach(c=>{let ac0=c.after,g=0;while(anc[ac0]!==undefined&&g++<20)ac0=anc[ac0];if(/^t\d$/.test(ac0)){const ix=SEQ0.indexOf(ac0);ac0=ix>0?SEQ0[ix-1]:ac0;}const ac=P[ac0]?P[ac0].c:'ch0',d=String(c.d||'').trim();
+    P[c.k]={c:ac||'ch0',h:()=>`${rh('',cpEsc(c.pl||''),d?'DAY '+cpEsc(d):'')}<div class="col gpcol cpcol"><div class="meta">${cpEsc([d?'DAY '+d:'',c.pl||''].filter(Boolean).join(' · '))}</div><h2>${cpEsc(c.t||'')}</h2>${c.x?`<p class="txt">${cpEsc(c.x).replace(/\n/g,'<br>')}</p>`:''}<div class="pgr cpg"></div></div>`};CPK.push(c.k);});
+  vis.forEach(place);
+  const S=pairUp(SEQ);SPREADS.splice(0,SPREADS.length,...S);PAGES.splice(0,PAGES.length,...SPREADS.flat().filter(k=>k!=='none'&&!P[k].spacer));
+  Object.keys(PAGEOF).forEach(x=>delete PAGEOF[x]);Object.keys(NUM).forEach(x=>delete NUM[x]);let n=0;
+  SPREADS.forEach(s=>s.forEach(k=>{if(k==='none'||P[k].spacer)return;n++;NUM[k]=n;const c=P[k].c;if(k.startsWith('op')&&!PAGEOF[c])PAGEOF[c]='p.'+n;if(k==='after')PAGEOF.after='p.'+n;}));
+  try{NBTOT=Math.max(...Object.values(NUM));}catch(e){}
+  if(cur){const j=idxOf(cur);if(j>=0)I=j;}I=Math.max(0,Math.min(UNITS().length-1,I));
+  setTimeout(()=>{try{if(/^#pg=c_/.test(location.hash))pgHash();}catch(e){}},60);
+  return true;}
 let MOB=false,I=0,BUSY=false,W=0,H=0;
 function pageHTML(k,side){const p=P[k];if(p.none)return `<div class="pg ${side} none"></div>`;const h=typeof p.h==='function'?p.h():p.h;
   const pnum=(k==='cover'||k==='back'||P[k].spacer)?'':`<span class="pn">${NUM[k]}</span>`;
@@ -1774,7 +1799,7 @@ function slideInit(B){clearInterval(SLT);SLT=null;SLJ=[];if(!B)return;
 
 // ===== 2026-11-19：書籤改成底部導覽列（使用者選 A）：‹ ｜ 章節・頁碼 ｜ ☰ 目錄 ｜ 🔖 ｜ › =====
 // 原本右上角的緞帶 .bm 與 #bmp 程式還在，只是藏起來。書籤一樣存在 localStorage hkr-book-mark。
-const NBTOT=Math.max(...Object.values(NUM));
+let NBTOT=Math.max(...Object.values(NUM));
 function nbChOf(k){const c=P[k]&&P[k].c;return CH.find(x=>x.c===c)||CH[0];}
 function nbMark(){try{return localStorage.getItem('hkr-book-mark');}catch(e){return null;}}
 function nbKeys(){const u=UNITS()[I];return MOB?[u]:u.filter(x=>x!=='none'&&P[x]&&!P[x].spacer);}

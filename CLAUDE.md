@@ -316,6 +316,10 @@
   私人項目在模板裡先寫成 `img/IMG_pv:<id>.webp`／`vid/IMG_pv:<id>.mp4`／`.jpg`，一個 MutationObserver 再換成分塊組回的 Blob URL（成員的瀏覽器會先對這些假網址發一次 404，沒影響）。
   REST 讀 bookpages 改成整份文件都解（`mapValue`／`arrayValue`）。電車車窗 0770a–d 不在 `MEDIA`，另外登記進 `PUBALL`，`thumb/` 補了 4 張縮圖。`book-media.json` 多 `sp`（給 trip-tools 的格子清單與預設內容）。
   驗證 scratchpad `sp/slot.js`（假的 bookpages：10 頁都照設定換、卡帶照片牆與連播、燈箱）、`sp/slot_pv.js`（`?privmock=1` 登入後私人照片影片都換成 Blob URL）、`del/t.js`（整本零錯誤、沒有溢出）。`sw.js` `hkr-v22`。
+- **自己加頁（2026-11-19，使用者：特殊頁太侷限、很多照片放不進去）**：trip-tools 📐 排版每一頁下面「＋ 在這頁後面加一頁」，資料 `bookpages/_custom＝{pages:[{k:'c_…', after, t 標題, pl 地點, d Day, x 文字}]}`，照片與版型跟一般頁一樣存 `bookpages/{k}`。
+  書本 `cpApply()`（`bpSet`、`gpRefresh` 時跑）：從 `SEQ0`（加了照片頁 gp 之後的原始順序）重排——每頁放在 `after` 後面（接在同一頁後面已經加過的頁之後），**`after` 是車票頁（t1…）時放在車票前面**（車票一定接章扉）；
+  章節顏色跟著前一頁；**有任何一項看得到才插進書裡**（全是私人的頁，沒登入看不到整頁；空的頁不出現）。插好後重算 `SPREADS`／`PAGES`／`PAGEOF`／`NUM`／`NBTOT`，目前那頁保持不動；`#pg=c_…` 等插好再跳。
+  頁面＝`.col.gpcol.cpcol`（meta、h2 標題、文字、`.pgr.cpg` 給 `bpRun` 換成版型）。trip-tools 用同一套規則排清單（`cpMerge`）。驗證 scratchpad `sp/cp.js`（插在對的位置、車票前、只有私人的頁沒登入不出現、頁碼 77 → 80、標題、版型、沒有溢出、`#pg=` 跳頁）。`sw.js` `hkr-v23`。
 
 ## GitHub Pages 發布
 - Settings → Pages → Deploy from a branch → 選分支 / `(root)`。
