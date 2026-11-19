@@ -1560,7 +1560,17 @@ function bpAssign(L,slots,co,fixed){co=co||[];const used=new Set(),pl=slots.map(
 /* 格子裡的照片全是同一個方向、但格子形狀相反時，把格子縮成照片的比例（置中），不留兩側的模糊墊底 */
 function bpFit(c,list){if(!list.length)return;const g=list.map(x=>x[3]==='v'?'v':'h');if(g.some(y=>y!==g[0]))return;
   const t=list.reduce((a,x)=>a+bpAr(x),0)/list.length,w=c.clientWidth,h=c.clientHeight;if(!w||!h)return;const r=w/h;
-  if(t<r*0.85){c.style.width=Math.round(h*t)+'px';c.style.justifySelf='center';}else if(t>r/0.85){c.style.height=Math.round(w/t)+'px';c.style.alignSelf='center';}}
+  /* 縮小後往整個版面的中間靠（左邊的格子靠右、右邊的靠左），不會一左一右中間空一塊 */
+  const bx=c.parentElement.getBoundingClientRect(),cr=c.getBoundingClientRect(),mx=(cr.left+cr.right)/2-(bx.left+bx.right)/2,my=(cr.top+cr.bottom)/2-(bx.top+bx.bottom)/2;
+  if(t<r*0.85){c.style.width=Math.round(h*t)+'px';c.style.justifySelf=mx<-4?'end':mx>4?'start':'center';}else if(t>r/0.85){c.style.height=Math.round(w/t)+'px';c.style.alignSelf=my<-4?'end':my>4?'start':'center';}}
+/* 兩欄的版型：有一列是兩個單獨的格子、照片一直一橫時，欄寬照照片比例分（例如 0.75:1.33），格子就不會被縮得一大一小還留白 */
+function bpCols(box,cs,pl,sp){const cols=(sp.c||'').trim().split(/\s+/);if(cols.length!==2)return;const rows=(sp.g||'').match(/"[^"]*"/g)||[];
+  for(const rw of rows){const a=rw.replace(/"/g,'').trim().split(/\s+/);if(a.length!==2||a[0]===a[1])continue;
+    const ix=a.map(n=>sp.s.findIndex(q=>q[0]===n));if(ix.some(i=>i<0||!pl[i]||!pl[i].length))continue;
+    const ar=ix.map(i=>{const g=pl[i].map(x=>x[3]==='v'?'v':'h');return g.every(y=>y===g[0])?pl[i].reduce((m,x)=>m+bpAr(x),0)/pl[i].length:0;});if(ar.some(x=>!x)||Math.abs(ar[0]-ar[1])<0.2)continue;
+    /* 其他列有跨兩欄的格子才調（不然會連帶改到另一列的格子） */
+    if(!rows.every(o=>{if(o===rw)return true;const b=o.replace(/"/g,'').trim().split(/\s+/);return b[0]===b[1];}))continue;
+    box.style.gridTemplateColumns=`${ar[0].toFixed(2)}fr ${ar[1].toFixed(2)}fr`;return;}}
 /* 自動版型：依直橫決定格子怎麼切（直的多就左右並排，橫的多就上下疊） */
 function bpAutoSpec(L){const V=L.filter(x=>x[2]==='v'),Pi=L.filter(x=>x[2]!=='v');const S=Math.min(MOB?2:4,Pi.length+(V.length?1:0))||1;
   const nv=L.filter(x=>x[3]==='v').length,vert=nv*2>=L.length;const sl=Array.from({length:S},(_,i)=>[String.fromCharCode(97+i),i===0&&V.length?'v':'*']);
@@ -1584,6 +1594,7 @@ function bpRender(k,area,L,lay){const l=BPLK[lay]||BPLK.auto;const box=document.
   if(l.k==='auto'||!l.sp&&l.s){const sp=l.k==='auto'?bpAutoSpec(L):l;box.style.gridTemplateAreas=sp.g;box.style.gridTemplateRows=sp.r;box.style.gridTemplateColumns=sp.c;
     const cs=sp.s.map(s=>{const c=document.createElement('div');c.style.gridArea=s[0];box.appendChild(c);return c;});area.replaceWith(box);
     const co=cs.map(c=>{const w=c.clientWidth,h=c.clientHeight;return !w||!h?'':w/h<0.9?'v':w/h>1.1?'h':'';});const pl=bpAssign(L,sp.s,co,!!(BPG[k]&&BPG[k].fixed));
+    bpCols(box,cs,pl,sp);
     cs.forEach((c,i)=>{if(!pl[i].length){c.remove();return;}c.dataset.n=i+1;bpFit(c,pl[i]);bpCell(c,pl[i],k);});return;}
   else if(l.k==='main'){box.innerHTML='<div class="bpm"></div><div class="bpt"></div>';const m=box.querySelector('.bpm');const st=bpCell(m,L,k);
     box.querySelector('.bpt').innerHTML=L.map((x,i)=>`<button data-i="${i}" style="${x[4]?'':`background-image:url(${x[2]==='v'?'vid':'img'}/IMG_${x[0]}.${x[2]==='v'?'jpg':'webp'})`}">${x[2]==='v'?'▶':x[4]?'🔒':''}</button>`).join('');

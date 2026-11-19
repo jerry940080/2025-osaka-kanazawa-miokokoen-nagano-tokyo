@@ -336,6 +336,8 @@
   - 驗證 scratchpad `nd/t.js`（電腦、手機：開場 0.5 倍速、播完消失、重新整理不再播；烤網 5 塊、點兩塊、全部烤好、燈箱；`?bpmock=eki|sunset` 沒有溢出、零錯誤；截圖 `nd/sheet-d.jpg`、`sheet-m.jpg`）。`sw.js` `hkr-v25`。
 - **trip-tools 的即時預覽（2026-11-19）**：`?embedpreview=1`（`html.pvw`）＝不登入、不播開場、藏導覽列與 🔒；收到 `postMessage({type:'hkr-preview', k, doc, pv})` 就把 `doc` 疊到那頁（`window.PREVD`，之後 REST／onSnapshot 讀到的也會疊上去）、私人項目改用 `pv` 給的 Blob URL，重算特殊頁與插頁後翻到那頁；載好時送 `hkr-preview-ready`。
   預覽時每格左上顯示編號（`[data-n]`）。**`bookpages/{頁}.fixed`**＝照使用者排的順序放進格子（`bpAssign(…, fixed)`：第 1 項放第 1 格，多的輪流分），不勾才照直橫自動分。`sw.js` `hkr-v26`。
+- **修：「一大兩小」等固定格子的版型縮成照片比例後散開（2026-11-19，使用者回報「金澤車站好像壞掉了」）**：`bpFit` 把格子縮成照片比例時原本各自置中，下排一直一橫會一左一右、中間空一大塊。
+  改成縮小後往整個版面中間靠（左邊的格子靠右、右邊的靠左、上面的靠下、下面的靠上）；兩欄版型若其他列都是跨兩欄的格子（例如上大下兩小），`bpCols` 讓下排兩格的欄寬照照片比例分。`sw.js` `hkr-v27`。驗證 scratchpad `nd/tsu.js`、`del/t.js`、`sp/fit.js`。
 
 ## GitHub Pages 發布
 - Settings → Pages → Deploy from a branch → 選分支 / `(root)`。
