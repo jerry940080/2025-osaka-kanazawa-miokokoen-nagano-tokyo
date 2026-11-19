@@ -320,6 +320,7 @@
   書本 `cpApply()`（`bpSet`、`gpRefresh` 時跑）：從 `SEQ0`（加了照片頁 gp 之後的原始順序）重排——每頁放在 `after` 後面（接在同一頁後面已經加過的頁之後），**`after` 是車票頁（t1…）時放在車票前面**（車票一定接章扉）；
   章節顏色跟著前一頁；**有任何一項看得到才插進書裡**（全是私人的頁，沒登入看不到整頁；空的頁不出現）。插好後重算 `SPREADS`／`PAGES`／`PAGEOF`／`NUM`／`NBTOT`，目前那頁保持不動；`#pg=c_…` 等插好再跳。
   頁面＝`.col.gpcol.cpcol`（meta、h2 標題、文字、`.pgr.cpg` 給 `bpRun` 換成版型）。trip-tools 用同一套規則排清單（`cpMerge`）。驗證 scratchpad `sp/cp.js`（插在對的位置、車票前、只有私人的頁沒登入不出現、頁碼 77 → 80、標題、版型、沒有溢出、`#pg=` 跳頁）。`sw.js` `hkr-v23`。
+- `book-media.json` 的 `items` 多第 4 欄＝這項原本在 `MEDIA` 的哪一頁（0770a–d 算 `trainx`），給 trip-tools 候選名單分組用（2026-11-19，`rt/bm2.js`）。
 
 ## GitHub Pages 發布
 - Settings → Pages → Deploy from a branch → 選分支 / `(root)`。
