@@ -298,6 +298,13 @@
   **使用者說要刪時，Claude 讀 `https://firestore.googleapis.com/v1/projects/trip-tools-21847/databases/(default)/documents/trips/<TRIP>/bookpages/_trash`，刪 `img/`、`vid/`、`thumb/` 的檔，從 `MEDIA`／`PHOTO`／`GPPUB`／`SNOWBYE` 等拿掉，重產兩個 json，再請使用者把 `_trash` 清空（拖回或在 trip-tools 清掉）。**
   `?bpmock=版型` 測試用（把十頁假設成那個版型）。驗證 scratchpad `rt/bpt.js`（16 種版型 × 4 頁 × 電腦／手機：零錯誤、沒有溢出；`rt/bp-sheet.jpg`）。**改 `SEQ`、頁標題或公開照片後，`book-pages.json`、`book-media.json` 都要重產。**
 
+- **2026-11-19 使用者要求（刪檔、改頁名、補早餐）**：
+  - 刪掉 trip-tools 🗑 裡的 14 個公開檔案（0552、0618、0625、0630、0668、1979、0764、0765、0907、0908、2151、0993、0994、1009）：`img/`、`thumb/` 的檔、`GAL`、`GPPUB`；固定格 `PHOTO` 換成同頁其他張（兼六園 0551、能登牛 0619、回轉壽司 0629、第四章章扉 0906），`s_akiba` 的兩格沒有照片了（改顯示插畫）。`MEDIA` 用 scratchpad `media_build.py` 重產（找不到檔案的會自動略過）。**`_trash` 請使用者在 trip-tools 清空**（留著也沒影響，那些編號已經不存在）。
+  - `s_uber` 改名「上越妙高站」。
+  - 新增 **`s_bfast`「岡山旅館的早餐」**（Day 5 開頭，`DAYSTART[5]`）：日式早餐 0831、0827、0828＋退房那天的西式早餐 2123（`media_build.py` 的 `BFAST`）；`s_day5`「改逛溫泉街」拿掉早餐，留路邊 taco 與 NINJA Riceball。
+  - 渋溫泉：`s_shibu` 改名「足湯」（0881＋法國人那段），`g_shibu3` 改名「日落街景」（湯田中的夕陽，`GPPUB` 換成夕陽 11 張）；順序改成 足湯 → 日落街景（`ins('s_shibu',['g_shibu3'])`）。`media_build.py` 的「湯田中」改歸 `noren`，0881 歸 `s_shibu`。
+  - 全書 77 頁。兩個 json 已重產。`sw.js` `hkr-v19`。驗證 scratchpad `del/t.js`（電腦、手機翻完整本：零錯誤、沒有 404、沒有文字溢出）。
+
 ## GitHub Pages 發布
 - Settings → Pages → Deploy from a branch → 選分支 / `(root)`。
 - 網址：`https://jerry940080.github.io/2025-osaka-kanazawa-miokokoen-nagano-tokyo/`
