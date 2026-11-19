@@ -773,6 +773,14 @@ html.big .txt{font-size:19px}html.big .one{font-size:21px}html.big h2{font-size:
 .tframe .ly.vid video,.vidfill{width:100%;height:100%;object-fit:cover;display:block}
 .dstrip .ph.img{background-size:cover}
 </style>
+<style>
+/* ===== 2026-11-19 翻到那一頁影片就自動播（靜音，可開聲音）===== */
+.ph .autov{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:inherit;pointer-events:none}
+.ph.vid.auto::before{display:none}
+.ph .vsnd{position:absolute;right:6px;bottom:6px;z-index:4;width:34px;height:34px;border-radius:50%;border:0;background:rgba(0,0,0,.55);color:#fff;font-size:16px;line-height:34px;padding:0;cursor:pointer}
+.ph .vsnd:hover{background:rgba(0,0,0,.75)}
+.pcount{z-index:4}
+</style>
 <style id="dyn"></style></head><body>
 <div id="pal"><button id="palb">🎨 選配色</button></div>
 <div id="pk" hidden><div class="pkh"><b>每一章選一個色票</b><button id="pkx">完成</button></div><div id="pkrows"></div><label class="pkband"><input type="checkbox" id="band"> 頁面上緣加一條章節色帶</label><div class="pkcur"><span id="pkcur"></span><button id="pkcp">複製</button></div></div>
@@ -1007,6 +1015,7 @@ function bmClose(){$('#bmp').hidden=true;$('.bm').classList.remove('on');}
 document.addEventListener('input',e=>{if(e.target.id==='bmr')bmLabel(+e.target.value);});
 document.addEventListener('change',e=>{if(e.target.id==='bmr'){const i=+e.target.value;bmClose();if(i!==I)jump(i);}});
 document.addEventListener('click',e=>{
+  {const sb=e.target.closest('.vsnd');if(sb){const v=sb.parentNode.querySelector('video');if(v){v.muted=!v.muted;if(!v.muted){v.currentTime=0;v.play().catch(()=>{});document.querySelectorAll('#base .autov').forEach(o=>{if(o!==v)o.muted=true;});document.querySelectorAll('#base .vsnd').forEach(o=>{if(o!==sb){o.textContent='🔇';o.title='開聲音';}});}sb.textContent=v.muted?'🔇':'🔊';sb.title=v.muted?'開聲音':'關聲音';}e.stopPropagation();e.preventDefault();return;}}
   {const im=e.target.closest('#base .ph[data-src],#pscr .ph[data-src]');if(im&&!im.closest('.cap,.got')){const g=galOf(im.dataset.g)||[[im.dataset.src,im.dataset.l]];const i=Math.max(0,g.findIndex(v=>v[0]===im.dataset.src));lbOpen('',0,i,g);e.stopPropagation();return;}}
   if(e.target.closest('#base .more[data-alb]')){lbOpen('',0,0,MEDIA.s_album);e.stopPropagation();return;}
   if(e.target.closest('#base .fopen')){const i=+document.querySelector('#base .fview').dataset.i||0;lbOpen('',0,0,FOCUSGAL[i]);e.stopPropagation();return;}
@@ -1018,6 +1027,14 @@ document.addEventListener('click',e=>{
   const tz=e.target.closest('.tz');if(tz){flip(tz.classList.contains('l')?-1:1);}
 },true);
 
+
+// 翻到這一頁：頁面上的影片靜音自動循環播放（最多 4 支；省流量模式不播）
+function autoVids(B){if(!B)return;const save=navigator.connection&&navigator.connection.saveData;if(save)return;let n=0;
+  B.querySelectorAll('.ph.img.vid[data-src]').forEach(ph=>{if(n>=4||ph.querySelector('video'))return;n++;
+    const v=document.createElement('video');v.className='autov';v.muted=true;v.defaultMuted=true;v.loop=true;v.playsInline=true;v.setAttribute('playsinline','');v.setAttribute('muted','');v.preload='auto';
+    v.poster=`vid/IMG_${ph.dataset.src}.jpg`;v.src=`vid/IMG_${ph.dataset.src}.mp4`;ph.prepend(v);ph.classList.add('auto');
+    const b=document.createElement('button');b.className='vsnd';b.type='button';b.textContent='🔇';b.title='開聲音';b.setAttribute('aria-label','開聲音');ph.appendChild(b);
+    v.play().catch(()=>{});});}
 let WI=0;
 function initSpecial(root){if(!root)return;
   root.querySelectorAll('.gl canvas').forEach(snowCanvas);}
@@ -1174,7 +1191,7 @@ const galOf=k=>MEDIA[k]||GAL[k];
 function cnt(k){const g=MEDIA[k]||[];const p=g.filter(x=>x[2]!=='v').length,v=g.length-p;return (p?p+' 張':'')+(p&&v?'・':'')+(v?v+' 支影片':'');}
 function phHTML(cls,v,key,extra=''){const isV=v[2]==='v';cls=cls.replace(/\bvid\b/g,'').trim();
   return `<div class="ph ${cls} img${isV?' vid':''}" data-l="${v[1]}" data-src="${v[0]}" data-g="${key}" style="background-image:url(${isV?'vid':'img'}/IMG_${v[0]}.${isV?'jpg':'webp'})">${extra}</div>`;}
-function photoPatch(key,html){const map=PHOTO[key]||{};const used=[];let first=true;const g=MEDIA[key]||[];
+function photoPatch(key,html){const map=PHOTO[key]||{};const used=[];let first=!html.includes('class="pcount"');const g=MEDIA[key]||[];
   html=html.replace(/<div class="ph ([^"]*)" data-l="([^"]*)"><\/div>/g,(m,cls,l)=>{const v=map[l];if(!v)return m;used.push(v);
     const ex=first&&g.length>1?`<span class="pcount">共 ${cnt(key)}</span>`:'';first=false;return phHTML(cls,v,key,ex);});
   if(!GAL[key]&&used.length)GAL[key]=used;return html;}
@@ -1229,6 +1246,8 @@ const TUNNELVID='1850';
 const TAPEVID={'商店街的街頭表演':'1223'};
 P.pop.h=P.pop.h.replace(' data-v="白川鄉的雪"','');
 ['t1','s_kogen','s_night','s_akiba','s_kabuki','pop'].forEach(k=>PHOTO_DONE.delete(k));applyPhotos();
+// 已經套好成字串的頁，再補一次（後來才加的照片／影片）
+Object.keys(PHOTO).forEach(k=>{if(P[k]&&typeof P[k].h==='string')P[k].h=photoPatch(k,P[k].h);});
 
 // 書的順序：一般頁兩頁一個跨頁；特殊頁自己佔一個跨頁；車票一定在左頁（後面接章扉頁）；湊不成對時補一張留白頁
 const SEQ=['endp','toc','pre','route',
@@ -1272,7 +1291,7 @@ function size(){MOB=innerWidth<=720||innerWidth<innerHeight*0.95;// 直立的平
   document.documentElement.classList.toggle('short',MOB&&H<600);document.documentElement.classList.toggle('big',!MOB&&W>=640);document.documentElement.style.setProperty('--W',W+'px');document.documentElement.style.setProperty('--H',H+'px');
   $('#book').style.width=(MOB?W:W*2)+'px';}
 function show(){const U=UNITS();I=Math.max(0,Math.min(I,U.length-1));const b=$('#base');b.innerHTML='';b.appendChild(build(U[I]));after();}
-function after(){const U=UNITS(),u=U[I],k=MOB?u:u[0];WI=0;TRIES=0;initSpecial(document.querySelector('#base'));initSpecial2(document.querySelector('#base'));trainInit(document.querySelector('#base'));
+function after(){const U=UNITS(),u=U[I],k=MOB?u:u[0];WI=0;TRIES=0;initSpecial(document.querySelector('#base'));initSpecial2(document.querySelector('#base'));trainInit(document.querySelector('#base'));autoVids(document.querySelector('#base'));
   $('#stage').classList.toggle('tilt',!!P[k].pop);
   const pw=document.querySelector('#base .popw');if(pw){setTimeout(()=>pw.parentNode.classList.add('open'),MOB?250:650);}
   $('#prev').disabled=I===0;$('#next').disabled=I===U.length-1;document.querySelector('.tz.l').classList.toggle('off',I===0);document.querySelector('.tz.r').classList.toggle('off',I===U.length-1);
@@ -1306,11 +1325,11 @@ $('#tocb').onclick=()=>{const U=UNITS();jump(U.findIndex(u=>(MOB?u:u[1])==='toc'
 let x0=null;addEventListener('touchstart',e=>{if(e.target.closest('.deck,.tape,#lb,.sps,input,#proj,#pk,#bmp'))return;x0=e.touches[0].clientX;},{passive:true});
 addEventListener('touchend',e=>{if(x0===null)return;const dx=e.changedTouches[0].clientX-x0;x0=null;if(Math.abs(dx)>50)flip(dx<0?1:-1);},{passive:true});
 // 燈箱（相簿）
-let LB={n:0,i:0,t:''};function lbOpen(t,n,i,list){LB={t,n:list?list.length:n,i:i||0,list};$('#lb').hidden=false;lbDraw();}
+let LB={n:0,i:0,t:''};function lbOpen(t,n,i,list){document.querySelectorAll('#base .autov').forEach(v=>v.pause());LB={t,n:list?list.length:n,i:i||0,list};$('#lb').hidden=false;lbDraw();}
 function lbDraw(){const im=$('#lbimg');im.innerHTML='';if(LB.list){const it=LB.list[LB.i];im.classList.add('img');im.style.background='';
   if(it[2]==='v'){im.style.backgroundImage='';im.innerHTML=`<video src="vid/IMG_${it[0]}.mp4" poster="vid/IMG_${it[0]}.jpg" controls autoplay playsinline></video>`;}else im.style.backgroundImage=`url(img/IMG_${it[0]}.webp)`;$('#lbcap').textContent=(LB.t?LB.t+'　':'')+(it[1]||'');$('#lbn').textContent=(LB.i+1)+' / '+LB.n;return;}im.classList.remove('img');im.style.backgroundImage='';$('#lbcap').textContent='';$('#lbimg').setAttribute('data-l',LB.t+' · 第 '+(LB.i+1)+' 張');$('#lbimg').style.background=`linear-gradient(${135+LB.i*23}deg,#8fa6ba,#cfdbe6)`;$('#lbn').textContent=(LB.i+1)+' / '+LB.n;}
 function lbGo(d){LB.i=(LB.i+d+LB.n)%LB.n;lbDraw();}
-$('#lbp').onclick=()=>lbGo(-1);$('#lbn2').onclick=()=>lbGo(1);$('#lbx').onclick=()=>{$('#lb').hidden=true;$('#lbimg').innerHTML='';};
+$('#lbp').onclick=()=>lbGo(-1);$('#lbn2').onclick=()=>lbGo(1);$('#lbx').onclick=()=>{$('#lb').hidden=true;$('#lbimg').innerHTML='';document.querySelectorAll('#base .autov').forEach(v=>v.play().catch(()=>{}));};
 document.addEventListener('click',e=>{
   const go=e.target.closest('[data-go]');if(go){const key=go.dataset.go,U=UNITS();const target=key==='after'?'after':Object.keys(P).find(k=>k.startsWith('op')&&P[k].c===key);jump(U.findIndex(u=>MOB?u===target:u.includes(target)));return;}
   const a=e.target.closest('[data-alb]');if(a){lbOpen(a.dataset.alb,20,0);return;}
