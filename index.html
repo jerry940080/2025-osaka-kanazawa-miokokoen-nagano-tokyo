@@ -374,6 +374,60 @@ body.pj #nb,body.pj #nbpnl,#stage.tilt~#nb{display:none}
 .gpe{flex:1;min-height:0;position:relative;border-radius:3px;overflow:hidden;margin-top:4px}.gpe .ills{position:absolute;inset:0;width:100%;height:100%}
 .gpe span{position:absolute;left:8px;bottom:6px;background:rgba(255,255,255,.72);color:#5a4f43;padding:1px 6px;border-radius:8px;font:10px var(--mono)}
 .ills .board{animation:ilBoard 5s ease-in infinite}@keyframes ilBoard{0%{transform:translate(10px,36px) rotate(22deg)}70%{transform:translate(150px,92px) rotate(22deg)}80%{transform:translate(160px,80px) rotate(200deg)}100%{transform:translate(168px,100px) rotate(380deg)}}
+/* 2026-11-19 開場動畫（千本鳥居） */
+#intro{position:fixed;inset:0;z-index:200;background:#0c0806;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:opacity .9s ease}
+#intro video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:saturate(1.05) contrast(1.05);transform:scale(1.04);transition:transform 4s ease,filter 1.6s ease}
+#intro.t0 video{transform:scale(1.14)}#intro.t video{filter:brightness(.42) saturate(.9) blur(1px)}
+#intro::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at center,transparent 45%,rgba(0,0,0,.55));pointer-events:none}
+#intro .itx{position:relative;z-index:2;text-align:center;color:#fff;opacity:0;transform:translateY(10px);transition:opacity 1.2s ease,transform 1.2s ease;text-shadow:0 2px 14px rgba(0,0,0,.7)}
+#intro.t .itx{opacity:1;transform:none}#intro .itx small{display:block;font:13px var(--mono);letter-spacing:.2em;opacity:.85}
+#intro .itx b{display:block;font:700 clamp(28px,5vw,46px)/1.3 var(--serif,serif);letter-spacing:.12em;margin:10px 0}#intro .itx span{font:16px var(--hand,serif);opacity:.9}
+#intro .isk{position:absolute;right:16px;bottom:18px;z-index:3;border:1px solid rgba(255,255,255,.5);background:rgba(0,0,0,.35);color:#fff;border-radius:999px;padding:6px 14px;font-size:13px;cursor:pointer}
+#intro.out{opacity:0;pointer-events:none}
+/* 2026-11-19 烤網頁 */
+.sp-grill .sps{display:flex;align-items:center;justify-content:center}
+.grl{position:relative;width:min(100%,560px);aspect-ratio:1/1;max-height:100%;border-radius:50%;background:radial-gradient(circle at 50% 50%,#3a1a0d 0,#1d0f08 60%,#120a06 100%);box-shadow:inset 0 0 0 10px #2b2724,inset 0 0 0 14px #57504a,0 18px 40px rgba(0,0,0,.45);overflow:hidden}
+.grl .coal{position:absolute;inset:14%;}.grl .coal i{position:absolute;width:34%;height:34%;border-radius:50%;background:radial-gradient(circle,#ff7a1a 0,#c2410c 35%,rgba(120,30,0,.0) 70%);filter:blur(6px);animation:ember 3.2s ease-in-out infinite}
+.grl .coal i:nth-child(1){left:6%;top:10%}.grl .coal i:nth-child(2){left:52%;top:4%;animation-delay:.6s}.grl .coal i:nth-child(3){left:30%;top:36%;animation-delay:1.2s}.grl .coal i:nth-child(4){left:64%;top:52%;animation-delay:1.8s}.grl .coal i:nth-child(5){left:8%;top:58%;animation-delay:.9s}.grl .coal i:nth-child(6){left:40%;top:66%;animation-delay:2.4s}
+@keyframes ember{0%,100%{opacity:.55;transform:scale(.9)}50%{opacity:1;transform:scale(1.08)}}
+.grl .net{position:absolute;inset:0;border-radius:50%;background:repeating-linear-gradient(90deg,transparent 0 13px,#8d8a86 13px 15px),repeating-linear-gradient(0deg,transparent 0 13px,rgba(141,138,134,.55) 13px 14px);opacity:.75}
+.grl .gsm i{position:absolute;bottom:20%;width:26%;height:46%;border-radius:50%;background:radial-gradient(ellipse,rgba(255,255,255,.22),transparent 70%);filter:blur(10px);animation:gsmoke 5s linear infinite;opacity:0}
+.grl .gsm i:nth-child(1){left:12%}.grl .gsm i:nth-child(2){left:40%;animation-delay:1.3s}.grl .gsm i:nth-child(3){left:64%;animation-delay:2.6s}.grl .gsm i:nth-child(4){left:28%;animation-delay:3.8s}
+@keyframes gsmoke{0%{transform:translateY(20%) scale(.7);opacity:0}25%{opacity:.8}100%{transform:translateY(-90%) scale(1.3);opacity:0}}
+.grl .mts{position:absolute;inset:15%;display:grid;grid-template-columns:repeat(var(--cols),1fr);gap:4%;align-content:center}
+.grl .mt{position:relative;aspect-ratio:1.25/1;border:0;padding:0;border-radius:42% 36% 40% 34%/38% 44% 34% 40%;background-size:cover;background-position:center;transform:rotate(var(--r)) translateY(var(--dy));cursor:pointer;box-shadow:0 4px 10px rgba(0,0,0,.55);overflow:hidden;filter:saturate(.55) brightness(.95);transition:filter .9s ease,transform .3s ease}
+.grl .mt:hover{transform:rotate(var(--r)) translateY(calc(var(--dy) - 3px)) scale(1.04)}
+.grl .mt .raw{position:absolute;inset:0;background:radial-gradient(circle at 30% 30%,rgba(255,255,255,.35) 0 6%,transparent 7%),repeating-linear-gradient(115deg,rgba(255,236,236,.45) 0 3px,transparent 3px 11px),linear-gradient(160deg,rgba(214,46,64,.78),rgba(150,20,40,.82));transition:opacity 1s ease}
+.grl .mt .mk{position:absolute;inset:0;background:repeating-linear-gradient(45deg,transparent 0 16px,rgba(30,12,4,.5) 16px 20px);opacity:0;transition:opacity 1s ease .35s}
+.grl .mt.ck{filter:none}.grl .mt.ck .raw{opacity:0}.grl .mt.ck .mk{opacity:.55}
+.grl .mt .sz{position:absolute;inset:0;pointer-events:none}.grl .mt .sz b{position:absolute;bottom:20%;width:30%;height:60%;border-radius:50%;background:radial-gradient(ellipse,rgba(255,255,255,.7),transparent 70%);filter:blur(4px);opacity:0}
+.grl .mt.sizz .sz b{animation:sizz 1.2s ease-out}.grl .mt .sz b:nth-child(1){left:10%}.grl .mt .sz b:nth-child(2){left:38%;animation-delay:.15s}.grl .mt .sz b:nth-child(3){left:64%;animation-delay:.3s}
+@keyframes sizz{0%{opacity:0;transform:translateY(10%)}30%{opacity:.9}100%{opacity:0;transform:translateY(-70%) scale(1.4)}}
+.grl .mt .pl{position:absolute;right:6px;top:6px;font-size:11px;background:rgba(0,0,0,.55);color:#fff;border-radius:999px;padding:1px 6px}
+.grl .mt .cp{position:absolute;left:0;right:0;bottom:0;font:10.5px var(--mono);color:#fff;padding:10px 6px 4px;background:linear-gradient(transparent,rgba(0,0,0,.6));opacity:0;transition:opacity .6s ease .6s;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.grl .mt.ck .cp{opacity:1}
+.grl .gdone{position:absolute;left:50%;bottom:7%;transform:translate(-50%,10px);background:#fff8e8;color:#5a2e14;font:15px var(--hand,serif);padding:6px 14px;border-radius:6px;box-shadow:0 4px 12px rgba(0,0,0,.4);opacity:0;transition:opacity .8s ease,transform .8s ease;white-space:nowrap}
+.grl.fin .gdone{opacity:1;transform:translate(-50%,0)}
+.sp-grill .gctl{display:flex;align-items:center;gap:10px;margin-top:8px}
+@media (prefers-reduced-motion:reduce){.grl .coal i,.grl .gsm i{animation:none}}
+/* 2026-11-19 月台版型 */
+.bpa.bp-eki{display:flex;flex-direction:column;gap:8px;background:linear-gradient(#d9dde2,#c3c8ce);border-radius:6px;padding:10px 10px 0;overflow:hidden}
+.bp-eki .eks{align-self:center;min-width:62%;background:#fff;border:2px solid #47505a;border-radius:4px;text-align:center;box-shadow:0 3px 8px rgba(0,0,0,.18);overflow:hidden}
+.bp-eki .eks b{display:block;font:800 clamp(18px,3.2vw,26px)/1.5 var(--serif,serif);letter-spacing:.18em;color:#1b2430;padding:4px 12px 2px}
+.bp-eki .ekb{display:flex;justify-content:space-between;background:#1f5aa8;color:#fff;font:12px/1.9 var(--mono);padding:0 10px;font-style:normal}
+.bp-eki .ekw{position:relative;flex:1;min-height:0;border-radius:10px;overflow:hidden;background:#1d1a17;border:4px solid #e9ecef;box-shadow:inset 0 0 0 2px #9aa3ad}
+.bp-eki .ekc{position:absolute;inset:0;border-radius:0}
+.bp-eki .eks,.bp-eki .ekl,.bp-eki .ekr{cursor:default}.bp-eki .ekl{height:16px;background:#5d646b;position:relative;margin:0 -10px}.bp-eki .ekl i{position:absolute;left:0;right:0;top:3px;height:7px;background:repeating-linear-gradient(90deg,#f2c230 0 10px,#e1b11f 10px 12px)}
+.bp-eki .ekr{height:12px;margin:0 -10px;background:repeating-linear-gradient(90deg,#3b3631 0 8px,#2b2724 8px 22px);border-top:2px solid #9aa3ad;box-shadow:inset 0 -3px 0 #8e8a85}
+.bp-eki .ekc i.f.n{transform:translateX(18%);opacity:0}.bp-eki .ekc i.f.n.on{transform:none;opacity:1;transition:transform .9s cubic-bezier(.2,.7,.2,1),opacity .9s ease}
+/* 2026-11-19 日落版型 */
+.bpa.bp-sunset{position:relative;display:block;border-radius:8px;overflow:hidden;background:linear-gradient(#2c2a5a 0%,#7a3f6e 34%,#e2724a 64%,#f6b45c 82%,#fbd889 100%);background-size:100% 160%;animation:skyshift 14s ease-in-out infinite alternate}
+@keyframes skyshift{0%{background-position:0 0}100%{background-position:0 100%}}
+.bp-sunset .ssky{position:absolute;inset:0;background:transparent;overflow:visible;cursor:default}.bp-sunset .srow{background:transparent!important;overflow:visible!important;cursor:default!important}.bp-sunset .ssun{position:absolute;left:62%;top:18%;width:16%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,#fff6d6 0,#ffd27a 45%,#ff9a3c 70%,rgba(255,140,60,0) 72%);box-shadow:0 0 40px 18px rgba(255,170,90,.55);animation:sunset 14s ease-in-out infinite alternate}
+@keyframes sunset{0%{transform:translateY(0)}100%{transform:translateY(160%)}}
+.bp-sunset .sridge{position:absolute;left:0;right:0;bottom:0;width:100%;height:42%}.bp-sunset .sridge path{fill:#2a1a26}
+.bp-sunset .srow{position:absolute;left:4%;right:4%;top:8%;bottom:12%;display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:3%;align-items:end}
+.bp-sunset .scell{position:relative;height:72%;border-radius:8px;overflow:hidden;box-shadow:0 6px 18px rgba(40,10,20,.45);border:3px solid rgba(255,236,210,.85);cursor:zoom-in;background:#1d1a17}.bp-sunset .scell.big{height:100%;grid-column:span 1}
+@media (prefers-reduced-motion:reduce){.bpa.bp-sunset,.bp-sunset .ssun{animation:none}}
 /* 2026-11-19 自己排版的版型（.bpa） */
 .bpa{flex:1;min-height:0;display:grid;gap:6px;margin-top:4px;position:relative}
 .bpa>div,.bpa .pf>div,.bpm{position:relative;overflow:hidden;border-radius:3px;background:#1d1a17;cursor:zoom-in;min-height:0}
@@ -1474,7 +1528,9 @@ const BPL=[ // 版型：k、名稱、說明、適合、grid、格子（t：v 影
  {k:'vduo',n:'兩支直式影片並排',d:'兩支直式影片左右並排',fit:'2 支直式影片',g:'"a b"',r:'1fr',c:'1fr 1fr',s:[['a','v','v'],['b','v','v']]},
  {k:'vfull',n:'影片優先單格',d:'一大格先播影片，再輪播照片',fit:'影片是主角',g:'"a"',r:'1fr',c:'1fr',s:[['a','v']]},
  {k:'pano',n:'全景在上',d:'上面放全景照片，下面兩格',fit:'有全景照片',g:'"a a" "b c"',r:'0.8fr 1.3fr',c:'1fr 1fr',s:[['a','*','p'],['b','*'],['c','*']]},
- {k:'film',n:'底片條',d:'一整排照原比例的底片，可以左右捲',fit:'張數多、想一次看到',sp:1}];
+ {k:'film',n:'底片條',d:'一整排照原比例的底片，可以左右捲',fit:'張數多、想一次看到',sp:1},
+ {k:'eki',n:'月台',d:'站名牌＋月台黃線，照片像列車一班一班進站（標題寫「A→B」會變成站名）',fit:'車站、搭車',sp:1},
+ {k:'sunset',n:'日落',d:'夕陽的天空漸層、太陽慢慢落到山後面，照片排在山稜上',fit:'傍晚、夕陽',sp:1}];
 const BPLK={};BPL.forEach(l=>BPLK[l.k]=l);
 let BPG=window.BPG||{};
 const bpPv=id=>(window.PVALL||{})[id];
@@ -1528,6 +1584,13 @@ function bpRender(k,area,L,lay){const l=BPLK[lay]||BPLK.auto;const box=document.
   else if(l.k==='main'){box.innerHTML='<div class="bpm"></div><div class="bpt"></div>';const m=box.querySelector('.bpm');const st=bpCell(m,L,k);
     box.querySelector('.bpt').innerHTML=L.map((x,i)=>`<button data-i="${i}" style="${x[4]?'':`background-image:url(${x[2]==='v'?'vid':'img'}/IMG_${x[0]}.${x[2]==='v'?'jpg':'webp'})`}">${x[2]==='v'?'▶':x[4]?'🔒':''}</button>`).join('');
     box.querySelector('.bpt').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;e.stopPropagation();bpCell(m,L.slice(+b.dataset.i).concat(L.slice(0,+b.dataset.i)),k);},true);}
+  else if(l.k==='eki'){const ttl=((area.closest('.col')||document).querySelector('h2,h3')||{}).textContent||titleOf(k)||'';const pr=ttl.split(/\s*(?:->|→|➝|⇒|>)\s*/);
+    const a=(pr[0]||ttl).replace(/(列車|電車|月台)$/,'').trim(),b=(pr[1]||'').replace(/(列車|電車|月台)$/,'').trim();
+    box.innerHTML=`<div class="eks"><b>${cpEsc(a)}</b>${b?`<i class="ekb"><span></span><span>${cpEsc(b)} ▸</span></i>`:'<i class="ekb"><span></span><span></span></i>'}</div><div class="ekw"><div class="ekc"></div><span class="ekt"></span></div><div class="ekl"><i></i></div><div class="ekr"></div>`;
+    const c=box.querySelector('.ekc');area.replaceWith(box);bpCell(c,L,k);return;}
+  else if(l.k==='sunset'){box.innerHTML=`<div class="ssky"><i class="ssun"></i><svg class="sridge" viewBox="0 0 400 90" preserveAspectRatio="none"><path d="M0 70 L40 52 L78 62 L120 34 L160 50 L205 22 L250 46 L290 38 L330 56 L370 44 L400 58 V90 H0Z"/></svg></div><div class="srow"></div>`;
+    const row=box.querySelector('.srow'),n=Math.min(3,Math.max(1,L.length)),V=L.filter(x=>x[2]==='v'),Pp=L.filter(x=>x[2]!=='v'),ord=V.length?[V[0],...Pp,...V.slice(1)]:L,pl=Array.from({length:n},()=>[]);ord.forEach((x,i)=>pl[i%n].push(x));
+    area.replaceWith(box);pl.forEach((p,i)=>{const c=document.createElement('div');c.className='scell'+(i===0&&n>1?' big':'');row.appendChild(c);bpCell(c,p,k);});return;}
   else if(l.k==='wall'||l.k==='film'){L.slice(0,l.k==='wall'?9:40).forEach(x=>{const c=document.createElement('div');c.style.flexGrow=bpAr(x);c.style.aspectRatio=bpAr(x);box.appendChild(c);bpCell(c,[x],k);});}
   else if(l.k==='pola'){const n=Math.min(5,Math.max(1,L.length));const pos=[[4,6,52,-4],[46,2,50,5],[10,46,48,3],[50,44,46,-6],[28,26,44,2]];const pl=Array.from({length:n},()=>[]);L.forEach((x,i)=>pl[i%n].push(x));
     pl.forEach((p,i)=>{const f=document.createElement('div');f.className='pf';const [x,y,w,r]=pos[i];f.style.cssText=`left:${x}%;top:${y}%;width:${w}%;transform:rotate(${r}deg)`;const c=document.createElement('div');f.appendChild(c);box.appendChild(f);bpCell(c,p,k);});}
@@ -1864,13 +1927,14 @@ const SPSLOT={
  trainx:{t:'電車',s:[['cars','車廂（一節放一項，依序排）','*',12]]},
  noren:{t:'暖簾',s:[['in','暖簾拉開後','*',1],['mini','下面一排小圖','*',4]]},
  cabinet:{t:'展示櫃',s:[['r0','第一層','*',6],['r1','第二層','*',6],['r2','第三層','*',6],['r3','第四層','*',6]]},
- focus:{t:'對焦環',s:[['far','遠（第一張照片是對焦的畫面，其餘點開看）','*',8],['mid','中','*',8],['near','近','*',8]]},
+ focus:{t:'烤網',s:[['grill','烤網上的肉（一塊放一項，點一下才烤熟）','*',9]]},
+ intro:{t:'開場動畫',s:[['v','開場影片（0.5 倍速慢慢播）','v',1]]},
  cass:{t:'卡帶',tapes:1}};
 const TAPECOL=['#2b3550','#3b2b45','#4a2b2b','#2b4a3e','#45402b','#2b3a4a'];
 const SPDEF={tunnel:{v:[TUNNELVID]},gate:{pano:[PANO],sm:GATESM.map(v=>v[0])},snowx:{bg:[SNOWX]},pop:{m:['1954']},korokke:{m:[]},
  trainx:{cars:TRX.map(c=>c[2])},noren:{in:[],mini:['0862','0891','0866','0913']},
  cabinet:Object.fromEntries(CABS.map((r,i)=>['r'+i,[...new Set(r.cells.flatMap(c=>c.ps))]])),
- focus:{far:['0944'],mid:['0941','2159'],near:['2160','2161','2162']},
+ focus:{grill:['2159','0941','2160','2161','2162']},intro:{v:['0565']},
  cass:{tapes:[{t:'商店街的街頭表演',items:['1222','1223','1224','1225']},{t:'淺草寺的夜景',items:(GAL.s_sensoji||[]).map(v=>v[0])},
    {t:'淺草寺的夜',items:[]},{t:'秋葉原一整天',items:[]},{t:'AmiAmi 的戰利品',items:[]},{t:'交誼廳聊到五點',items:[]}]}};
 SPSLOT.cabinet.s.forEach((x,i)=>{if(CABS[i])x[1]=`第${'一二三四'[i]}層・${CABS[i].n}`;});
@@ -1888,6 +1952,7 @@ function spApply(){const sig=JSON.stringify(Object.keys(SPSLOT).map(k=>BPG[k]||n
   {const x=one('tunnel','v','v');TUNNELVID=x?x[0]:SPDEF.tunnel.v[0];}
   {const x=one('gate','pano','i');PANO=x?x[0]:SPDEF.gate.pano[0];const L=spSet('gate','sm')?spRes('gate','sm').filter(x=>x[2]!=='v'):[];GATESM.splice(0,GATESM.length,...(L.length?L.map(x=>[x[0],spCap(x)]):SPD0.GATESM.map(v=>v.slice())));}
   {const x=one('snowx','bg','i');SNOWX=x?x[0]:SPDEF.snowx.bg[0];}
+  {const x=one('intro','v','v');INTROVID=x?x[0]:'0565';}
   {const L=spSet('trainx','cars')?spRes('trainx','cars'):[];TRX.splice(0,TRX.length,...(L.length?L.map(x=>[spCap(x)||(x[2]==='v'?'影片':'照片'),x[2]==='v'?1:0,x[0]]):SPD0.TRX.map(c=>c.slice())));}
   CABS.splice(0,CABS.length,...SPD0.CABS.map((r,i)=>{const c=BPG.cabinet&&BPG.cabinet.slots;if(!(c&&Array.isArray(c['r'+i])))return JSON.parse(JSON.stringify(r));const L=spRes('cabinet','r'+i);
     if(!L.length)return JSON.parse(JSON.stringify(r));L.forEach(x=>{if(!MBYID[x[0]])MBYID[x[0]]=[x[0],x[1],x[2],x[3]];});const n=Math.min(3,L.length);
@@ -1927,6 +1992,39 @@ function spDom(B){if(!B)return;let ch=0;
   new MutationObserver(rs=>{if(!window.PVALL)return;rs.forEach(r=>{if(r.type==='attributes'){fix(r.target);return;}r.addedNodes.forEach(n=>{if(n.nodeType!==1)return;if(n.matches(SEL))fix(n);n.querySelectorAll(SEL).forEach(fix);});});})
     .observe(document.documentElement,{subtree:true,childList:true,attributes:true,attributeFilter:['style','src','poster']});}
 try{spApply();}catch(e){console.error(e);}
+
+/* ===== 2026-11-19 開場動畫：千本鳥居（石浦神社）0.5 倍速，像走進另一個世界 =====
+   每次開書（同一個分頁只播一次，sessionStorage hkr-intro）；#pg= 直接跳頁、預覽、減少動態時不播。點一下就跳過。影片可以在 trip-tools 特殊頁「開場動畫」換，或在「📄 頁面」把它藏起來（hidden 含 intro）。 */
+var INTROVID='0565';
+function introRun(){try{if(sessionStorage.getItem('hkr-intro'))return;}catch(e){}
+  if(/^#pg=/.test(location.hash)||/embedpreview|bpmock|nointro/.test(location.search)||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+  const ov=document.createElement('div');ov.id='intro';ov.innerHTML=`<video muted playsinline preload="auto"></video><div class="itx"><small>2025.02.22 — 03.02</small><b>北陸・信州・東京 九日</b><span>穿過鳥居，翻開這本書</span></div><button class="isk" type="button">略過 ›</button>`;
+  document.body.appendChild(ov);const v=ov.querySelector('video');let done=false;
+  const close=()=>{if(done)return;done=true;try{sessionStorage.setItem('hkr-intro','1');}catch(e){}ov.classList.add('out');setTimeout(()=>ov.remove(),900);};
+  const title=()=>{ov.classList.add('t');setTimeout(close,2600);};
+  ov.addEventListener('click',close);
+  const start=()=>{const id=INTROVID;v.poster=`vid/IMG_${id}.jpg`;v.src=`vid/IMG_${id}.mp4`;v.defaultPlaybackRate=0.5;v.playbackRate=0.5;
+    v.onloadedmetadata=()=>{v.playbackRate=0.5;};v.onended=title;v.play().then(()=>{v.playbackRate=0.5;setTimeout(()=>ov.classList.add('t0'),400);}).catch(()=>title());
+    setTimeout(()=>{if(!done&&!ov.classList.contains('t'))title();},9000);};
+  /* 等 bookpages 讀到（換了影片或關掉開場）再開始，最多等 0.8 秒 */
+  let waited=0;const go=()=>{const H=new Set(((BPG._meta||{}).hidden)||[]);if(H.has('intro')){ov.remove();return;}if(window.BPLIVE||Object.keys(BPG).length||waited>=800){start();return;}waited+=100;setTimeout(go,100);};go();}
+/* ===== 2026-11-19 烤網頁（取代原本的「對焦環」）：タロちゃん的烤肉，每塊肉是一張照片或影片，點一下烤熟才看得清楚 ===== */
+let GRILL=[];
+function grillItems(){const c=BPG.focus&&BPG.focus.slots;let L=(c&&Array.isArray(c.grill)?c.grill:[]).map(id=>bpItem(spPre(id))).filter(Boolean).slice(0,9);
+  if(!L.length)L=SPDEF.focus.grill.map(id=>bpItem(spPre(id))).filter(Boolean);return L;}
+P.focus.h=()=>{GRILL=grillItems();const n=GRILL.length,cols=n<=4?2:3,pos=[[-4,2],[3,-3],[-2,4],[5,1],[-5,-2],[2,3],[-3,-4],[4,2],[0,-1]];
+  const tile=(x,i)=>{const v=x[2]==='v',src=v?`vid/IMG_${x[0]}.jpg`:`img/IMG_${x[0]}.webp`,[r,dy]=pos[i%pos.length];
+    return `<button class="mt${v?' v':''}" data-i="${i}" style="--r:${r}deg;--dy:${dy}px;background-image:url(${src})"><i class="raw"></i><i class="mk"></i><i class="sz"><b></b><b></b><b></b></i>${v?'<span class="pl">▶</span>':''}<span class="cp">${cpEsc(spCap(x)||'')}</span></button>`;};
+  return sp({cls:'grill',k:'DAY 7 · 中野 · タロちゃん',t:'炭火與牛舌',txt:['一半生吃、一半烤。部分內臟要生吃，真的不太能接受。','烤肉完美，牛舌好吃到又加點一份；收尾的湯剛好洗掉滿嘴的油膩。'],one:'點網子上的肉，一塊一塊烤熟。',
+    btn:`<div class="gctl"><button class="spbtn gall">全部烤好</button><span class="spn gcnt">已烤 0 / ${n}</span></div>`,
+    stage:`<div class="grl"><div class="coal"><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="net"></div><div class="gsm"><i></i><i></i><i></i><i></i></div><div class="mts" style="--cols:${cols}">${GRILL.map(tile).join('')}</div><div class="gdone">牛舌好吃到，又加點了一份。</div></div>`});};
+function grillCount(B){const all=B.querySelectorAll('.grl .mt'),ck=B.querySelectorAll('.grl .mt.ck');const c=B.querySelector('.gcnt');if(c)c.textContent=`已烤 ${ck.length} / ${all.length}`;B.querySelector('.grl')&&B.querySelector('.grl').classList.toggle('fin',all.length&&ck.length===all.length);}
+document.addEventListener('click',e=>{const B=document.querySelector('#base');if(!B)return;
+  const mt=e.target.closest('#base .grl .mt');if(mt){e.stopPropagation();if(!mt.classList.contains('ck')){mt.classList.add('ck','sizz');setTimeout(()=>mt.classList.remove('sizz'),1400);grillCount(B);return;}
+    lbOpen('炭火與牛舌',0,+mt.dataset.i,GRILL.map(x=>[x[0],spCap(x),x[2]]));return;}
+  if(e.target.closest('#base .grl')||e.target.closest('#base .gall')){if(e.target.closest('#base .gall')){e.stopPropagation();B.querySelectorAll('.grl .mt:not(.ck)').forEach((m,i)=>setTimeout(()=>{m.classList.add('ck','sizz');setTimeout(()=>m.classList.remove('sizz'),1400);grillCount(B);},i*180));}}},true);
+
+setTimeout(introRun,0);
 // 2026-11-19：網址 #pg=頁 key 直接翻到那一頁（trip-tools「在書裡看」用）
 function pgHash(){const m=/^#pg=([\w-]+)/.exec(location.hash);if(!m)return;const i=idxOf(m[1]);if(i>=0&&i!==I){if(typeof BUSY!=='undefined'&&BUSY)return;jump(i);}}
 addEventListener('hashchange',pgHash);
