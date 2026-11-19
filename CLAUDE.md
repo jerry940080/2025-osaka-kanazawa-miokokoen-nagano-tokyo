@@ -334,6 +334,8 @@
   - **版型「日落」`sunset`**（第 18 種）：天空漸層慢慢變色、太陽沉到山稜後面，照片 1–3 格排在山稜上（第一格放影片）。
   - **月台、日落要使用者自己在 trip-tools 選版型**（Claude 不能寫 Firestore）：「妙高高原->長野 列車」選月台、「日落」（`g_shibu3`）選日落。`book-media.json` 重產（18 種版型、`sp` 多 `intro`、`focus` 改成 `grill`）。
   - 驗證 scratchpad `nd/t.js`（電腦、手機：開場 0.5 倍速、播完消失、重新整理不再播；烤網 5 塊、點兩塊、全部烤好、燈箱；`?bpmock=eki|sunset` 沒有溢出、零錯誤；截圖 `nd/sheet-d.jpg`、`sheet-m.jpg`）。`sw.js` `hkr-v25`。
+- **trip-tools 的即時預覽（2026-11-19）**：`?embedpreview=1`（`html.pvw`）＝不登入、不播開場、藏導覽列與 🔒；收到 `postMessage({type:'hkr-preview', k, doc, pv})` 就把 `doc` 疊到那頁（`window.PREVD`，之後 REST／onSnapshot 讀到的也會疊上去）、私人項目改用 `pv` 給的 Blob URL，重算特殊頁與插頁後翻到那頁；載好時送 `hkr-preview-ready`。
+  預覽時每格左上顯示編號（`[data-n]`）。**`bookpages/{頁}.fixed`**＝照使用者排的順序放進格子（`bpAssign(…, fixed)`：第 1 項放第 1 格，多的輪流分），不勾才照直橫自動分。`sw.js` `hkr-v26`。
 
 ## GitHub Pages 發布
 - Settings → Pages → Deploy from a branch → 選分支 / `(root)`。

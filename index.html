@@ -374,6 +374,9 @@ body.pj #nb,body.pj #nbpnl,#stage.tilt~#nb{display:none}
 .gpe{flex:1;min-height:0;position:relative;border-radius:3px;overflow:hidden;margin-top:4px}.gpe .ills{position:absolute;inset:0;width:100%;height:100%}
 .gpe span{position:absolute;left:8px;bottom:6px;background:rgba(255,255,255,.72);color:#5a4f43;padding:1px 6px;border-radius:8px;font:10px var(--mono)}
 .ills .board{animation:ilBoard 5s ease-in infinite}@keyframes ilBoard{0%{transform:translate(10px,36px) rotate(22deg)}70%{transform:translate(150px,92px) rotate(22deg)}80%{transform:translate(160px,80px) rotate(200deg)}100%{transform:translate(168px,100px) rotate(380deg)}}
+/* 2026-11-19 trip-tools 預覽模式 */
+html.pvw #nb,html.pvw #pvbtn,html.pvw .pvb,html.pvw #intro{display:none!important}
+html.pvw .bpa [data-n]::after{content:attr(data-n);position:absolute;left:6px;top:6px;z-index:5;min-width:20px;height:20px;border-radius:10px;background:rgba(198,113,57,.92);color:#fff;font:700 12px/20px var(--mono);text-align:center;pointer-events:none}
 /* 2026-11-19 開場動畫（千本鳥居） */
 #intro{position:fixed;inset:0;z-index:200;background:#0c0806;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:opacity .9s ease}
 #intro video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:saturate(1.05) contrast(1.05);transform:scale(1.04);transition:transform 4s ease,filter 1.6s ease}
@@ -1544,7 +1547,8 @@ function bpItems(k){const c=BPG[k]||{},PV=window.PVM||{};let ids=c.items?c.items
   if(c.items)(PV[k]||[]).forEach(m=>{if(!ids.includes('pv:'+m.id))ids.push('pv:'+m.id);});   // trip-tools 指定到這頁、但還沒排進順序的私人項目放最後
   return ids.map(bpItem).filter(Boolean);}
 // 分配到格子：影片格先拿影片（方向對的優先），全景格拿全景，其他平均分
-function bpAssign(L,slots,co){co=co||[];const used=new Set(),pl=slots.map(()=>[]);const og=x=>x[3]==='v'?'v':'h';
+function bpAssign(L,slots,co,fixed){co=co||[];const used=new Set(),pl=slots.map(()=>[]);
+  if(fixed){L.forEach((x,i)=>pl[i<slots.length?i:i%slots.length].push(x));return pl;}   /* 照使用者排的順序：第 1 項放第 1 格 */const og=x=>x[3]==='v'?'v':'h';
   const take=(f)=>{const i=L.findIndex((x,j)=>!used.has(j)&&f(x));if(i<0)return null;used.add(i);return L[i];};
   slots.forEach((s,i)=>{let x=null;if(s[1]==='v')x=take(y=>y[2]==='v'&&(!s[2]||y[3]===s[2]))||take(y=>y[2]==='v');
     else if(s[2]==='p')x=take(y=>y[3]==='p');else if(s[1]==='i')x=take(y=>y[2]!=='v'&&(!s[2]||y[3]===s[2]))||take(y=>y[2]!=='v');
@@ -1579,8 +1583,8 @@ function bpCell(c,list,k){const st={c,list,i:-1,k,t:null};c.classList.add('bpc')
 function bpRender(k,area,L,lay){const l=BPLK[lay]||BPLK.auto;const box=document.createElement('div');box.className='bpa bp-'+l.k;box.dataset.k=k;
   if(l.k==='auto'||!l.sp&&l.s){const sp=l.k==='auto'?bpAutoSpec(L):l;box.style.gridTemplateAreas=sp.g;box.style.gridTemplateRows=sp.r;box.style.gridTemplateColumns=sp.c;
     const cs=sp.s.map(s=>{const c=document.createElement('div');c.style.gridArea=s[0];box.appendChild(c);return c;});area.replaceWith(box);
-    const co=cs.map(c=>{const w=c.clientWidth,h=c.clientHeight;return !w||!h?'':w/h<0.9?'v':w/h>1.1?'h':'';});const pl=bpAssign(L,sp.s,co);
-    cs.forEach((c,i)=>{if(!pl[i].length){c.remove();return;}bpFit(c,pl[i]);bpCell(c,pl[i],k);});return;}
+    const co=cs.map(c=>{const w=c.clientWidth,h=c.clientHeight;return !w||!h?'':w/h<0.9?'v':w/h>1.1?'h':'';});const pl=bpAssign(L,sp.s,co,!!(BPG[k]&&BPG[k].fixed));
+    cs.forEach((c,i)=>{if(!pl[i].length){c.remove();return;}c.dataset.n=i+1;bpFit(c,pl[i]);bpCell(c,pl[i],k);});return;}
   else if(l.k==='main'){box.innerHTML='<div class="bpm"></div><div class="bpt"></div>';const m=box.querySelector('.bpm');const st=bpCell(m,L,k);
     box.querySelector('.bpt').innerHTML=L.map((x,i)=>`<button data-i="${i}" style="${x[4]?'':`background-image:url(${x[2]==='v'?'vid':'img'}/IMG_${x[0]}.${x[2]==='v'?'jpg':'webp'})`}">${x[2]==='v'?'▶':x[4]?'🔒':''}</button>`).join('');
     box.querySelector('.bpt').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;e.stopPropagation();bpCell(m,L.slice(+b.dataset.i).concat(L.slice(0,+b.dataset.i)),k);},true);}
@@ -1604,7 +1608,7 @@ document.addEventListener('click',e=>{const c=e.target.closest('#base .bpc');if(
 // trip-tools 拖到「🗑 刪除」的公開項目（bookpages/_trash）：Claude 從網站刪檔之前，先從相簿與排過的頁拿掉
 function bpTrash(){const T=new Set(((BPG._trash||{}).items||[]).map(x=>x.replace(/^pub:/,'')));if(!T.size)return;Object.values(MEDIA).forEach(a=>{for(let i=a.length-1;i>=0;i--)if(T.has(a[i][0]))a.splice(i,1);});
   Object.keys(GPPUB).forEach(k=>{GPPUB[k]=GPPUB[k].filter(x=>!T.has(x));});Object.keys(PUBALL).forEach(x=>{if(T.has(x))delete PUBALL[x];});}
-window.bpSet=G=>{BPG=G||{};window.BPG=BPG;bpTrash();try{spApply();}catch(e){console.error(e);}try{cpApply();}catch(e){console.error(e);}try{if(typeof show==='function'&&$('#base').children.length){show();}}catch(e){}};
+window.bpSet=G=>{G=G||{};if(window.PREVD){const d=window.PREVD;G={...G,[d.k]:{...(G[d.k]||{}),...d.doc}};}BPG=G;window.BPG=BPG;bpTrash();try{spApply();}catch(e){console.error(e);}try{cpApply();}catch(e){console.error(e);}try{if(typeof show==='function'&&$('#base').children.length){show();}}catch(e){}};
 // 公開訪客：用 Firestore REST 讀一次（規則還沒更新或沒網路就照原本）
 fetch(`https://firestore.googleapis.com/v1/projects/trip-tools-21847/databases/(default)/documents/trips/${BPTRIP}/bookpages?pageSize=300`).then(r=>r.ok?r.json():null).then(j=>{if(!j||!j.documents||window.BPLIVE)return;const G={};
   const fv=v=>v==null?null:'stringValue' in v?v.stringValue:'integerValue' in v?+v.integerValue:'doubleValue' in v?v.doubleValue:'booleanValue' in v?v.booleanValue:'arrayValue' in v?(v.arrayValue.values||[]).map(fv):'mapValue' in v?Object.fromEntries(Object.entries(v.mapValue.fields||{}).map(([a,b])=>[a,fv(b)])):null;
@@ -2025,6 +2029,17 @@ document.addEventListener('click',e=>{const B=document.querySelector('#base');if
   if(e.target.closest('#base .grl')||e.target.closest('#base .gall')){if(e.target.closest('#base .gall')){e.stopPropagation();B.querySelectorAll('.grl .mt:not(.ck)').forEach((m,i)=>setTimeout(()=>{m.classList.add('ck','sizz');setTimeout(()=>m.classList.remove('sizz'),1400);grillCount(B);},i*180));}}},true);
 
 setTimeout(introRun,0);
+
+/* ===== 2026-11-19 trip-tools 的即時預覽（?embedpreview=1）=====
+   trip-tools 用 iframe 開這本書，postMessage({type:'hkr-preview', k 頁, doc:{layout, items, fixed}, pv:{私人 id:{kind,w,h,note,_f,_p}}})：
+   還沒存檔的設定先套在這一頁、翻到那頁；私人照片影片用 trip-tools 那邊組好的 Blob URL（同網域，iframe 讀得到）。不登入、不播開場、不顯示導覽列。 */
+if(/embedpreview/.test(location.search)){document.documentElement.classList.add('pvw');
+  const PVX={};const oldUrl=window.pvUrl;
+  window.addEventListener('message',e=>{if(e.origin!==location.origin)return;const d=e.data;if(!d||d.type!=='hkr-preview')return;
+    Object.assign(PVX,d.pv||{});window.PVALL={...(window.PVALL||{}),...PVX};window.pvUrl=(m,w)=>{const x=PVX[m.id];if(x)return Promise.resolve(w==='p'?(x._p||x._f):x._f);return oldUrl?oldUrl(m,w):Promise.reject();};
+    window.PREVD={k:d.k,doc:d.doc||{}};SPSIG='';CPSIG='';window.bpSet(BPG);
+    const go=()=>{const i=idxOf(d.k);if(i>=0&&i!==I){if(typeof BUSY!=='undefined'&&BUSY)return setTimeout(go,120);jump(i);}else if(i>=0)show();};setTimeout(go,30);});
+  try{parent.postMessage({type:'hkr-preview-ready'},location.origin);}catch(e){}}
 // 2026-11-19：網址 #pg=頁 key 直接翻到那一頁（trip-tools「在書裡看」用）
 function pgHash(){const m=/^#pg=([\w-]+)/.exec(location.hash);if(!m)return;const i=idxOf(m[1]);if(i>=0&&i!==I){if(typeof BUSY!=='undefined'&&BUSY)return;jump(i);}}
 addEventListener('hashchange',pgHash);
@@ -2182,7 +2197,7 @@ addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('#pvn').hidden){$('#pvn')
 
 // 登入過的成員：下次打開自動載入（Firebase 自己記得登入狀態）
 let was=false;try{was=localStorage.getItem('hkr-priv')==='1';}catch(e){}
-if(was&&!MOCK)loadFB().catch(()=>{});
+if(was&&!MOCK&&!/embedpreview/.test(location.search))loadFB().catch(()=>{});
 draw();
 </script>
 </body></html>
