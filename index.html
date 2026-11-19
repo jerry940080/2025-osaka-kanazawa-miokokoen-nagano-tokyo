@@ -314,6 +314,8 @@ button{font:inherit;color:inherit}
 .sbye.pvv{display:block;position:relative;background:#111;border-radius:3px;overflow:hidden}
 .sbye.pvv video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#111;cursor:zoom-in}
 .sbye.pvv .vsnd{position:absolute;right:8px;bottom:8px;z-index:4;width:36px;height:36px;border-radius:50%;border:0;background:rgba(0,0,0,.55);color:#fff;font-size:16px;line-height:36px;padding:0;cursor:pointer}
+/* 2026-11-19 封面：拿掉下面的英文路線，照片窗吃滿剩下的高度 */
+.cv .win{height:auto;flex:1;min-height:0;margin-top:28px}
 </style>
 <style>
 .slots{display:flex;gap:6px;margin-bottom:6px}
@@ -845,7 +847,7 @@ const CH=[
 const rh=(c,l,r)=>`<div class="rh"><span>${l}</span><span>${r||''}</span></div>`;
 // 每一頁：{c:章 class, h:內容}
 const P={
- cover:{c:'cover',cls:'cv',h:`<div><div style="font:12px var(--mono);letter-spacing:.3em;color:#d9b25c">2025 · WINTER · 9 DAYS</div><div class="ttl" style="margin-top:22px">北陸・信州・東京<br>九日</div><div class="sub">第一次看見雪的那個冬天</div></div><div class="win"><div class="mtn"></div></div><div class="route">OSAKA — KANAZAWA — SHIRAKAWA-GO<br>MYOKO — NAGANO — TOKYO</div>`},
+ cover:{c:'cover',cls:'cv',h:`<div><div style="font:12px var(--mono);letter-spacing:.3em;color:#d9b25c">2025 · WINTER · 9 DAYS</div><div class="ttl" style="margin-top:22px">北陸・信州・東京<br>九日</div><div class="sub">第一次看見雪的那個冬天</div></div><div class="win"><div class="mtn"></div></div>`},
  endp:{c:'ch0',h:`<div class="col" style="justify-content:center;text-align:center;gap:20px"><div class="meta">2025.02.22 — 03.02</div><p style="font-family:var(--serif);font-size:20px;line-height:1.9">大阪、金澤、白川鄉、妙高、<br>長野、渋溫泉、東京。</p></div>`},
  toc:{c:'ch0',h:()=>`${rh('','目錄','CONTENTS')}<h2 style="margin-top:14px">目錄</h2><ul class="toc">${CH.slice(1).map((c,i)=>`<li data-go="${c.c}"><span class="no">${String(i+1).padStart(2,'0')}</span><span><span class="dot" style="background:${c.dot}"></span><b>${c.t}</b><small>${c.sub}・${c.d}</small></span><span class="p">${PAGEOF[c.c]||''}</span></li>`).join('')}<li data-go="after"><span class="no">—</span><span><b>後記</b><small>也許正是一路上的艱苦</small></span><span class="p">${PAGEOF.after||''}</span></li></ul>`},
  pre:{c:'ch0',h:`${rh('','序')}<div class="col" style="padding-top:20px"><div class="meta">PROLOGUE</div><h2>從大阪到成田</h2><p class="txt">2025 年 2 月底，兩個人從大阪出發，一路往北陸、信州，最後到東京，九天換了十四種交通工具。</p><p class="txt">這趟遇到了雪國、合掌村、夜間雪場、五十五度的溫泉，也遇到髒亂的旅館、過不了閘門的 IC 卡和黑線雪道。這本書照時間順序，一站一頁記下來。</p><p class="one">兩個人・九天・十四種交通工具。</p></div>`},
