@@ -1484,15 +1484,26 @@ function bpItems(k){const c=BPG[k]||{},PV=window.PVM||{};let ids=c.items?c.items
   if(c.items)(PV[k]||[]).forEach(m=>{if(!ids.includes('pv:'+m.id))ids.push('pv:'+m.id);});   // trip-tools 指定到這頁、但還沒排進順序的私人項目放最後
   return ids.map(bpItem).filter(Boolean);}
 // 分配到格子：影片格先拿影片（方向對的優先），全景格拿全景，其他平均分
-function bpAssign(L,slots){const used=new Set(),pl=slots.map(()=>[]);
+function bpAssign(L,slots,co){co=co||[];const used=new Set(),pl=slots.map(()=>[]);const og=x=>x[3]==='v'?'v':'h';
   const take=(f)=>{const i=L.findIndex((x,j)=>!used.has(j)&&f(x));if(i<0)return null;used.add(i);return L[i];};
   slots.forEach((s,i)=>{let x=null;if(s[1]==='v')x=take(y=>y[2]==='v'&&(!s[2]||y[3]===s[2]))||take(y=>y[2]==='v');
     else if(s[2]==='p')x=take(y=>y[3]==='p');else if(s[1]==='i')x=take(y=>y[2]!=='v'&&(!s[2]||y[3]===s[2]))||take(y=>y[2]!=='v');
-    else if(s[2])x=take(y=>y[3]===s[2]);if(x)pl[i].push(x);});
+    else if(s[2])x=take(y=>y[3]===s[2]);else if(co[i])x=take(y=>(s[1]==='v'||y[2]!=='v')&&og(y)===co[i]);if(x)pl[i].push(x);});
   slots.forEach((s,i)=>{if(!pl[i].length){const x=take(y=>s[1]==='v'?true:y[2]!=='v')||take(()=>true);if(x)pl[i].push(x);}});
   const rest=L.filter((x,j)=>!used.has(j));const tgt=slots.map((s,i)=>i).filter(i=>slots[i][1]!=='v');const T=tgt.length?tgt:slots.map((s,i)=>i);
-  rest.forEach((x,j)=>pl[T[j%T.length]].push(x));return pl;}
-const bpAr=x=>x[3]==='p'?3.4:x[3]==='v'?0.75:1.33;
+  /* 2026-11-19：多的照片放進同方向的格子（直的進直格、橫的進橫格），沒有同方向的格子才平均分 */
+  const cnt={};rest.forEach((x,j)=>{const M=T.filter(i=>co[i]===og(x)),C=M.length?M:T,key=M.length?og(x):'*';cnt[key]=(cnt[key]||0)+1;pl[C[(cnt[key]-1)%C.length]].push(x);});return pl;}
+/* 格子裡的照片全是同一個方向、但格子形狀相反時，把格子縮成照片的比例（置中），不留兩側的模糊墊底 */
+function bpFit(c,list){if(!list.length)return;const g=list.map(x=>x[3]==='v'?'v':'h');if(g.some(y=>y!==g[0]))return;
+  const t=list.reduce((a,x)=>a+bpAr(x),0)/list.length,w=c.clientWidth,h=c.clientHeight;if(!w||!h)return;const r=w/h;
+  if(t<r*0.85){c.style.width=Math.round(h*t)+'px';c.style.justifySelf='center';}else if(t>r/0.85){c.style.height=Math.round(w/t)+'px';c.style.alignSelf='center';}}
+/* 自動版型：依直橫決定格子怎麼切（直的多就左右並排，橫的多就上下疊） */
+function bpAutoSpec(L){const V=L.filter(x=>x[2]==='v'),Pi=L.filter(x=>x[2]!=='v');const S=Math.min(MOB?2:4,Pi.length+(V.length?1:0))||1;
+  const nv=L.filter(x=>x[3]==='v').length,vert=nv*2>=L.length;const sl=Array.from({length:S},(_,i)=>[String.fromCharCode(97+i),i===0&&V.length?'v':'*']);
+  let g,r,c;if(S===1){g='"a"';r='1fr';c='1fr';}else if(S===2){if(vert){g='"a b"';r='1fr';c='1fr 1fr';}else{g='"a" "b"';r='1fr 1fr';c='1fr';}}
+  else if(S===3){if(vert){g='"a b c"';r='1fr';c='1fr 1fr 1fr';}else{g='"a a" "b c"';r='1.2fr 1fr';c='1fr 1fr';}}else{g='"a b" "c d"';r='1fr 1fr';c='1fr 1fr';}
+  return {g,r,c,s:sl};}
+const bpAr=x=>x[3]==='p'?3.4:x[2]==='v'?(x[3]==='v'?0.5625:1.78):x[3]==='v'?0.75:1.33;   /* 影片是 9:16／16:9 */
 // 一格：照片淡入輪播、影片播完換下一個
 function bpCell(c,list,k){const st={c,list,i:-1,k,t:null};c.classList.add('bpc');c.innerHTML='<span class="cp"></span>';c.dataset.k=k;
   const next=()=>{if(!c.isConnected)return;show((st.i+1)%list.length);};
@@ -1506,15 +1517,16 @@ function bpCell(c,list,k){const st={c,list,i:-1,k,t:null};c.classList.add('bpc')
     if(list.length>1&&!matchMedia('(prefers-reduced-motion: reduce)').matches)st.t=setTimeout(function w(){if(document.hidden||!$('#lb').hidden){st.t=setTimeout(w,1500);return;}next();},4200+Math.random()*1200);};
   show(0);return st;}
 function bpRender(k,area,L,lay){const l=BPLK[lay]||BPLK.auto;const box=document.createElement('div');box.className='bpa bp-'+l.k;box.dataset.k=k;
-  if(l.k==='auto'){const sl=gpSlots(L);box.style.cssText=`grid-template:${sl.length===3?'1.2fr 1fr/1fr 1fr':sl.length===4?'1fr 1fr/1fr 1fr':sl.length===2?'1fr 1fr/1fr':'1fr/1fr'}`;sl.forEach((p,j)=>{const c=document.createElement('div');if(sl.length===3&&j===0)c.style.gridColumn='1/3';box.appendChild(c);bpCell(c,p,k);});}
+  if(l.k==='auto'||!l.sp&&l.s){const sp=l.k==='auto'?bpAutoSpec(L):l;box.style.gridTemplateAreas=sp.g;box.style.gridTemplateRows=sp.r;box.style.gridTemplateColumns=sp.c;
+    const cs=sp.s.map(s=>{const c=document.createElement('div');c.style.gridArea=s[0];box.appendChild(c);return c;});area.replaceWith(box);
+    const co=cs.map(c=>{const w=c.clientWidth,h=c.clientHeight;return !w||!h?'':w/h<0.9?'v':w/h>1.1?'h':'';});const pl=bpAssign(L,sp.s,co);
+    cs.forEach((c,i)=>{if(!pl[i].length){c.remove();return;}bpFit(c,pl[i]);bpCell(c,pl[i],k);});return;}
   else if(l.k==='main'){box.innerHTML='<div class="bpm"></div><div class="bpt"></div>';const m=box.querySelector('.bpm');const st=bpCell(m,L,k);
     box.querySelector('.bpt').innerHTML=L.map((x,i)=>`<button data-i="${i}" style="${x[4]?'':`background-image:url(${x[2]==='v'?'vid':'img'}/IMG_${x[0]}.${x[2]==='v'?'jpg':'webp'})`}">${x[2]==='v'?'▶':x[4]?'🔒':''}</button>`).join('');
     box.querySelector('.bpt').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;e.stopPropagation();bpCell(m,L.slice(+b.dataset.i).concat(L.slice(0,+b.dataset.i)),k);},true);}
   else if(l.k==='wall'||l.k==='film'){L.slice(0,l.k==='wall'?9:40).forEach(x=>{const c=document.createElement('div');c.style.flexGrow=bpAr(x);c.style.aspectRatio=bpAr(x);box.appendChild(c);bpCell(c,[x],k);});}
   else if(l.k==='pola'){const n=Math.min(5,Math.max(1,L.length));const pos=[[4,6,52,-4],[46,2,50,5],[10,46,48,3],[50,44,46,-6],[28,26,44,2]];const pl=Array.from({length:n},()=>[]);L.forEach((x,i)=>pl[i%n].push(x));
     pl.forEach((p,i)=>{const f=document.createElement('div');f.className='pf';const [x,y,w,r]=pos[i];f.style.cssText=`left:${x}%;top:${y}%;width:${w}%;transform:rotate(${r}deg)`;const c=document.createElement('div');f.appendChild(c);box.appendChild(f);bpCell(c,p,k);});}
-  else{box.style.gridTemplateAreas=l.g;box.style.gridTemplateRows=l.r;box.style.gridTemplateColumns=l.c;const pl=bpAssign(L,l.s);
-    l.s.forEach((s,i)=>{if(!pl[i].length)return;const c=document.createElement('div');c.style.gridArea=s[0];box.appendChild(c);bpCell(c,pl[i],k);});}
   area.replaceWith(box);}
 function bpRun(B){if(!B)return;const U=UNITS(),u=U[I],keys=MOB?[u]:(P[u[0]]&&P[u[0]].full?[u[0]]:u);const els=[...B.querySelectorAll('.spread > .pg, .spread > .full')];
   keys.forEach((k,ix)=>{const el=els[ix];if(!el||!bpHas(k))return;const col=el.querySelector('.col');if(!col)return;
