@@ -1366,7 +1366,7 @@ Object.assign(P,{
  t4:{c:'ch5',h:()=>ticket({day:'DAY 7',date:'2025. 2.28',a:'長 野',ar:'NAGANO',b:'新 宿',br:'SHINJUKU',line:'北陸新幹線 → 大宮 → 埼京線',no:'No. 0228',st:'東京',ph:'橫幅照片・新宿的人潮',txt:'早上心情有點糟，但還要趕車，就沒多想。早餐是樓下超商買的。',one:'新幹線到大宮那段，沒什麼印象。'})},
  // 第五章 東京
  op5:opg('ch5','第五章','東京','CHAPTER 05 · DAY 7–8','霓虹與模型','直幅照片・歌舞伎町','一到新宿，人潮一下子多了好幾倍。'),
- s_bookbed:pg('ch5',{pl:'新宿',d:'DAY 7 · 2/28（五）',m:'上午 · 寄行李',t:'以為是咖啡廳',ph:[['h','橫幅照片・咖啡廳吧檯']],x:['BOOK AND BED 新宿其實在歌舞伎町裡面，一棟大樓的高樓層。前台是咖啡廳吧檯；側門打開才是旅舍的公共空間，連著廁所、浴室、交誼廳和每個人的床位。','私人空間只有一張用簾子遮的床，行李箱要另外找地方硬塞，只適合背包客。'],one:'寄行李時只看到吧檯，晚上回來才發現裡面長這樣。'}),
+ s_bookbed:pg('ch5',{pl:'新宿',d:'DAY 7 · 2/28（五）',m:'上午 · 寄行李',t:'以為是咖啡廳',ph:[['h','橫幅照片・咖啡廳吧檯']],x:['BOOK AND BED 新宿其實在歌舞伎町裡面，一棟大樓的高樓層。前台是咖啡廳吧檯，從外面看就像一間咖啡廳。','寄行李時只看到這個吧檯，還以為是在咖啡廳寄放東西。']}),
  s_motomura:pg('ch5',{pl:'新宿',d:'DAY 7',m:'11:00 · 午餐',t:'牛かつ もと村',ph:[['h','橫幅照片・自己烤的牛かつ']],x:['很幸運 11 點就到、不用排隊。牛排外面裹一層麵衣，自己烤起來脆脆的，很特別的體驗。']}),
  s_kabuki:pg('ch5',{pl:'新宿',d:'DAY 7',m:'晚上 · 歌舞伎町',t:'想看看傳說中的樣子',ph:[['h','橫幅照片・歌舞伎町的街道']],x:['大馬路上有工整站成兩排等待的女性，原以為是 18 禁的業務，實際上多是陪唱歌、喝酒聊天的店。','真正站街拉客的原本在大久保公園，最近警察常臨檢，都不見了；但還是看到零星男女交談後前往酒店。']}),
  q7:qd('ch5',7,'2/28（五）','歌舞伎町比想像中還要龍蛇混雜，但不像真的紅燈區會有主動拉客的行為。'),
@@ -1786,6 +1786,9 @@ const SEQ0=SEQ.slice();let CPSIG='',CPK=[];const DAYSTART0={...DAYSTART};
 const mtEsc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 function mtTitle(k,h){const t=((BPG._meta||{}).titles||{})[k];if(!t||typeof h!=='string')return h;let done=false;return h.replace(/(<h([23])\b[^>]*>)([\s\S]*?)(<\/h\2>)/,(m,a,_,x,b)=>{done=true;return a+mtEsc(t)+b;});}
 const cpEsc=t=>String(t==null?'':t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+/* 自己加的頁還沒在 trip-tools 寫文字時，用這裡的預設文字（使用者在 trip-tools 寫了就以那邊為準）。
+   c_mwnrpfwngpsk＝「以為是咖啡廳(二)」：原本 s_bookbed 一頁的文字分成兩頁（2026-11-20 使用者要求） */
+const CPTXT={c_mwnrpfwngpsk:{x:'晚上回來推開側門，才知道後面是旅舍的公共空間，連著廁所、浴室、交誼廳和每個人的床位。\n\n私人空間只有一張用簾子遮的床，行李箱要另外找地方硬塞，只適合背包客。',one:'寄行李時只看到吧檯，晚上回來才發現裡面長這樣。'}};
 function cpApply(){const L=((BPG._custom||{}).pages||[]).filter(c=>c&&/^c_[\w-]+$/.test(c.k||''));
   const vis=L.filter(c=>{try{return bpItems(c.k).length>0;}catch(e){return false;}});
   const META=BPG._meta||{},HID=new Set((META.hidden||[]).filter(k=>k!=='cover'&&k!=='back'));const sig=JSON.stringify([vis.map(c=>[c.k,c.after,c.t,c.pl,c.d,c.x]),[...HID].sort(),META.titles||{}]);if(sig===CPSIG)return false;CPSIG=sig;
@@ -1796,7 +1799,8 @@ function cpApply(){const L=((BPG._custom||{}).pages||[]).filter(c=>c&&/^c_[\w-]+
     while(i+1<SEQ.length&&anc[SEQ[i+1]]!==undefined&&SEQ.indexOf(SEQ[i+1])>i&&chainOf(SEQ[i+1],a))i++;SEQ.splice(i+1,0,c.k);};
   const chainOf=(k,a)=>{let g=0;while(k&&g++<20){if(anc[k]===a)return true;k=anc[k];}return false;};
   vis.forEach(c=>{let ac0=c.after,g=0;while(anc[ac0]!==undefined&&g++<20)ac0=anc[ac0];if(/^t\d$/.test(ac0)){const ix=SEQ0.indexOf(ac0);ac0=ix>0?SEQ0[ix-1]:ac0;}const ac=P[ac0]?P[ac0].c:'ch0',d=String(c.d||'').trim();
-    P[c.k]={c:ac||'ch0',h:()=>`${rh('',cpEsc(c.pl||''),d?'DAY '+cpEsc(d):'')}<div class="col gpcol cpcol"><div class="meta">${cpEsc([d?'DAY '+d:'',c.pl||''].filter(Boolean).join(' · '))}</div><h2>${cpEsc(c.t||'')}</h2>${c.x?`<p class="txt">${cpEsc(c.x).replace(/\n/g,'<br>')}</p>`:''}<div class="pgr cpg"></div></div>`};CPK.push(c.k);});
+    const dx=CPTXT[c.k]||{},cx=c.x||dx.x||'';
+    P[c.k]={c:ac||'ch0',h:()=>`${rh('',cpEsc(c.pl||''),d?'DAY '+cpEsc(d):'')}<div class="col gpcol cpcol"><div class="meta">${cpEsc([d?'DAY '+d:'',c.pl||''].filter(Boolean).join(' · '))}</div><h2>${cpEsc(c.t||'')}</h2>${cx?cx.split(/\n{2,}/).map(t=>`<p class="txt">${cpEsc(t).replace(/\n/g,'<br>')}</p>`).join(''):''}<div class="pgr cpg"></div>${!c.x&&dx.one?`<p class="one">${cpEsc(dx.one)}</p>`:''}</div>`};CPK.push(c.k);});
   vis.forEach(place);
   if(HID.size){const keep=SEQ.filter(k=>!HID.has(k));SEQ.splice(0,SEQ.length,...keep);}
   Object.keys(DAYSTART0).forEach(d=>{let k=DAYSTART0[d];if(SEQ.includes(k)){DAYSTART[d]=k;return;}const i=SEQ0.indexOf(k);const nx=SEQ0.slice(i+1).find(x=>SEQ.includes(x));DAYSTART[d]=nx||k;});
