@@ -2058,6 +2058,22 @@ function introRun(){try{if(sessionStorage.getItem('hkr-intro'))return;}catch(e){
     setTimeout(()=>{if(!done&&!ov.classList.contains('t'))title();},9000);};
   /* 等 bookpages 讀到（換了影片或關掉開場）再開始，最多等 0.8 秒 */
   let waited=0;const go=()=>{const H=new Set(((BPG._meta||{}).hidden)||[]);if(H.has('intro')){ov.remove();return;}if(window.BPLIVE||Object.keys(BPG).length||waited>=800){start();return;}waited+=100;setTimeout(go,100);};go();}
+/* ===== 2026-11-19 翻到某一頁時先全螢幕播一段影片（兼六園：石浦神社的千本鳥居，0.5 倍速），播完才看到那一頁 ===== */
+const PAGEINTRO={s_castle:{v:'0565',m:'15:20 · 石浦神社',s:'穿過千本鳥居，走進兼六園'}};
+let PI_LAST='';
+function pageIntro(){const U=UNITS(),u=U[I],keys=(Array.isArray(u)?u:[u]).filter(Boolean),sig=keys.join('|');if(sig===PI_LAST)return;const prev=PI_LAST;PI_LAST=sig;
+  const k=keys.find(x=>PAGEINTRO[x]);if(!k||!prev||prev.split('|').includes(k))return;   /* 第一次載入（prev 空）或同一頁重畫不播 */
+  if(/embedpreview|bpmock|nointro/.test(location.search)||matchMedia('(prefers-reduced-motion: reduce)').matches||document.getElementById('intro'))return;
+  const H=new Set(((BPG._meta||{}).hidden)||[]);if(H.has('pi_'+k))return;
+  const o=PAGEINTRO[k],ov=document.createElement('div');ov.id='intro';ov.className='pgi';
+  ov.innerHTML=`<video muted playsinline preload="auto"></video><div class="itx"><small>${o.m}</small><b>${cpEsc(titleOf(k)||'')}</b><span>${o.s}</span></div><button class="isk" type="button">略過 ›</button>`;
+  document.body.appendChild(ov);const v=ov.querySelector('video');let done=false;
+  const close=()=>{if(done)return;done=true;ov.classList.add('out');setTimeout(()=>ov.remove(),900);};
+  const title=()=>{if(done)return;ov.classList.add('t');setTimeout(close,1800);};
+  ov.addEventListener('click',close);document.addEventListener('keydown',function kd(e){if(['ArrowLeft','ArrowRight','Escape',' '].includes(e.key)){close();document.removeEventListener('keydown',kd);}});
+  v.poster=`vid/IMG_${o.v}.jpg`;v.src=`vid/IMG_${o.v}.mp4`;v.defaultPlaybackRate=0.5;v.playbackRate=0.5;v.onloadedmetadata=()=>{v.playbackRate=0.5;};v.onended=title;
+  v.play().then(()=>{v.playbackRate=0.5;setTimeout(()=>ov.classList.add('t0'),300);}).catch(()=>title());setTimeout(title,8000);}
+{const _a9=after;after=function(){_a9.apply(this,arguments);try{pageIntro();}catch(e){console.error(e);}};}
 /* ===== 2026-11-19 烤網頁（取代原本的「對焦環」）：タロちゃん的烤肉，每塊肉是一張照片或影片，點一下烤熟才看得清楚 ===== */
 let GRILL=[];
 function grillItems(){const c=BPG.focus&&BPG.focus.slots;let L=(c&&Array.isArray(c.grill)?c.grill:[]).map(id=>bpItem(spPre(id))).filter(Boolean).slice(0,9);
