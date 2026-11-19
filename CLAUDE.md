@@ -270,6 +270,13 @@
   按章節或 ☰ 開 `#nbpnl`：「🔖 夾在這一頁」「翻到書籤（p.N）」、拖拉跳頁、封面／目錄／序・路線／六章（目前那章展開 Day 按鈕）／後記／封底；🔖 直接把書籤夾在目前這頁（亮紅色＝這頁就是書籤），提示 `#nbt`。
   書籤一樣存 localStorage `hkr-book-mark`。舊的右上角緞帶 `.bm`／`#bmp` 藏起來（程式還在）。`#stage` 下方留 66px 給導覽列；投影卡帶時（`body.pj`）藏起來。手機成員入口 `.pvb` 移到右上角（原本讓位給緞帶）。
   驗證 scratchpad `rt/nbt.js`（電腦、手機、360×640：書不蓋到導覽列、面板在畫面內、夾書籤／翻回書籤／Day 按鈕／拖拉、沒有溢出）。**踩雷**：頁碼的 span 不能叫 `.pg`（書頁本身的 class）。`sw.js` `hkr-v11`。
+- **2026-11-19 使用者要求（隧道、省略頁、照片完整）**：
+  - **隧道頁翻到就自動推進度條**（`tunnelAuto`，包住 `after()`）：0.7 秒後開始，約 7 秒從京都推到敦賀（緩進緩出），出隧道後窗外影片照舊播；使用者一拖或按鍵就停。
+  - **沒有照片的內容頁從 `SEQ` 拿掉**（頁面定義還在，要放回只改 `SEQ`）：`s_taiyo` 太洋商務飯店、`s_lunch2` 小巷的湯麵沾麵、`s_market3` 早上的近江町市場、`s_koyama`、`s_bath5` 付費的湯、`s_taco`、`s_dentetsu` 湯けむり號、`s_kanda` 神田勝本、`s_ichiran` 一蘭。
+    判斷依據＝公開照片沒有、對頁草稿也沒有私人照片放在那頁（以私人版為主）。章扉、車票、每天一句話、有私人照片的頁（新今宮站、IC 卡、恐龍、鰻魚、NINJA、歌舞伎町）都留著。`DAYSTART[3]` 改 `s_noto`。全書 73 → 64 頁。`book-pages.json` 已重產。
+    第三章章扉 `op3` 的插畫換成公開照片 0780（岡山旅館窗外的雪）。
+  - **照片完整顯示**：一般頁的照片格（`.col>.ph`、`.pgr .ph`、`.op>.ph`）不再裁切——`::before` 用 `background-image:inherit` 以 `contain` 疊一張完整的，後面原本 `cover` 的那張被 `backdrop-filter:blur(14px) brightness(.72)` 糊成墊底；輪播的 `.slx` 同樣處理；頁面上的影片 `object-fit:contain`。私人照片 `.pvf` 不套（它自己有焦點／不裁切的邏輯）。
+  - 驗證 scratchpad `rt/fit.js`（隧道 0 → 100 且影片播放、拿掉的頁 `idxOf=-1`、電腦與手機整本沒有文字溢出、零錯誤）。`sw.js` `hkr-v12`。
 
 ## GitHub Pages 發布
 - Settings → Pages → Deploy from a branch → 選分支 / `(root)`。

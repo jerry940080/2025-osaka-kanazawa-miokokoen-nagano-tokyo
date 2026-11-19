@@ -352,6 +352,11 @@ html.short .rchips span{font-size:10.5px;padding:1px 6px 1px 3px}html.short .rsu
 body.pj #nb,body.pj #nbpnl,#stage.tilt~#nb{display:none}
 @media (max-width:520px){#nb .nbt span{display:none}#nb .nbc .nm{max-width:110px}#nb button{padding:7px 9px}}
 @media (max-width:370px){#nb .nbc .nm{display:none}}
+/* 2026-11-19 照片完整顯示（使用者：盡可能讓每一張圖都完整展示）：一般頁的照片格不裁切，空出來的地方用同一張照片模糊墊底；影片也不裁切 */
+.col>.ph.img:not(.vid):not(.pvf)::before,.pgr .ph.img:not(.vid):not(.pvf)::before,.op>.ph.img:not(.vid):not(.pvf)::before{content:'';position:absolute;inset:0;z-index:0;pointer-events:none;background-image:inherit;background-size:contain;background-repeat:no-repeat;background-position:center;-webkit-backdrop-filter:blur(14px) brightness(.72);backdrop-filter:blur(14px) brightness(.72)}
+.col>.ph.img::after,.pgr .ph.img::after,.op>.ph.img::after{z-index:2}
+.ph.sld .slx{background-size:contain!important;background-repeat:no-repeat;-webkit-backdrop-filter:blur(14px) brightness(.72);backdrop-filter:blur(14px) brightness(.72)}
+.col>.ph.vid .autov,.pgr .ph.vid .autov,.op>.ph.vid .autov{object-fit:contain;background:#111}
 </style>
 <style>
 .slots{display:flex;gap:6px;margin-bottom:6px}
@@ -1073,7 +1078,7 @@ function trainInit(B){const tr=B.querySelector('.tr2');if(!tr)return;TI=0;tr.sty
   ln.addEventListener('touchend',e=>{if(x0===null)return;const dx=e.changedTouches[0].clientX-x0;x0=null;if(Math.abs(dx)>40)trainSet(B,TI+(dx<0?1:-1));},{passive:true});}
 
 // ===== 書籤：快速翻頁 =====
-const DAYSTART={1:'s_arrive',2:'s_iccard',3:'s_market3',4:'s_uber',5:'s_day5',6:'t3',7:'t4',8:'s_plus',9:'op6'};
+const DAYSTART={1:'s_arrive',2:'s_iccard',3:'s_noto',4:'s_uber',5:'s_day5',6:'t3',7:'t4',8:'s_plus',9:'op6'};
 const CHDAYS={ch1:[1],ch2:[2,3],ch3:[4,5],ch4:[6],ch5:[7,8],ch6:[9]};
 const NAMEK={cover:'封面',back:'封底',endp:'題詞',toc:'目錄',pre:'序',route:'路線',after:'後記',cass:'秋葉原・淺草的錄音帶'};
 function titleOf(k){if(NAMEK[k])return NAMEK[k];const p=P[k];if(!p)return '';if(/^q\d$/.test(k))return 'Day '+k.slice(1)+' 的一句話';
@@ -1231,6 +1236,7 @@ const MEDIA={"s_dinner1":[["0494","串炸（炸蝦串淋塔塔醬）與生高麗
 // PHOTO[頁][佔位標籤]=[照片編號, 新的說明]；GAL[頁]＝點照片時燈箱裡可以翻的那一組（沒寫就用這一頁有放的照片）
 const CAP={};
 const PHOTO={
+ op3:{'直幅照片・妙高的雪':['0780','岡山旅館窗外的雪']},
  s_dinner1:{'橫幅照片・晚餐':['0494','串炸']},
  op2:{'直幅照片・鼓門與飄雪':['0508','金澤站・鼓門']},
  s_tsuzumi:{'直幅・鼓門':['0509','鼓門前，行李箱還在'],'橫幅・雪':['1854','鼓門廣場'],'橫幅・行李箱':['1858','走去飯店的雪巷']},
@@ -1335,12 +1341,13 @@ Object.keys(PHOTO).forEach(k=>{if(P[k]&&typeof P[k].h==='string')P[k].h=photoPat
 const SNOWBYE=[['1848','t1'],['0508','s_tsuzumi'],['1872','gate'],['0645','s_album'],['0777','s_okayama'],['2124','t3'],['2136','noren'],['0918','s_shibu']];
 P.s_snowbye={c:'ch4',h:()=>`${rh('','雪國','DAY 2–6')}<div class="col"><div class="meta">DAY 2–6 · 敦賀 → 湯田中</div><h3>再見，雪國</h3><p class="txt">從往敦賀的路上出了隧道開始，到湯田中為止，這五天幾乎都在雪裡。明天就到東京了。</p><div class="sbye">${SNOWBYE.map(([id,k])=>{const v=(MEDIA[k]||[]).find(x=>x[0]===id)||[id,''];return phHTML('',[v[0],v[1],'i',v[3]||'h'],k);}).join('')}</div></div>`};
 const SEQ=['endp','toc','pre','route',
- 'op1','s_arrive','s_dinner1','s_taiyo','q1','s_iccard',
- 't1','op2','tunnel','s_tsuzumi','s_hotel2','s_lunch2','gate','s_castle','s_dinner2','q2','s_market3','s_noto','s_bus','snowx','pop','korokke','s_album','s_shira','s_unagi','q3','s_uber',
- 't2','op3','trainx','s_kogen','s_okayama','s_night','s_ninja','q4','s_day5','s_koyama','s_bath5','s_taco','q5',
- 't3','op4','s_soba','s_dentetsu','noren','s_shibu','s_nagano','q6','s_snowbye',
- 't4','op5','s_bookbed','s_motomura','cabinet','focus','s_kabuki','q7','s_plus','s_akiba','s_kanda','s_ichiran','s_sensoji','cass','suitcase','q8',
+ 'op1','s_arrive','s_dinner1','q1','s_iccard',
+ 't1','op2','tunnel','s_tsuzumi','s_hotel2','gate','s_castle','s_dinner2','q2','s_noto','s_bus','snowx','pop','korokke','s_album','s_shira','s_unagi','q3','s_uber',
+ 't2','op3','trainx','s_kogen','s_okayama','s_night','s_ninja','q4','s_day5','q5',
+ 't3','op4','s_soba','noren','s_shibu','s_nagano','q6','s_snowbye',
+ 't4','op5','s_bookbed','s_motomura','cabinet','focus','s_kabuki','q7','s_plus','s_akiba','s_sensoji','cass','suitcase','q8',
  'op6','after'];
+// 2026-11-19 使用者：沒有照片的頁省略。拿掉（定義還在）：s_taiyo s_lunch2 s_market3 s_koyama s_bath5 s_taco s_dentetsu s_kanda s_ichiran
 const CHNO={ch1:'01',ch2:'02',ch3:'03',ch4:'04',ch5:'05',ch6:'終'};
 function pairUp(seq){const out=[['none','cover']];let pend=null,sn=0;
   const spacer=c=>{const k='spc'+(++sn);P[k]={c,spacer:1,h:`<div class="spc"><b>${CHNO[c]||''}</b><span>${(CH.find(x=>x.c===c)||{}).sub||''}</span></div>`};return k;};
@@ -1603,6 +1610,15 @@ document.addEventListener('change',e=>{if(e.target.id==='nbr'){const i=+e.target
 addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('#nbpnl').hidden){nbClose();e.stopImmediatePropagation();}},true);
 ['touchstart','touchend','touchmove'].forEach(ev=>{$('#nbpnl').addEventListener(ev,e=>e.stopPropagation(),{passive:true});$('#nb').addEventListener(ev,e=>e.stopPropagation(),{passive:true});});
 {const _a1=after;after=function(){_a1.apply(this,arguments);try{nbDraw();}catch(e){console.error(e);}};}
+
+// 2026-11-19：隧道頁翻到就自動推進度條（約 7 秒從京都到敦賀）；使用者自己拖就停下來
+let TUN=null;
+function tunnelAuto(B){if(TUN){cancelAnimationFrame(TUN.r);TUN=null;}if(!B)return;const r=B.querySelector('.tprog');if(!r)return;
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches){r.value=100;tunnelSet(B,100);return;}
+  const st={t0:0,dur:7000,stop:false};TUN=st;const halt=()=>{st.stop=true;};r.addEventListener('pointerdown',halt,{once:true});r.addEventListener('keydown',halt,{once:true});r.addEventListener('touchstart',halt,{once:true,passive:true});
+  const tick=t=>{if(st.stop||TUN!==st||!r.isConnected)return;if(!st.t0)st.t0=t+700;const x=Math.max(0,Math.min(1,(t-st.t0)/st.dur)),v=Math.round((x<.5?2*x*x:1-Math.pow(-2*x+2,2)/2)*100);
+    if(+r.value!==v){r.value=v;tunnelSet(B,v);}if(x<1)st.r=requestAnimationFrame(tick);};st.r=requestAnimationFrame(tick);}
+{const _a2=after;after=function(){_a2.apply(this,arguments);try{tunnelAuto(document.querySelector('#base'));}catch(e){console.error(e);}};}
 
 show();
 </script>
