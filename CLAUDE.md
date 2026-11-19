@@ -277,6 +277,13 @@
     第三章章扉 `op3` 的插畫換成公開照片 0780（岡山旅館窗外的雪）。
   - **照片完整顯示**：一般頁的照片格（`.col>.ph`、`.pgr .ph`、`.op>.ph`）不再裁切——`::before` 用 `background-image:inherit` 以 `contain` 疊一張完整的，後面原本 `cover` 的那張被 `backdrop-filter:blur(14px) brightness(.72)` 糊成墊底；輪播的 `.slx` 同樣處理；頁面上的影片 `object-fit:contain`。私人照片 `.pvf` 不套（它自己有焦點／不裁切的邏輯）。
   - 驗證 scratchpad `rt/fit.js`（隧道 0 → 100 且影片播放、拿掉的頁 `idxOf=-1`、電腦與手機整本沒有文字溢出、零錯誤）。`sw.js` `hkr-v12`。
+- **重點景點多給頁數（2026-11-19，使用者：依 trip-tools 私人照片影片的量調整篇幅，金澤城公園、第一次看到雪、合掌村要多幾頁）**：照片頁 `gp`（`GPG`／`GPINFO`／`gpItems`／`gpRun`，scratchpad `rt/gp.js`）。
+  依對頁草稿的量（第一次看到雪 公開 7＋私人 10、金澤城公園 公開 11＋私人 20、白川鄉 公開 49＋私人 41）新增 8 頁：`g_tsu1`「第一次看到雪（二）」`g_tsu2`「拖著行李箱的雪路」（`s_tsuzumi` 之後）、
+  `g_gate1`／`g_gate2`「金澤城公園（二）（三）」（`gate` 之後）、`g_shira1`～`g_shira4`「雪中的合掌村（一）～（四）」（`s_album` 之後）。全書 64 → 72 頁。
+  每頁從來源頁的相簿（公開 `MEDIA[來源]` 扣掉來源頁已經放的，＋成員登入後的私人 `window.PVM[來源]`、`PVM[這頁]`）依時間平均切一段；電腦最多 4 格、手機 2 格，照片比格子多就每格輪播（完整顯示＋模糊墊底）；
+  有影片時第一格播影片（多支依序接著播，靜音、🔇 可開聲音）；點格子開燈箱翻這頁全部。來源頁（`GPSRC`）不再自己輪播這些照片。私人模組在 `refresh()` 交出 `window.PVM／PVALL／pvUrl` 並呼叫 `gpRefresh()`。
+  **Claude 讀不到使用者在 trip-tools 的實際擺放**，數量是依草稿估的；使用者把私人照片指定到 `g_*` 頁也會出現在那頁。`book-pages.json` 已重產。`sw.js` `hkr-v13`。驗證 scratchpad `rt/gpt.js`。
+  **踩雷**：單行函式裡加 `//` 註解會把後面的程式吃掉（要用 `/* */`）。
 
 ## GitHub Pages 發布
 - Settings → Pages → Deploy from a branch → 選分支 / `(root)`。

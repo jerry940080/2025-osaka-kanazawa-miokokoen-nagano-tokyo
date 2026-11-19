@@ -357,6 +357,19 @@ body.pj #nb,body.pj #nbpnl,#stage.tilt~#nb{display:none}
 .col>.ph.img::after,.pgr .ph.img::after,.op>.ph.img::after{z-index:2}
 .ph.sld .slx{background-size:contain!important;background-repeat:no-repeat;-webkit-backdrop-filter:blur(14px) brightness(.72);backdrop-filter:blur(14px) brightness(.72)}
 .col>.ph.vid .autov,.pgr .ph.vid .autov,.op>.ph.vid .autov{object-fit:contain;background:#111}
+/* 2026-11-19 照片頁 gp：最多 4 格，完整顯示＋模糊墊底，輪播 */
+.gpcol .txt{margin-bottom:6px}
+.gpg{flex:1;min-height:0;display:grid;gap:6px;margin-top:4px}
+.gpg.n1{grid-template:1fr/1fr}.gpg.n2{grid-template:1fr 1fr/1fr}.gpg.n3{grid-template:1.2fr 1fr/1fr 1fr}.gpg.n3 .gpc:first-child{grid-column:1/3}.gpg.n4{grid-template:1fr 1fr/1fr 1fr}
+.gpc{position:relative;overflow:hidden;border-radius:3px;background:#1d1a17;cursor:zoom-in;min-height:0}
+.gpc i{position:absolute;inset:0;background-image:var(--u);background-position:center;transition:opacity .9s ease}
+.gpc i.b{background-size:cover;filter:blur(14px) brightness(.7);transform:scale(1.15)}.gpc i.f{background-size:contain;background-repeat:no-repeat}
+.gpc i.n{opacity:0}.gpc i.n.on{opacity:1}
+.gpc video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#111}
+.gpc .pl{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);color:#fff;font-size:26px;text-shadow:0 2px 8px #000}
+.gpc .cp{position:absolute;left:6px;bottom:5px;right:40px;z-index:2;font:11px var(--mono);color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.9);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gpc .vsnd{position:absolute;right:6px;bottom:6px;z-index:4;width:32px;height:32px;border-radius:50%;border:0;background:rgba(0,0,0,.55);color:#fff;font-size:15px;line-height:32px;padding:0;cursor:pointer}
+.gpm{font:11px var(--mono);color:var(--sub);margin-top:5px;text-align:right}
 </style>
 <style>
 .slots{display:flex;gap:6px;margin-bottom:6px}
@@ -1348,6 +1361,64 @@ const SEQ=['endp','toc','pre','route',
  't4','op5','s_bookbed','s_motomura','cabinet','focus','s_kabuki','q7','s_plus','s_akiba','s_sensoji','cass','suitcase','q8',
  'op6','after'];
 // 2026-11-19 使用者：沒有照片的頁省略。拿掉（定義還在）：s_taiyo s_lunch2 s_market3 s_koyama s_bath5 s_taco s_dentetsu s_kanda s_ichiran
+// ===== 2026-11-19：重點景點多給頁數（照片頁 gp）=====
+// 使用者：依 trip-tools 裡私人照片影片的量調整篇幅，金澤城公園、第一次看到雪、合掌村多幾頁。
+// 每個照片頁從「來源頁」的相簿（公開 MEDIA ＋ 成員登入後的私人照片影片 window.PVM）分到一段，最多 4 格；
+// 照片比格子多時每格輪播（完整顯示、模糊墊底）；有影片時第一格播影片（多支依序播）。來源頁自己就不再輪播這些照片。
+const GPG={
+  s_tsuzumi:{pages:['g_tsu1','g_tsu2'],skip:['0509','1854','1858']},
+  gate:{pages:['g_gate1','g_gate2'],skip:['0518']},
+  s_album:{pages:['g_shira1','g_shira2','g_shira3','g_shira4'],skip:(()=>{const g=MEDIA.s_album||[],ph=g.filter(x=>x[2]!=='v').slice(0,10),v=g.find(x=>x[2]==='v');return ph.concat(v?[v]:[]).map(x=>x[0]);})()}
+};
+const GPINFO={
+  g_tsu1:['ch2','金澤','DAY 2','12:23 · 金澤站','第一次看到雪（二）','鼓門一帶，到處都是雪。'],
+  g_tsu2:['ch2','金澤','DAY 2','下午 · 走去飯店','拖著行李箱的雪路','地圖說 15 分鐘，實際走了快半小時。'],
+  g_gate1:['ch2','金澤','DAY 2','14:20 · 金澤城公園','金澤城公園（二）','公園很大，城門、石垣、護城壕都積著雪。'],
+  g_gate2:['ch2','金澤','DAY 2','15:00 · 金澤城公園','金澤城公園（三）','雪吊的松樹和池塘，一路走到兼六園。'],
+  g_shira1:['ch2','白川鄉','DAY 3','14:30 · 白川鄉','雪中的合掌村（一）','下了巴士，雪厚到可以整個人栽進去。'],
+  g_shira2:['ch2','白川鄉','DAY 3','白川鄉','雪中的合掌村（二）','主街、合掌屋、屋簷下的冰柱。'],
+  g_shira3:['ch2','白川鄉','DAY 3','白川鄉','雪中的合掌村（三）','田裡的雪原，被雪埋到屋簷的合掌屋。'],
+  g_shira4:['ch2','白川鄉','DAY 3','16:27 · 白川鄉','雪中的合掌村（四）','庄川河岸和雪山，四點半左右離開。']};
+const GPSRC=new Set(Object.keys(GPG));const GPOF={};Object.entries(GPG).forEach(([s,g])=>g.pages.forEach((k,i)=>GPOF[k]={src:s,i,n:g.pages.length}));
+// 這一頁分到的項目：[id, 說明, 'i'|'v', 方向, 私人?]
+function gpItems(k){const o=GPOF[k];if(!o)return [];const g=GPG[o.src];
+  const pub=(MEDIA[o.src]||[]).filter(x=>!g.skip.includes(x[0]));
+  const PV=window.PVM||{};const priv=[...(PV[o.src]||[]),...(PV[k]||[])].map(m=>['pv:'+m.id,m.note||'',m.kind==='video'?'v':'i',m.h>m.w?'v':'h',1]);
+  const cut=(L,i,n)=>{const a=Math.floor(L.length*i/n),b=Math.floor(L.length*(i+1)/n);return L.slice(a,b);};
+  return cut(pub,o.i,o.n).concat(cut(priv,o.i,o.n));}
+function gpSlots(L){const V=L.filter(x=>x[2]==='v'),Pi=L.filter(x=>x[2]!=='v');const S=Math.min(MOB?2:4,Pi.length+(V.length?1:0))||1;/* 手機一次兩格，照片才夠大 */const sl=Array.from({length:S},()=>[]);
+  let s0=0;if(V.length){sl[0]=V;s0=1;}Pi.forEach((x,i)=>{const n=S-s0;if(n>0)sl[s0+(i%n)].push(x);});return sl.filter(a=>a.length);}
+const gpSrc=x=>x[4]?'':(x[2]==='v'?`vid/IMG_${x[0]}.jpg`:`img/IMG_${x[0]}.webp`);
+function gpCell(x,k,j){const u=gpSrc(x),bg=u?`style="--u:url(${u})"`:'';return `<div class="gpc${x[2]==='v'?' v':''}" data-gp="${k}" data-j="${j}" ${bg}><i class="b"></i><i class="f"></i>${x[2]==='v'?'<b class="pl">▶</b>':''}<span class="cp">${x[4]?'🔒 ':''}${x[1]||''}</span></div>`;}
+function gpHTML(k){const L=gpItems(k),sl=gpSlots(L),p=L.filter(x=>x[2]!=='v').length,v=L.length-p;
+  return `<div class="gpg n${sl.length}" data-gpk="${k}">${sl.map((a,j)=>gpCell(a[0],k,j)).join('')}</div><div class="gpm">${p?p+' 張':''}${p&&v?'・':''}${v?v+' 支影片':''}</div>`;}
+Object.entries(GPINFO).forEach(([k,[c,pl,d,m,t,x]])=>{P[k]={c,h:()=>`${rh('',pl,d)}<div class="col gpcol"><div class="meta">${m}</div><h2>${t}</h2><p class="txt">${x}</p>${gpHTML(k)}</div>`};});
+// 放進 SEQ：第一次看到雪之後、金澤城公園拉頁之後、白川鄉相簿之後
+{const ins=(after,ks)=>{const i=SEQ.indexOf(after);if(i>=0)SEQ.splice(i+1,0,...ks);};ins('s_tsuzumi',GPG.s_tsuzumi.pages);ins('gate',GPG.gate.pages);ins('s_album',GPG.s_album.pages);}
+// 翻到時：補上私人項目、輪播、播影片
+let GPT=null;
+function gpRun(B){clearInterval(GPT);GPT=null;if(!B)return;const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;const jobs=[];
+  B.querySelectorAll('.gpg').forEach(g=>{const k=g.dataset.gpk;const L=gpItems(k),sl=gpSlots(L);
+    g.className='gpg n'+sl.length;g.innerHTML=sl.map((a,j)=>gpCell(a[0],k,j)).join('');const m=g.nextElementSibling;if(m){const p=L.filter(x=>x[2]!=='v').length,v=L.length-p;m.textContent=(p?p+' 張':'')+(p&&v?'・':'')+(v?v+' 支影片':'');}
+    g.querySelectorAll('.gpc').forEach((c,j)=>{const list=sl[j];const st={c,list,i:0,k};gpShow(st,0);if(list[0][2]==='v')gpVideo(st);else if(list.length>1&&!reduce)jobs.push(st);});});
+  if(!jobs.length)return;let t=0;GPT=setInterval(()=>{if(document.hidden||!$('#lb').hidden)return;t++;jobs.forEach((j,n)=>{if((t+n)%2)return;if(!j.c.isConnected)return;gpShow(j,(j.i+1)%j.list.length);});},2600);}
+async function gpUrl(x,which){if(!x[4])return which==='p'?`vid/IMG_${x[0]}.jpg`:(x[2]==='v'?`vid/IMG_${x[0]}.mp4`:`img/IMG_${x[0]}.webp`);
+  const m=(window.PVALL||{})[x[0].slice(3)];if(!m||!window.pvUrl)throw new Error('no');return window.pvUrl(m,which);}
+function gpShow(st,i){const x=st.list[i];st.i=i;const c=st.c;c.dataset.j=i;c.querySelector('.cp').textContent=(x[4]?'🔒 ':'')+(x[1]||'');
+  if(x[2]==='v')return;
+  gpUrl(x,'f').then(u=>{const im=new Image();im.onload=()=>{if(!c.isConnected||st.list[st.i]!==x)return;const o=document.createElement('i');o.className='f n';o.style.backgroundImage=`url(${u})`;
+    const b=document.createElement('i');b.className='b n';b.style.backgroundImage=`url(${u})`;c.prepend(b);c.insertBefore(o,c.querySelector('.cp'));requestAnimationFrame(()=>{o.classList.add('on');b.classList.add('on');});
+    setTimeout(()=>{c.querySelectorAll('i.f:not(.n),i.b:not(.n)').forEach(e=>e.remove());o.classList.remove('n','on');b.classList.remove('n','on');},950);};im.src=u;}).catch(()=>{});}
+function gpVideo(st){const c=st.c;const play=i=>{const x=st.list[i];st.i=i;c.dataset.j=i;c.querySelector('.cp').textContent=(x[4]?'🔒 ':'')+(x[1]||'');
+    Promise.all([gpUrl(x,'p').catch(()=>''),gpUrl(x,'f')]).then(([p,u])=>{if(!c.isConnected)return;let v=c.querySelector('video');if(!v){v=document.createElement('video');v.className='autov';v.muted=true;v.playsInline=true;v.setAttribute('playsinline','');v.setAttribute('muted','');c.insertBefore(v,c.querySelector('.cp'));
+      const sb=document.createElement('button');sb.className='vsnd';sb.type='button';sb.textContent='🔇';sb.title='開聲音';c.appendChild(sb);c.querySelector('.pl')&&c.querySelector('.pl').remove();}
+      v.loop=st.list.length===1;if(p)v.poster=p;v.src=u;v.onended=()=>play((st.i+1)%st.list.length);v.play().catch(()=>{});}).catch(()=>{});};
+  if(!(navigator.connection&&navigator.connection.saveData))play(0);}
+document.addEventListener('click',e=>{const c=e.target.closest('#base .gpc');if(!c||e.target.closest('.vsnd'))return;e.stopPropagation();const k=c.dataset.gp;const L=gpItems(k);const sl=gpSlots(L);const j=[...c.parentNode.children].indexOf(c);const x=sl[j][+c.dataset.j||0];
+  lbOpen(titleOf(k),0,Math.max(0,L.indexOf(x)),L.map(y=>[y[0],y[1],y[2],y[3]]));},true);
+window.gpRefresh=()=>{try{gpRun(document.querySelector('#base'));}catch(e){}};
+{const _a3=after;after=function(){_a3.apply(this,arguments);try{gpRun(document.querySelector('#base'));}catch(e){console.error(e);}};}
+
 const CHNO={ch1:'01',ch2:'02',ch3:'03',ch4:'04',ch5:'05',ch6:'終'};
 function pairUp(seq){const out=[['none','cover']];let pend=null,sn=0;
   const spacer=c=>{const k='spc'+(++sn);P[k]={c,spacer:1,h:`<div class="spc"><b>${CHNO[c]||''}</b><span>${(CH.find(x=>x.c===c)||{}).sub||''}</span></div>`};return k;};
@@ -1557,7 +1628,7 @@ function slideInit(B){clearInterval(SLT);SLT=null;SLJ=[];if(!B)return;
     const photoSlots=slots.filter(p=>!p.classList.contains('vid'));
     if(vids.length&&photoSlots.length>=2){const p=photoSlots.pop();p.classList.add('vid');p.dataset.src=vids[0][0];p.dataset.l=vids[0][1]||'';p.style.backgroundImage=`url(vid/IMG_${vids[0][0]}.jpg)`;shown.add(vids[0][0]);addV=true;}
     else if(vids.length&&photoSlots.length===1){const v=vids[0],d=document.createElement('div');d.className='ph img vid pip '+(v[3]==='v'?'pv':'ph');d.dataset.src=v[0];d.dataset.l='';d.dataset.g=k;d.style.backgroundImage=`url(vid/IMG_${v[0]}.jpg)`;photoSlots[0].appendChild(d);addV=true;}
-    const pics=g.filter(x=>x[2]!=='v'),rest=pics.filter(x=>!shown.has(x[0]));
+    const pics=g.filter(x=>x[2]!=='v'),rest=GPSRC.has(k)?[]:pics.filter(x=>!shown.has(x[0]));
     if(!rest.length||reduce)return;
     photoSlots.forEach((p,i)=>{const cur=pics.find(x=>x[0]===p.dataset.src)||[p.dataset.src,p.dataset.l,'i'];
       const list=[cur,...rest.filter((_,j)=>j%photoSlots.length===i)];if(list.length>1){p.classList.add('sld');SLJ.push({p,list,i:0});}});
@@ -1682,7 +1753,7 @@ function setNotes(rows){PN={};rows.filter(n=>n.page).forEach(n=>(PN[n.page]=PN[n
 function mockData(){const mk=(id,page,src,kind,w,h,extra={})=>({id,page,src,kind,w,h,ready:true,bytes:1,nf:1,...extra});
   setMedia([mk('M1','s_unagi','0494','photo',1600,1200,{note:'（模擬）晚餐',focus:{x:30,y:60}}),mk('M2','s_unagi','0506','photo',1600,1200),
     mk('M3','s_ninja','0501','video',720,1280,{dur:12}),mk('M4','s_ninja','0518','photo',3600,1000),mk('M5','trainx','0509','photo',1600,1200),mk('M6','noren','0526','photo',1600,1200,{note:'（模擬）湯'}),mk('M8','noren','0501','video',720,1280,{dur:12,note:'（模擬）影片'}),
-    mk('M7','s_arrive','0527','photo',1200,1600),mk('M9','s_snowbye','0501','video',720,1280,{dur:12,note:'（模擬）雪國的這幾天'})]);
+    mk('M7','s_arrive','0527','photo',1200,1600),mk('M9','s_snowbye','0501','video',720,1280,{dur:12,note:'（模擬）雪國的這幾天'}),mk('M10','gate','1872','photo',1600,1200,{note:'（模擬）私人・金澤城'}),mk('M11','gate','0501','video',720,1280,{dur:12,note:'（模擬）私人影片'}),mk('M12','s_album','1990','photo',1600,1200,{note:'（模擬）私人・合掌村'})]);
   setNotes([{id:'n1',page:'s_uber',title:'（模擬）私人文字的標題',text:'第一段。\n\n第二段，只有成員看得到。'}]);}
 
 /* ── 登入 ── */
@@ -1747,7 +1818,8 @@ function fill(ph,m,k,play){const il=ph.querySelector('.ills');if(il)il.remove();
   if(m.kind!=='video'){if(m.focus){ph.style.backgroundSize='cover';ph.style.backgroundPosition=`${m.focus.x}% ${m.focus.y}%`;}else ph.classList.add('ctn');}
   urlOf(m,m.kind==='video'?'p':'f').then(u=>{if(!ph.isConnected)return;ph.style.backgroundImage=`url(${u})`;
     if(m.kind==='video'&&play&&!(navigator.connection&&navigator.connection.saveData))urlOf(m,'f').then(vu=>{if(!ph.isConnected||ph.querySelector('video'))return;const v=document.createElement('video');v.muted=true;v.loop=true;v.playsInline=true;v.setAttribute('playsinline','');v.className='autov';v.src=vu;ph.prepend(v);v.play().catch(()=>{});}).catch(()=>{});}).catch(()=>{});}
-function refresh(){draw();if(typeof UNITS==='function')decorate();}
+function refresh(){window.PVM=PM;window.PVALL=ALL;draw();if(typeof UNITS==='function')decorate();if(window.gpRefresh)window.gpRefresh();}
+window.pvUrl=(m,w)=>urlOf(m,w);
 
 // 換頁後重新裝飾（原本的 after() 之後）
 const _after=window.after;window.after=function(){_after.apply(this,arguments);try{decorate();}catch(e){console.error(e);}};
