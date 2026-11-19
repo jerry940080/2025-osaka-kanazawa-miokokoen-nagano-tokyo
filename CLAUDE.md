@@ -304,6 +304,8 @@
   - 新增 **`s_bfast`「岡山旅館的早餐」**（Day 5 開頭，`DAYSTART[5]`）：日式早餐 0831、0827、0828＋退房那天的西式早餐 2123（`media_build.py` 的 `BFAST`）；`s_day5`「改逛溫泉街」拿掉早餐，留路邊 taco 與 NINJA Riceball。
   - 渋溫泉：`s_shibu` 改名「足湯」（0881＋法國人那段），`g_shibu3` 改名「日落街景」（湯田中的夕陽，`GPPUB` 換成夕陽 11 張）；順序改成 足湯 → 日落街景（`ins('s_shibu',['g_shibu3'])`）。`media_build.py` 的「湯田中」改歸 `noren`，0881 歸 `s_shibu`。
   - 全書 77 頁。兩個 json 已重產。`sw.js` `hkr-v19`。驗證 scratchpad `del/t.js`（電腦、手機翻完整本：零錯誤、沒有 404、沒有文字溢出）。
+- **直式影片被當成橫式（2026-11-19 修）**：0782、1222、1224 是另外下載的大影片，catalog 的寬高記的是手機原檔「轉向前」的尺寸（直拍記成 1280×720），`MEDIA` 就標成橫式 `h`。
+  `media_build.py` 改成用 ffprobe 量 `vid/` 裡實際的檔來判斷直橫，三支都改成 `v`；`book-media.json` 重產。私人影片不受影響（壓縮工具量的是轉向後的輸出檔）。`sw.js` `hkr-v20`。
 
 ## GitHub Pages 發布
 - Settings → Pages → Deploy from a branch → 選分支 / `(root)`。
