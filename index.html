@@ -1112,7 +1112,7 @@ function trainInit(B){const tr=B.querySelector('.tr2');if(!tr)return;TI=0;tr.sty
 const DAYSTART={1:'s_arrive',2:'s_iccard',3:'s_noto',4:'s_uber',5:'s_bfast',6:'t3',7:'t4',8:'s_plus',9:'op6'};
 const CHDAYS={ch1:[1],ch2:[2,3],ch3:[4,5],ch4:[6],ch5:[7,8],ch6:[9]};
 const NAMEK={cover:'封面',back:'封底',endp:'題詞',toc:'目錄',pre:'序',route:'路線',after:'後記',cass:'秋葉原・淺草的錄音帶'};
-function titleOf(k){if(NAMEK[k])return NAMEK[k];const p=P[k];if(!p)return '';if(/^q\d$/.test(k))return 'Day '+k.slice(1)+' 的一句話';
+function titleOf(k){const mt=((BPG._meta||{}).titles||{})[k];if(mt)return mt;if(NAMEK[k])return NAMEK[k];const p=P[k];if(!p)return '';if(/^q\d$/.test(k))return 'Day '+k.slice(1)+' 的一句話';
   const h=typeof p.h==='function'?p.h():p.h;let m=h.match(/<h[23][^>]*>([\s\S]*?)<\/h[23]>/);if(/^t\d$/.test(k)){const b=[...h.matchAll(/<b>([^<]*)<\/b><small>/g)].map(x=>x[1].replace(/\s/g,''));if(b.length>1)return '車票：'+b[0]+' → '+b[1];}
   return m?m[1].replace(/<[^>]+>/g,'').trim():'';}
 function keyAt(i){const u=UNITS()[i];return MOB?u:(u[0]==='none'?u[1]:u[0]);}
@@ -1567,11 +1567,14 @@ const NUM={};pn=0;SPREADS.forEach(s=>s.forEach(k=>{if(k!=='none'&&!P[k].spacer)N
 /* ===== 2026-11-19 自己加的照片頁（trip-tools 📐「＋ 在這頁後面加一頁」）=====
    bookpages/_custom＝{pages:[{k:'c_…', after:頁 key, t 標題, pl 地點, d Day, x 文字}]}；照片與版型跟一般頁一樣存在 bookpages/{k}。
    有任何一項看得到才插進書裡（全是私人照片的頁，沒登入的人看不到整頁）。插好後重算 SPREADS／PAGES／NUM。 */
-const SEQ0=SEQ.slice();let CPSIG='',CPK=[];
+const SEQ0=SEQ.slice();let CPSIG='',CPK=[];const DAYSTART0={...DAYSTART};
+/* 2026-11-19 trip-tools「📄 頁面」：bookpages/_meta＝{titles:{頁:新標題}, hidden:[頁…]}——改標題（換掉頁上第一個 h2／h3）、在書裡隱藏整頁（封面、封底不能藏） */
+const mtEsc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function mtTitle(k,h){const t=((BPG._meta||{}).titles||{})[k];if(!t||typeof h!=='string')return h;let done=false;return h.replace(/(<h([23])\b[^>]*>)([\s\S]*?)(<\/h\2>)/,(m,a,_,x,b)=>{done=true;return a+mtEsc(t)+b;});}
 const cpEsc=t=>String(t==null?'':t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 function cpApply(){const L=((BPG._custom||{}).pages||[]).filter(c=>c&&/^c_[\w-]+$/.test(c.k||''));
   const vis=L.filter(c=>{try{return bpItems(c.k).length>0;}catch(e){return false;}});
-  const sig=JSON.stringify(vis.map(c=>[c.k,c.after,c.t,c.pl,c.d,c.x]));if(sig===CPSIG)return false;CPSIG=sig;
+  const META=BPG._meta||{},HID=new Set((META.hidden||[]).filter(k=>k!=='cover'&&k!=='back'));const sig=JSON.stringify([vis.map(c=>[c.k,c.after,c.t,c.pl,c.d,c.x]),[...HID].sort(),META.titles||{}]);if(sig===CPSIG)return false;CPSIG=sig;
   const cur=(()=>{try{return keyAt(I);}catch(e){return null;}})();
   CPK.forEach(k=>delete P[k]);CPK=[];SEQ.splice(0,SEQ.length,...SEQ0);
   const anc={};L.forEach(c=>anc[c.k]=c.after);
@@ -1581,6 +1584,8 @@ function cpApply(){const L=((BPG._custom||{}).pages||[]).filter(c=>c&&/^c_[\w-]+
   vis.forEach(c=>{let ac0=c.after,g=0;while(anc[ac0]!==undefined&&g++<20)ac0=anc[ac0];if(/^t\d$/.test(ac0)){const ix=SEQ0.indexOf(ac0);ac0=ix>0?SEQ0[ix-1]:ac0;}const ac=P[ac0]?P[ac0].c:'ch0',d=String(c.d||'').trim();
     P[c.k]={c:ac||'ch0',h:()=>`${rh('',cpEsc(c.pl||''),d?'DAY '+cpEsc(d):'')}<div class="col gpcol cpcol"><div class="meta">${cpEsc([d?'DAY '+d:'',c.pl||''].filter(Boolean).join(' · '))}</div><h2>${cpEsc(c.t||'')}</h2>${c.x?`<p class="txt">${cpEsc(c.x).replace(/\n/g,'<br>')}</p>`:''}<div class="pgr cpg"></div></div>`};CPK.push(c.k);});
   vis.forEach(place);
+  if(HID.size){const keep=SEQ.filter(k=>!HID.has(k));SEQ.splice(0,SEQ.length,...keep);}
+  Object.keys(DAYSTART0).forEach(d=>{let k=DAYSTART0[d];if(SEQ.includes(k)){DAYSTART[d]=k;return;}const i=SEQ0.indexOf(k);const nx=SEQ0.slice(i+1).find(x=>SEQ.includes(x));DAYSTART[d]=nx||k;});
   const S=pairUp(SEQ);SPREADS.splice(0,SPREADS.length,...S);PAGES.splice(0,PAGES.length,...SPREADS.flat().filter(k=>k!=='none'&&!P[k].spacer));
   Object.keys(PAGEOF).forEach(x=>delete PAGEOF[x]);Object.keys(NUM).forEach(x=>delete NUM[x]);let n=0;
   SPREADS.forEach(s=>s.forEach(k=>{if(k==='none'||P[k].spacer)return;n++;NUM[k]=n;const c=P[k].c;if(k.startsWith('op')&&!PAGEOF[c])PAGEOF[c]='p.'+n;if(k==='after')PAGEOF.after='p.'+n;}));
@@ -1589,13 +1594,13 @@ function cpApply(){const L=((BPG._custom||{}).pages||[]).filter(c=>c&&/^c_[\w-]+
   setTimeout(()=>{try{if(/^#pg=c_/.test(location.hash))pgHash();}catch(e){}},60);
   return true;}
 let MOB=false,I=0,BUSY=false,W=0,H=0;
-function pageHTML(k,side){const p=P[k];if(p.none)return `<div class="pg ${side} none"></div>`;const h=typeof p.h==='function'?p.h():p.h;
+function pageHTML(k,side){const p=P[k];if(p.none)return `<div class="pg ${side} none"></div>`;const h=mtTitle(k,typeof p.h==='function'?p.h():p.h);
   const pnum=(k==='cover'||k==='back'||P[k].spacer)?'':`<span class="pn">${NUM[k]}</span>`;
   const tab=/^ch[1-6]$/.test(p.c)?'<i class="tab"></i>':'';
   return `<div class="pg ${side} ${p.c} ${p.cls||''} ${p.snow?'snow':''}">${tab}${h}${pnum}</div>`;}
 function build(u){const el=document.createElement('div');el.className='spread'+(MOB?' m':'');
-  if(MOB){const k=u;const p=P[k];el.innerHTML=p.full?`<div class="full ${p.c}">${typeof p.h==='function'?p.h():p.h}</div>`:pageHTML(k,'L');}
-  else{const p=P[u[0]];el.innerHTML=p.full?`<div class="full ${p.c}">${typeof p.h==='function'?p.h():p.h}</div>`:pageHTML(u[0],'L')+pageHTML(u[1],'R');}
+  if(MOB){const k=u;const p=P[k];el.innerHTML=p.full?`<div class="full ${p.c}">${mtTitle(k,typeof p.h==='function'?p.h():p.h)}</div>`:pageHTML(k,'L');}
+  else{const p=P[u[0]];el.innerHTML=p.full?`<div class="full ${p.c}">${mtTitle(u[0],typeof p.h==='function'?p.h():p.h)}</div>`:pageHTML(u[0],'L')+pageHTML(u[1],'R');}
   return el;}
 const UNITS=()=>MOB?PAGES:SPREADS;
 function face(u,side){const f=document.createElement('div');f.className='face';const s=build(u);s.style.left=side==='L'?'0':(-W)+'px';f.appendChild(s);return f;}

@@ -321,6 +321,10 @@
   章節顏色跟著前一頁；**有任何一項看得到才插進書裡**（全是私人的頁，沒登入看不到整頁；空的頁不出現）。插好後重算 `SPREADS`／`PAGES`／`PAGEOF`／`NUM`／`NBTOT`，目前那頁保持不動；`#pg=c_…` 等插好再跳。
   頁面＝`.col.gpcol.cpcol`（meta、h2 標題、文字、`.pgr.cpg` 給 `bpRun` 換成版型）。trip-tools 用同一套規則排清單（`cpMerge`）。驗證 scratchpad `sp/cp.js`（插在對的位置、車票前、只有私人的頁沒登入不出現、頁碼 77 → 80、標題、版型、沒有溢出、`#pg=` 跳頁）。`sw.js` `hkr-v23`。
 - `book-media.json` 的 `items` 多第 4 欄＝這項原本在 `MEDIA` 的哪一頁（0770a–d 算 `trainx`），給 trip-tools 候選名單分組用（2026-11-19，`rt/bm2.js`）。
+- **改標題、隱藏頁（2026-11-19，使用者：「我想要修改每一頁的標題跟該頁是否存在」）**：`bookpages/_meta＝{titles:{頁:新標題}, hidden:[頁…]}`（trip-tools「📄 頁面」）。
+  `mtTitle(k,h)` 在 `pageHTML`／`build` 輸出時把那頁第一個 h2／h3 換成新標題（`titleOf` 也先看 `_meta`，導覽列、目錄跳頁跟著變）；車票、每天一句話、題詞沒有大標題，只能隱藏。
+  隱藏：`cpApply` 插完自訂頁之後把 `hidden` 的頁從 `SEQ` 拿掉（封面、封底不能藏），重算頁碼；`DAYSTART` 的那天第一頁被藏了就改成後面第一個沒藏的（`DAYSTART0` 是原本的）。
+  `book-pages.json` 多 `ht`（這頁有沒有大標題）。驗證 scratchpad `sp/meta.js`（改兩頁標題、藏兩頁、Day 2 起點換成下一頁、頁碼 77 → 75、零錯誤）。`sw.js` `hkr-v24`。
 
 ## GitHub Pages 發布
 - Settings → Pages → Deploy from a branch → 選分支 / `(root)`。
