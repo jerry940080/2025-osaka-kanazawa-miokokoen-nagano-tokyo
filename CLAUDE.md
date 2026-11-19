@@ -352,6 +352,9 @@
   **要使用者在 trip-tools 把「往白川鄉的巴士」（`s_bus`，目前是拍立得散落，項目 1947 直照片、0640 直影片、1950 橫影片）換成這個版型。** 驗證 scratchpad `nd/bus.js`、`del/t.js`。`sw.js` `hkr-v32`。
 - **「日落」版型改成最多 6 格（2026-11-19，使用者：「日落的影片是兩個直 四個橫」）**：原本只有 1–3 格、每格輪播。改成每格一項（超過 6 項照方向輪播），每格照原比例（私人用 `PVALL` 的 w／h），
   用 `wallLay(row,cs,ar,'end',3)`（多了靠下對齊、最多 3 排）排在山稜上；`.srow` 改成 `top:30%`，太陽不會被蓋住。驗證 scratchpad `nd/sun.js`（2 直 4 橫＋1：電腦、手機都沒有格子超出）、`del/t.js`。`sw.js` `hkr-v33`。
+- **「日落」版型重做（2026-11-20，使用者：原本的「超醜」，這頁是 3 支影片＋3 張照片；從三個樣張 A 夕陽電影／B 剪影相片牆／C 大窗＋小窗選 A）**：`sunRender()`。
+  A＝暮色漸層底（下緣有淡淡的落日光暈），上方 `.sr1` 一大格主影片（優先橫式影片，照原比例置中），下方 `.sr2` 其他的照原比例排 1–2 排（`wallLay`），右下手寫小字「日が沈む」；格子細白邊、不再用厚米色框與大太陽。
+  B、C 的程式也留著：`bookpages/{頁}.sv='B'|'C'` 或網址 `?sunv=B|C` 可以切（trip-tools 目前沒有切換的地方）。樣張 scratchpad `nd/sunset-ABC.jpg`、測試 `nd/sun3.js`。`sw.js` `hkr-v34`。
 
 ## GitHub Pages 發布
 - Settings → Pages → Deploy from a branch → 選分支 / `(root)`。

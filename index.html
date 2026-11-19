@@ -423,14 +423,29 @@ html.pvw .bpa [data-n]::after{content:attr(data-n);position:absolute;left:6px;to
 .bp-eki .ekr{height:12px;margin:0 -10px;background:repeating-linear-gradient(90deg,#3b3631 0 8px,#2b2724 8px 22px);border-top:2px solid #9aa3ad;box-shadow:inset 0 -3px 0 #8e8a85}
 .bp-eki .ekc i.f.n{transform:translateX(18%);opacity:0}.bp-eki .ekc i.f.n.on{transform:none;opacity:1;transition:transform .9s cubic-bezier(.2,.7,.2,1),opacity .9s ease}
 /* 2026-11-19 日落版型 */
-.bpa.bp-sunset{position:relative;display:block;border-radius:8px;overflow:hidden;background:linear-gradient(#2c2a5a 0%,#7a3f6e 34%,#e2724a 64%,#f6b45c 82%,#fbd889 100%);background-size:100% 160%;animation:skyshift 14s ease-in-out infinite alternate}
-@keyframes skyshift{0%{background-position:0 0}100%{background-position:0 100%}}
-.bp-sunset .ssky{position:absolute;inset:0;background:transparent;overflow:visible;cursor:default}.bp-sunset .srow{background:transparent!important;overflow:visible!important;cursor:default!important}.bp-sunset .ssun{position:absolute;left:62%;top:18%;width:16%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,#fff6d6 0,#ffd27a 45%,#ff9a3c 70%,rgba(255,140,60,0) 72%);box-shadow:0 0 40px 18px rgba(255,170,90,.55);animation:sunset 14s ease-in-out infinite alternate}
-@keyframes sunset{0%{transform:translateY(0)}100%{transform:translateY(160%)}}
-.bp-sunset .sridge{position:absolute;left:0;right:0;bottom:0;width:100%;height:42%}.bp-sunset .sridge path{fill:#2a1a26}
-.bp-sunset .srow{position:absolute;left:4%;right:4%;top:30%;bottom:8%;display:block}
-.bp-sunset .scell{position:absolute;border-radius:8px;overflow:hidden;box-shadow:0 6px 18px rgba(40,10,20,.45);border:3px solid rgba(255,236,210,.85);cursor:zoom-in;background:#1d1a17}.bp-sunset .scell.big{height:100%;grid-column:span 1}
-@media (prefers-reduced-motion:reduce){.bpa.bp-sunset,.bp-sunset .ssun{animation:none}}
+.bpa.bp-sunset{position:relative;display:block;border-radius:10px;overflow:hidden;background:linear-gradient(180deg,#2b2346 0%,#5b3560 38%,#b4566a 66%,#e98a5a 86%,#f6c27a 100%)}
+.bp-sunset .sglow{position:absolute;right:8%;top:6%;width:26%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,rgba(255,236,190,.95) 0,rgba(255,190,110,.55) 30%,rgba(255,150,90,0) 70%);pointer-events:none;animation:sglow 9s ease-in-out infinite alternate}
+@keyframes sglow{from{transform:translateY(0);opacity:1}to{transform:translateY(22%);opacity:.75}}
+.bp-sunset .sridge{position:absolute;left:0;right:0;bottom:0;width:100%;height:22%;pointer-events:none}.bp-sunset .sridge path{fill:rgba(30,16,30,.55)}
+.bp-sunset .sa{position:absolute;inset:4%;background:none!important;overflow:visible!important;border-radius:0!important;cursor:default!important}.bp-sunset .sr{position:absolute;inset:0;cursor:default;background:none!important;overflow:visible!important;border-radius:0!important}
+.bp-sunset .scell{position:absolute;border-radius:6px;overflow:hidden;background:#140d14;box-shadow:0 4px 14px rgba(20,6,16,.45),0 0 0 1px rgba(255,236,214,.45);cursor:zoom-in}
+.bp-sunset .scell .cp{font-size:11px}
+/* A 夕陽電影 */
+.bp-sunset.svA{background:linear-gradient(180deg,#1d1424 0%,#3b2440 40%,#7a3b55 70%,#c8644f 100%)}
+.bp-sunset.svA .sglow{right:auto;left:50%;top:auto;bottom:-14%;width:60%;margin-left:-30%;opacity:.7}
+.bp-sunset.svA .sridge{display:none}
+.bp-sunset.svA .sa{inset:5% 4% 4%}.bp-sunset.svA .sr1{bottom:34%}.bp-sunset.svA .sr2{top:69%}
+.bp-sunset.svA .scell.main{border-radius:4px;box-shadow:0 10px 28px rgba(0,0,0,.5),0 0 0 1px rgba(255,214,170,.35)}
+.bp-sunset .stl{position:absolute;right:5%;top:2%;z-index:3;font:600 12px/1.6 var(--hand,serif);letter-spacing:.3em;color:rgba(255,226,190,.85);pointer-events:none}
+.bp-sunset.svA .stl{top:auto;bottom:31.5%;right:5%;font-size:11px}
+/* B 剪影相片牆 */
+.bp-sunset.svB .sa{inset:6% 5% 9%}
+/* C 大窗＋小窗 */
+.bp-sunset.svC{background:#1c1420}.bp-sunset.svC::before{content:'';position:absolute;left:0;right:0;top:0;height:5px;background:linear-gradient(90deg,#f6c27a,#e98a5a,#b4566a,#5b3560)}
+.bp-sunset.svC .sglow{width:34%;right:-6%;top:-10%;opacity:.45}.bp-sunset.svC .sridge{display:none}
+.bp-sunset.svC .sa{inset:5% 4% 4%}.bp-sunset.svC .sr1{right:36%}.bp-sunset.svC .sr2{left:66%}
+.bp-sunset.svC.vt .sr1{right:0;bottom:42%}.bp-sunset.svC.vt .sr2{left:0;top:60%}
+@media (prefers-reduced-motion:reduce){.bp-sunset .sglow{animation:none}}
 /* 2026-11-19 自己排版的版型（.bpa） */
 .bpa{flex:1;min-height:0;display:grid;gap:6px;margin-top:4px;position:relative}
 /* 初雪：雪白的底、整頁飄小雪（兩層雪花速度不同），左上角小標 */
@@ -1558,7 +1573,7 @@ const BPL=[ // 版型：k、名稱、說明、適合、grid、格子（t：v 影
  {k:'pano',n:'全景在上',d:'上面放全景照片，下面兩格',fit:'有全景照片',g:'"a a" "b c"',r:'0.8fr 1.3fr',c:'1fr 1fr',s:[['a','*','p'],['b','*'],['c','*']]},
  {k:'film',n:'底片條',d:'一整排照原比例的底片，可以左右捲',fit:'張數多、想一次看到',sp:1},
  {k:'eki',n:'月台',d:'站名牌＋月台黃線，照片像列車一班一班進站（標題寫「A→B」會變成站名）',fit:'車站、搭車',sp:1},
- {k:'sunset',n:'日落',d:'夕陽的天空漸層、太陽慢慢落到山後面，照片影片照原比例排在山稜上（最多 6 格，例如 2 直 4 橫）',fit:'傍晚、夕陽',sp:1}];
+ {k:'sunset',n:'日落',d:'暮色漸層底，上面一大格主影片（像寬銀幕），其他的照原比例排在下面，右下一行「日が沈む」（最多 6 格）',fit:'傍晚、夕陽',sp:1}];
 const BPLK={};BPL.forEach(l=>BPLK[l.k]=l);
 let BPG=window.BPG||{};
 const bpPv=id=>(window.PVALL||{})[id];
@@ -1597,6 +1612,23 @@ function hatsuSize(box){const g=8,P=16,W=box.clientWidth-P,H=box.clientHeight-P;
     const th=t=>t+g+fw(t)/R;if(th(t)>H){const lo=[0,t];for(let i=0;i<30;i++){const m=(lo[0]+lo[1])/2;th(m)>H?lo[1]=m:lo[0]=m;}t=lo[0];}
     const lh=(t-g)/2;w=fw(t);cols=`${t*Q}px ${lh*R}px`;rows=`${lh}px ${lh}px ${w/R}px`;h=t+g+w/R;}
   Object.assign(box.style,{gridTemplateColumns:cols,gridTemplateRows:rows,flex:'0 0 auto',width:Math.floor(w+P)+'px',height:Math.floor(h+P)+'px',alignSelf:'center',marginInline:'auto'});box.dataset.hz=1;}
+/* ===== 2026-11-20 日落版型重做（使用者：原本的太醜；3 支影片＋3 張照片）=====
+   三種樣式（BPG[頁].sv 或網址 ?sunv=A|B|C，預設 A）：
+   A 夕陽電影：上面一大格主影片（像寬銀幕），下面其他的照原比例排兩排；底色是暮色漸層。
+   B 剪影相片牆：整片暮色漸層＋右上角的太陽光暈＋下方淡淡的山稜剪影，全部照原比例排成一面牆，細白邊。
+   C 大窗＋小窗：左邊一大格主影片，右邊其他的疊成一欄；上方一條細細的夕陽色帶。 */
+function sunRender(k,box,area,L){const v=((/[?&]sunv=([ABC])/.exec(location.search)||[])[1])||((BPG[k]||{}).sv)||'A';box.classList.add('sv'+v);if(MOB)box.classList.add('vt');
+  const og=x=>x[3]==='v'?'v':'h',arOf=x=>{const m=x[4]&&bpPv(String(x[0]).slice(3));return m&&m.w&&m.h?m.w/m.h:bpAr(x);};
+  const n=Math.min(6,L.length),pick=L.slice(0,n).map(x=>[x]);L.slice(n).forEach((x,i)=>{const M=pick.filter(q=>og(q[0])===og(x)),C=M.length?M:pick;C[i%C.length].push(x);});
+  let mi=pick.findIndex(q=>q[0][2]==='v'&&og(q[0])==='h');if(mi<0)mi=pick.findIndex(q=>q[0][2]==='v');if(mi<0)mi=0;
+  box.innerHTML=`<i class="sglow"></i><svg class="sridge" viewBox="0 0 400 60" preserveAspectRatio="none"><path d="M0 46 L40 34 L78 40 L120 20 L160 32 L205 12 L250 30 L290 24 L330 36 L370 28 L400 38 V60 H0Z"/></svg><div class="sa"></div>`+(v==='A'?'<b class="stl">日が沈む</b>':'');
+  area.replaceWith(box);const sa=box.querySelector('.sa'),mk=cls=>{const c=document.createElement('div');c.className='scell'+(cls?' '+cls:'');return c;};
+  const cells=[];
+  if(v==='B'||pick.length<2){const reg=document.createElement('div');reg.className='sr';sa.appendChild(reg);const cs=pick.map(()=>{const c=mk();reg.appendChild(c);return c;});wallLay(reg,cs,pick.map(q=>arOf(q[0])),'',3);cs.forEach((c,i)=>cells.push([c,pick[i]]));}
+  else{const main=pick[mi],rest=pick.filter((q,i)=>i!==mi),r1=document.createElement('div'),r2=document.createElement('div');r1.className='sr sr1';r2.className='sr sr2';sa.append(r1,r2);
+    const mc=mk('main');r1.appendChild(mc);wallLay(r1,[mc],[arOf(main[0])],'',1);cells.push([mc,main]);
+    const cs=rest.map(()=>{const c=mk();r2.appendChild(c);return c;});wallLay(r2,cs,rest.map(q=>arOf(q[0])),v==='C'?'':'',v==='C'?5:2);cs.forEach((c,i)=>cells.push([c,rest[i]]));}
+  cells.forEach(([c,p],i)=>{c.dataset.n=i+1;bpCell(c,p,k);});}
 /* 巴士車窗：試三種排法（一排並列／橫的在上、兩扇直的在下／兩扇直的在上、橫的在下），挑車窗面積最大的；整組置中 */
 function busLay(box,cs,ar){const g=8,W=box.clientWidth,H=box.clientHeight,n=ar.length;if(!W||!H||!n)return;const opts=[[[...Array(n).keys()]]];
   if(n===3){opts.push([[2],[0,1]],[[0,1],[2]]);}else if(n===2)opts.push([[0],[1]]);let best=null;
@@ -1657,13 +1689,7 @@ function bpRender(k,area,L,lay){const l=BPLK[lay]||BPLK.auto;const box=document.
     const a=(pr[0]||ttl).replace(/(列車|電車|月台)$/,'').trim(),b=(pr[1]||'').replace(/(列車|電車|月台)$/,'').trim();
     box.innerHTML=`<div class="eks"><b>${cpEsc(a)}</b>${b?`<i class="ekb"><span></span><span>${cpEsc(b)} ▸</span></i>`:'<i class="ekb"><span></span><span></span></i>'}</div><div class="ekw"><div class="ekc"></div><span class="ekt"></span></div><div class="ekl"><i></i></div><div class="ekr"></div>`;
     const c=box.querySelector('.ekc');area.replaceWith(box);bpCell(c,L,k);return;}
-  else if(l.k==='sunset'){box.innerHTML=`<div class="ssky"><i class="ssun"></i><svg class="sridge" viewBox="0 0 400 90" preserveAspectRatio="none"><path d="M0 70 L40 52 L78 62 L120 34 L160 50 L205 22 L250 46 L290 38 L330 56 L370 44 L400 58 V90 H0Z"/></svg></div><div class="srow"></div>`;
-    /* 2026-11-19：最多 6 格（例如 2 直 4 橫），每格照影片／照片原本的比例，排在山稜上（靠下對齊）；超過 6 項照方向輪播 */
-    const row=box.querySelector('.srow'),n=Math.min(6,Math.max(1,L.length)),pl=L.slice(0,n).map(x=>[x]),og=x=>x[3]==='v'?'v':'h';
-    L.slice(n).forEach((x,i)=>{const M=pl.filter(q=>og(q[0])===og(x)),C=M.length?M:pl;C[i%C.length].push(x);});
-    const ar=pl.map(q=>{const x=q[0],m=x[4]&&bpPv(String(x[0]).slice(3));return m&&m.w&&m.h?m.w/m.h:bpAr(x);});
-    area.replaceWith(box);const cs=pl.map(()=>{const c=document.createElement('div');c.className='scell';row.appendChild(c);return c;});
-    wallLay(row,cs,ar,'end',3);cs.forEach((c,i)=>{c.dataset.n=i+1;bpCell(c,pl[i],k);});return;}
+  else if(l.k==='sunset'){sunRender(k,box,area,L);return;}
   else if(l.k==='bus'){const ttl=((area.closest('.col')||document).querySelector('h2,h3')||{}).textContent||'';const dst=/白川/.test(ttl+k)?'白川郷 行き':(ttl.replace(/^往|的巴士$/g,'')||'巴士');
     box.innerHTML=`<div class="bsg"><b>${cpEsc(dst)}</b></div><div class="bbd"><div class="bwn"></div><i class="bst"></i></div><div class="brd"><i></i></div>`;area.replaceWith(box);
     const V=L.filter(x=>x[3]==='v'),Hh=L.filter(x=>x[3]!=='v');let pl;
