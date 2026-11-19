@@ -1802,8 +1802,13 @@ function tunnelAuto(B){if(TUN){cancelAnimationFrame(TUN.r);TUN=null;}if(!B)retur
     if(+r.value!==v){r.value=v;tunnelSet(B,v);}if(x<1)st.r=requestAnimationFrame(tick);};st.r=requestAnimationFrame(tick);}
 {const _a2=after;after=function(){_a2.apply(this,arguments);try{tunnelAuto(document.querySelector('#base'));}catch(e){console.error(e);}};}
 
+// 2026-11-19：網址 #pg=頁 key 直接翻到那一頁（trip-tools「在書裡看」用）
+function pgHash(){const m=/^#pg=([\w-]+)/.exec(location.hash);if(!m)return;const i=idxOf(m[1]);if(i>=0&&i!==I){if(typeof BUSY!=='undefined'&&BUSY)return;jump(i);}}
+addEventListener('hashchange',pgHash);
+
 show();
 </script>
+<script>setTimeout(()=>{try{pgHash();}catch(e){}},50);</script>
 <style>
 /* 2026-11-19 私人照片影片與文字：只有 trip-tools 這趟的成員登入後看得到 */
 #pvbtn{position:fixed;left:8px;top:8px;z-index:45;border:0;border-radius:99px;background:rgba(255,250,242,.82);color:#3a2f26;font-size:12px;padding:5px 9px;box-shadow:0 1px 4px rgba(0,0,0,.18);cursor:pointer;backdrop-filter:blur(3px)}

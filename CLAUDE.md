@@ -289,6 +289,12 @@
   合掌屋與主街／被雪埋住的屋子／雪原／庄川與小雪人、渋湯橋／金具屋與石板街／足湯與傍晚。私人：`PVM[這頁]`（使用者在 trip-tools 指定到這頁的）固定放這頁、照順序；留在來源頁的才平均切。
   trip-tools 同時加了「選取多張一起移到某頁」與「📋 複製清單給 Claude」（使用者把清單貼回來，Claude 才知道私人照片的說明與分布）。`sw.js` `hkr-v15`。
   **踩雷**：單行函式裡加 `//` 註解會把後面的程式吃掉（要用 `/* */`）。
+- **自己排版（2026-11-19，使用者：在 trip-tools 直接排每一頁的順序、內容與版型）**：書本 `BPL`（16 種版型：自動、單格輪播、主圖＋縮圖列、左右兩格、上下兩格、一大兩小（上大／左大）、四宮格、原比例相片牆、拍立得散落、
+  直式影片＋旁邊照片、橫式影片在上＋照片一排、兩支直式影片並排、影片優先單格、全景在上、底片條）＋`bpRun`（包住 `after()`）。設定 `trips/<TRIP>/bookpages/{頁}`＝`{layout, items}`：
+  公開訪客用 Firestore REST 讀一次、成員在私人模組 onSnapshot 即時更新（`window.bpSet` 重畫）。**有設定的頁**照片區（`.pgr`／`.ph`／`.gpg`）換成版型：項目照 items 順序（`pub:` 公開、`pv:` 私人，沒登入的人看不到私人），
+  影片格先拿影片（方向對的優先）、全景格拿全景，多的平均分到格子輪播（照片 4–5 秒淡入、影片播完換下一個）；沒有任何可顯示的項目就保留原本內容（插畫）。有設定的頁 `slideInit`、`gpRun` 會跳過。
+  `bpDefPub(k)`＝這頁預設的公開照片。`book-media.json`（scratchpad `rt/bm2.js` 產生）給 trip-tools 用；`thumb/`＝231 張 240px 縮圖（公開照片＋影片封面，1.9 MB）。網址 `#pg=頁` 直接翻到那頁。
+  `?bpmock=版型` 測試用（把十頁假設成那個版型）。驗證 scratchpad `rt/bpt.js`（16 種版型 × 4 頁 × 電腦／手機：零錯誤、沒有溢出；`rt/bp-sheet.jpg`）。**改 `SEQ`、頁標題或公開照片後，`book-pages.json`、`book-media.json` 都要重產。**
 
 ## GitHub Pages 發布
 - Settings → Pages → Deploy from a branch → 選分支 / `(root)`。
