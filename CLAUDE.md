@@ -360,7 +360,7 @@
   **公開版**：框裡是 7 站的公開照片，每 3.2 秒換一站、慢慢推近，時間軸跟著亮；**成員登入後**：私人模組照舊把指定到 `s_snowbye` 的私人影片放進 `.sbye`（`pvv`），時間軸依影片播放進度平均分成 7 段亮起（`timeupdate`），點站名跳到那一段。
   點公開照片開燈箱翻 7 張。`sbyInit`（包住 `after()`）。trip-tools 特殊頁多一個「雪國回顧」格子（`SPSLOT.s_snowbye`，只放 1 支影片）：放私人影片＝照舊；放公開影片＝框裡改播那支。`book-pages.json`、`book-media.json` 已重產。驗證 scratchpad `nd/sby.js`（電腦、手機、`?privmock=1`：沒有超出、時間軸會走、成員看到影片）、`del/t.js`。`sw.js` `hkr-v35`。
 - **「以為是咖啡廳」文字分兩頁（2026-11-20，使用者在 trip-tools 加了「以為是咖啡廳(二)」`c_mwnrpfwngpsk`）**：`s_bookbed` 只留前台像咖啡廳、寄行李那兩段；推開側門、床位、只適合背包客＋一句心得搬到 (二)。
-  自己加的頁沒寫文字時用 `CPTXT[頁]`（`x` 用空一行分段、`one` 一句心得）當預設；**使用者在 trip-tools 寫了文字就以那邊為準**。驗證 scratchpad `nd/bb.js`、`del/t.js`。`sw.js` `hkr-v36`。
+  同日「金澤城公園(一)」`c_mwncgmo42xve`（場景大、拍到全景）／「金澤城公園(二)」`c_mwnnkmy4gdxj`（繞完才往兼六園、先城後園的落差）也用 `CPTXT` 補文字。自己加的頁沒寫文字時用 `CPTXT[頁]`（`x` 用空一行分段、`one` 一句心得）當預設；**使用者在 trip-tools 寫了文字就以那邊為準**。驗證 scratchpad `nd/bb.js`、`del/t.js`。`sw.js` `hkr-v36`。
 
 ## GitHub Pages 發布
 - Settings → Pages → Deploy from a branch → 選分支 / `(root)`。

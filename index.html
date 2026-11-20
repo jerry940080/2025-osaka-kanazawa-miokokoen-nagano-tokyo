@@ -1788,7 +1788,9 @@ function mtTitle(k,h){const t=((BPG._meta||{}).titles||{})[k];if(!t||typeof h!==
 const cpEsc=t=>String(t==null?'':t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 /* 自己加的頁還沒在 trip-tools 寫文字時，用這裡的預設文字（使用者在 trip-tools 寫了就以那邊為準）。
    c_mwnrpfwngpsk＝「以為是咖啡廳(二)」：原本 s_bookbed 一頁的文字分成兩頁（2026-11-20 使用者要求） */
-const CPTXT={c_mwnrpfwngpsk:{x:'晚上回來推開側門，才知道後面是旅舍的公共空間，連著廁所、浴室、交誼廳和每個人的床位。\n\n私人空間只有一張用簾子遮的床，行李箱要另外找地方硬塞，只適合背包客。',one:'寄行李時只看到吧檯，晚上回來才發現裡面長這樣。'}};
+const CPTXT={c_mwncgmo42xve:{x:'午餐後先走進金澤城公園。場景很大，城門、石垣和雪地一路延伸，站在中間就能把整個公園拍進全景。'},
+  c_mwnnkmy4gdxj:{x:'在城裡繞了一大圈，才往隔壁的兼六園走。先被城的宏偉衝擊過，等一下園裡精緻的小布景反而沒那麼吸引人。'},
+  c_mwnrpfwngpsk:{x:'晚上回來推開側門，才知道後面是旅舍的公共空間，連著廁所、浴室、交誼廳和每個人的床位。\n\n私人空間只有一張用簾子遮的床，行李箱要另外找地方硬塞，只適合背包客。',one:'寄行李時只看到吧檯，晚上回來才發現裡面長這樣。'}};
 function cpApply(){const L=((BPG._custom||{}).pages||[]).filter(c=>c&&/^c_[\w-]+$/.test(c.k||''));
   const vis=L.filter(c=>{try{return bpItems(c.k).length>0;}catch(e){return false;}});
   const META=BPG._meta||{},HID=new Set((META.hidden||[]).filter(k=>k!=='cover'&&k!=='back'));const sig=JSON.stringify([vis.map(c=>[c.k,c.after,c.t,c.pl,c.d,c.x]),[...HID].sort(),META.titles||{}]);if(sig===CPSIG)return false;CPSIG=sig;
