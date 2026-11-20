@@ -368,6 +368,7 @@
   **自己加的頁位置修正 `CPFIX`**：Claude 寫不了 Firestore，所以書本與 trip-tools 都在「Firestore 還是原本位置（`from`）」時改用 `CPFIX` 的位置；使用者在 trip-tools 改過位置就以那邊為準。`c_mwnlv4mxbxub`「妙高高原->長野 列車」從 Day 5 早餐後面 → 第四章章扉 `op4` 後面（Day 6）。
   `book-media.json` 多 `cpfix`（`rt/bm2.js`）。trip-tools「✎ 修改」自己加的頁多了「放在哪一頁後面」可以換位置。驗證 scratchpad `nd/txt.js`、`nd/q.js`、`del/t.js`。`sw.js` `hkr-v39`。
 - **開場動畫刪除（2026-11-20，使用者：「點擊網站的開頭動畫請幫我刪除」）**：不再呼叫 `introRun()`（函式與 CSS 留著）；`SPSLOT.intro` 拿掉，trip-tools 特殊頁不再有「開場動畫」格子。`book-media.json` 已重產。`sw.js` `hkr-v40`。
+- **金澤車站文字分給「拖著行李箱的雪路」（2026-11-20）**：`s_tsuzumi` 只留第一次看到雪、鼓門那段；走雪地快半小時＋「雪中也會撐傘」搬到 `g_tsu2`（`GPINFO` 的文字）。`sw.js` `hkr-v41`。
 
 ## GitHub Pages 發布
 - Settings → Pages → Deploy from a branch → 選分支 / `(root)`。
