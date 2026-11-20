@@ -506,6 +506,21 @@ html.pvw .bpa [data-n]::after{content:attr(data-n);position:absolute;left:6px;to
 .bp-wall{display:block;position:relative;overflow:hidden}
 .bp-film{display:flex;gap:6px;overflow-x:auto;align-items:stretch;padding:8px 0;background:#141210;border-radius:3px}.bp-film>div{flex:none!important;height:100%;border-radius:2px}
 .bp-pola{display:block}.bp-pola .pf{position:absolute;background:#fff;padding:6px 6px 18px;box-shadow:0 4px 12px rgba(0,0,0,.3)}.bp-pola .pf>div{aspect-ratio:1/1;width:100%}
+.dehalf{position:absolute;top:0;bottom:0;overflow:hidden}
+.deal{background:#fff;padding:calc(7px*var(--k));box-sizing:border-box;border-radius:3px !important;border:none !important;box-shadow:0 3px 10px #0003 !important;overflow:visible !important}
+.deal img{width:100%;object-fit:cover;display:block}
+.deal b{display:block;margin-top:calc(5px*var(--k));font:700 calc(15px*var(--k))/1.3 var(--hand);color:#3a2e25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.deal i{display:block;font:400 calc(12px*var(--k))/1.3 var(--hand);font-style:normal;color:#7a6a5a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ded2 .det{font-size:calc(40px*var(--k))}
+.dehero{border-radius:4px !important;border:calc(7px*var(--k)) solid #fff !important;transform:rotate(-1deg)}
+.dehero img{width:100%;height:100%;object-fit:cover}
+.dehero span{position:absolute;right:calc(10px*var(--k));bottom:calc(8px*var(--k));font:700 calc(14px*var(--k)) var(--hand);color:#fff;text-shadow:0 1px 4px #000a}
+.delist{position:absolute;border-top:1px dashed color-mix(in srgb,var(--dacc) 50%,transparent)}
+.delist>div{display:flex;align-items:center;gap:calc(10px*var(--k));border-bottom:1px dashed color-mix(in srgb,var(--dacc) 30%,transparent);font-family:var(--hand);color:var(--dink);white-space:nowrap;overflow:hidden}
+.delist i{font:500 calc(12px*var(--k)) var(--mono);font-style:normal;color:var(--dacc);width:calc(44px*var(--k));flex:none}
+.delist em{font-style:normal;width:calc(20px*var(--k));text-align:center;flex:none}
+.delist b{font-size:calc(16px*var(--k));flex:none}
+.delist span{font-size:calc(13px*var(--k));color:var(--dsub);overflow:hidden;text-overflow:ellipsis}
 /* 2026-11-20 每天結尾：手繪旅行地圖 */
 .pg.qe .pn{z-index:3}
 .de{position:absolute;inset:0;background:var(--dbg);overflow:hidden;z-index:1;color:var(--dink)}
@@ -1362,19 +1377,20 @@ const DAYEND={
  7:{st:'TOKYO',a:[['長野','早上',36.6431,138.1886,'','','',''],['大宮','',35.9063,139.6239,'','','轉埼京線','🚄'],['新宿','中午',35.6953,139.7007,'2164','s_bookbed','BOOK AND BED','🚃'],['元村','11:00',35.6939,139.6993,'2152','s_motomura','','🚶'],['中野百老匯','下午',35.7092,139.6657,'0930','cabinet','','🚃'],['タロちゃん','晚餐',35.7072,139.6648,'0941','focus','牛舌又加點一份','🚶'],['歌舞伎町','晚上',35.6961,139.7026,'0945','s_bookbed','','🚃']]},
  8:{st:'TOKYO',a:[['新宿','早上',35.6953,139.7007,'','','',''],['淺草','',35.7100,139.7956,'0988','s_plus','Plus Hostel','🚇'],['秋葉原','白天',35.6996,139.7714,'','','AmiAmi','🚇'],['神保町','晚餐',35.6962,139.7590,'','','神田勝本','🚇'],['淺草','晚上',35.7109,139.7958,'','','一蘭','🚇'],['淺草寺','夜裡',35.7130,139.7966,'1008','s_sensoji','晚上人少','🚶']]}
 };
-function deDraw(d,W,H,spread,q,date,c){const D=DAYEND[d];if(!D)return '';
+function deDraw(d,W,H,spread,q,date,c,o={}){const D=DAYEND[d];if(!D)return '';
  /* 顏色跟著這一章的色票（colOf(MAP[章])＝紙、字、強調色、是不是深色） */
  let pa='#f4ecd9',ink='#5a3e2b',acc='#a0522d',dk=false;try{[pa,ink,acc,dk]=colOf(MAP[c]);}catch(e){}
  const mx=(a,b,t)=>mixHex(a,b,t),C={bg:pa,sea:mx(pa,acc,.08),land:mx(pa,acc,dk?.16:.2),hatch:mx(pa,acc,dk?.3:.34),landS:mx(pa,acc,.55),wave:mx(pa,acc,.45),route:acc,pin:acc,
   ink,sub:mx(ink,pa,.42),card:dk?mx(pa,'#ffffff',.14):mx(pa,'#ffffff',.65),magW:mx(pa,acc,.3),magL:mx(pa,acc,dk?.1:.07),grid:mx(pa,acc,.16),lead:mx(ink,pa,.3)};const st=D.a,mob=!spread&&MOB;
  const k=spread?Math.max(.8,Math.min(1.4,W/1120,H/760)):mob?Math.max(.85,Math.min(1.25,W/380)):Math.max(.8,Math.min(1.4,W/560,H/760));
- const hd=Math.round((mob?78:88)*k),pad=Math.round((spread?44:mob?8:16)*k);const _nw=spread?470*k:W-2*(spread?44:mob?8:16)*k-(mob?8:20)*k,qh=spread?0:Math.ceil(Math.max(1,Math.ceil(q.length*20*k*1.1/(_nw-80*k)))*20*k*1.6+52*k+40*k);
- const nPh=st.filter(s=>s[4]).length,perSide=Math.max(1,Math.ceil(nPh/2));
- const top=hd+4,bot=spread?H-14*k:H-qh-34*k;let sz=Math.round((spread?168:mob?92:122)*k);const lbh=Math.round(36*k);
- sz=Math.max(64,Math.min(sz,Math.floor((bot-top)/perSide)-lbh-6));
- const gap=(spread?60:mob?10:22)*k,cx0=pad+sz+gap,cx1=W-pad-sz-gap;
- const noteW=spread?Math.min(470*k,cx1-cx0+40):W-2*pad-(mob?8:20)*k,nfs=20*k,nLines=Math.max(1,Math.ceil(q.length*nfs*1.1/(noteW-80*k))),noteH=nLines*nfs*1.6+52*k,noteX=(W-noteW)/2,noteY=H-noteH-(spread?30:34)*k;
- const mapR={x:cx0+6,y:hd+16*k,w:cx1-cx0-12,h:(spread?noteY-24*k:H-qh-14*k)-(hd+16*k)};
+ const hd=Math.round((mob?78:88)*k),pad=Math.round((spread?44:mob?8:16)*k);const _nw=spread?470*k:W-2*(spread?44:mob?8:16)*k-(mob?8:20)*k,qh=(spread||o.noNote)?0:Math.ceil(Math.max(1,Math.ceil(q.length*20*k*1.1/(_nw-80*k)))*20*k*1.6+52*k+40*k);
+ const nPh=o.noStk?0:st.filter(s=>s[4]).length,perSide=Math.max(1,Math.ceil(nPh/2));
+ const top=hd+4,bot=(spread||o.noNote)?H-14*k:H-qh-34*k;let sz=Math.round((o.row?150:spread?168:mob?92:122)*k);const lbh=Math.round(36*k);
+ if(!o.row)sz=Math.max(64,Math.min(sz,Math.floor((bot-top)/perSide)-lbh-6));else sz=Math.max(70,Math.min(sz,Math.floor((W-2*pad)/Math.max(1,nPh))-34*k));const rowH=o.row?sz+lbh+30*k:0;
+ const gap=(spread?60:mob?10:22)*k,cx0=o.row||o.noStk?pad+20*k:pad+sz+gap,cx1=o.row||o.noStk?W-pad-20*k:W-pad-sz-gap;
+ let noteW=spread?Math.min(470*k,cx1-cx0+40):W-2*pad-(mob?8:20)*k,nfs=20*k,nLines=Math.max(1,Math.ceil(q.length*nfs*1.1/(noteW-80*k))),noteH=nLines*nfs*1.6+52*k,noteX=(W-noteW)/2,noteY=H-noteH-(spread?30:34)*k;
+ if(o.row){noteW=Math.min(380*k,W*.34);noteX=W-pad-noteW-10*k;noteY=62*k;}if(o.noNote){noteX=-9999;}
+ const mapR=o.row?{x:cx0+20*k,y:hd+20*k,w:cx1-cx0-40*k,h:H-rowH-(hd+40*k)}:{x:cx0+6,y:hd+16*k,w:cx1-cx0-12,h:(spread&&!o.noNote?noteY-24*k:H-qh-14*k)-(hd+16*k)};
  // 投影：最小範圍 0.3 度，太近的點才會收成放大圈
  const la=st.map(s=>s[2]),lo=st.map(s=>s[3]);let y0=Math.min(...la),y1=Math.max(...la),x0=Math.min(...lo),x1=Math.max(...lo);
  const kc=Math.cos((y0+y1)/2*Math.PI/180),MS=.14;if(y1-y0<MS){const m=(y0+y1)/2;y0=m-MS/2;y1=m+MS/2;}if((x1-x0)*kc<MS){const m=(x0+x1)/2;x0=m-MS/kc/2;x1=m+MS/kc/2;}
@@ -1393,7 +1409,7 @@ function deDraw(d,W,H,spread,q,date,c){const D=DAYEND[d];if(!D)return '';
  // 放大圈
  const mags=[];big.forEach(c=>{const cw=cx1-cx0;let R=Math.min((spread?118:mob?66:84)*k*(c.m.length>3?1.08:1)*(big.length>1?.86:1),cw/2-4);
   let best=null,bs=1e18;for(let dd=R+16*k;dd<R+170*k;dd+=12*k)for(let a=0;a<360;a+=15){const t=a*Math.PI/180,x=c.x+Math.cos(t)*dd,y=c.y+Math.sin(t)*dd;let s=0;
-   s+=Math.max(0,cx0+R-x)**2*50+Math.max(0,x+R-cx1)**2*50+Math.max(0,hd+R+4-y)**2*50+Math.max(0,y+R-(spread?H-10:H-qh-4))**2*50;
+   s+=Math.max(0,cx0+R-x)**2*50+Math.max(0,x+R-cx1)**2*50+Math.max(0,hd+R+4-y)**2*50+Math.max(0,y+R-(o.row?H-rowH:spread?H-10:H-qh-4))**2*50;
    if(spread){const ox2=Math.max(0,Math.min(x+R,noteX+noteW)-Math.max(x-R,noteX)),oy2=Math.max(0,Math.min(y+R,noteY+noteH)-Math.max(y-R,noteY));s+=ox2*oy2*30;}
    pp.forEach((p,j)=>{if(!c.m.includes(j)&&Math.hypot(p[0]-x,p[1]-y)<R+14*k)s+=4e5;});mags.forEach(m=>{const o=m.R+R+10*k-Math.hypot(m.x-x,m.y-y);if(o>0)s+=o*o*5000;});
    s+=onSeg(x,y,R)*300+dd*dd*.5;if(s<bs){bs=s;best={x,y};}}
@@ -1405,22 +1421,23 @@ function deDraw(d,W,H,spread,q,date,c){const D=DAYEND[d];if(!D)return '';
   // 同一個地點的站：放在同一個點；不同地點太近時稍微撐開
   const loc={};c.m.forEach(j=>{const key=st[j][2]+','+st[j][3];if(!loc[key])loc[key]=M.P(st[j][2],st[j][3]);tgt[j]=loc[key];});M.loc=loc;});
  // 照片貼紙：左右兩欄，依目標點左右分邊、上下排
- const ph=st.map((s,i)=>({s,i,t:tgt[i]})).filter(o=>o.s[4]);const mid=(cx0+cx1)/2;
+ const ph=o.noStk?[]:st.map((s,i)=>({s,i,t:tgt[i]})).filter(x=>x.s[4]);const mid=(cx0+cx1)/2;
  const srt=[...ph].sort((a,b)=>a.t[0]-b.t[0]);let nl=srt.filter(o=>o.t[0]<mid).length;const cap=Math.floor((bot-top)/(sz+lbh+6));nl=Math.max(ph.length-cap,Math.min(cap,nl));
  if(Math.abs(nl-(ph.length-nl))>1&&ph.length>2)nl=Math.round(ph.length/2+(nl-ph.length/2)/2);
  const L=srt.slice(0,nl),Rr=srt.slice(nl);
- [[L,0],[Rr,1]].forEach(([g,side])=>{g.sort((a,b)=>a.t[1]-b.t[1]);const n=g.length;g.forEach((o,r)=>{const slot=(bot-top)/Math.max(n,1);let y=top+slot*(r+.5)-(sz+lbh)/2;
+ if(o.row){srt.forEach((x,r)=>{const n=srt.length,cw=(W-2*pad)/n;x.b={x:pad+cw*(r+.5)-sz/2+[0,6,-4,5,-3][r%5]*k,y:H-rowH+10*k+[0,10,4,12,2][r%5]*k,w:sz,h:sz+lbh};});}
+ else [[L,0],[Rr,1]].forEach(([g,side])=>{g.sort((a,b)=>a.t[1]-b.t[1]);const n=g.length;g.forEach((o,r)=>{const slot=(bot-top)/Math.max(n,1);let y=top+slot*(r+.5)-(sz+lbh)/2;
    const x=side?W-pad-sz:pad;o.b={x:x+(side?-1:1)*[0,8,-4,6,-2][r%5]*k,y,w:sz,h:sz+lbh};});});
  // 沒照片的點：名字小標，放在點旁邊不擋東西的地方
  const boxes=ph.map(o=>o.b).concat([{x:0,y:0,w:W,h:hd},{x:noteX,y:noteY,w:noteW,h:noteH}],mags.map(m=>({x:m.x-m.R*.2,y:m.y-m.R*.2,w:m.R*.4,h:m.R*.4})));
  const ov=(a,b)=>Math.max(0,Math.min(a.x+a.w,b.x+b.w)-Math.max(a.x,b.x))*Math.max(0,Math.min(a.y+a.h,b.y+b.h)-Math.max(a.y,b.y));
- const tags=[];const done={};st.forEach((s,i)=>{if(s[4])return;const key=Math.round(tgt[i][0])+','+Math.round(tgt[i][1]);const txt=s[0]+(s[1]?'・'+s[1]:'');
+ const tags=[];const done={};st.forEach((s,i)=>{if(s[4]&&!o.noStk)return;const key=Math.round(tgt[i][0])+','+Math.round(tgt[i][1]);const txt=(o.noStk?'①②③④⑤⑥⑦⑧⑨'[i]+' ':'')+s[0]+(s[1]&&!o.noStk?'・'+s[1]:'');
   if(done[key]){done[key].txt+='／'+txt;return;}const fs=(mob?12:13.5)*k,w=(txt.length*fs*1.02+18*k),h=fs*1.9;const t={txt,fs,w,h,i,p:tgt[i]};done[key]=t;tags.push(t);});
  tags.forEach(t=>{t.w=t.txt.length*t.fs*1.0+18*k;let best=null,bs=1e18;for(const r of [8,16,28,44])for(let a=0;a<360;a+=30){const th=a*Math.PI/180,cx=t.p[0]+Math.cos(th)*(r*k+t.w/2),cy=t.p[1]+Math.sin(th)*(r*k+t.h/2);
    const b={x:cx-t.w/2,y:cy-t.h/2,w:t.w,h:t.h};let s=0;boxes.forEach(o=>s+=ov(b,o)*12);s+=(Math.max(0,4-b.x)+Math.max(0,b.x+b.w-W+4)+Math.max(0,hd-b.y))*800;
    pp.forEach(p=>{if(p[0]>b.x-4&&p[0]<b.x+b.w+4&&p[1]>b.y-4&&p[1]<b.y+b.h+4)s+=900;});s+=r*r*.8;if(s<bs){bs=s;best=b;}}t.b=best;boxes.push(best);});
  // ===== 畫 =====
- const id='de'+d+(spread?'s':'');let svg=`<svg class="desvg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}"><defs><filter id="${id}w"><feTurbulence baseFrequency=".04" numOctaves="2" seed="3"/><feDisplacementMap in="SourceGraphic" scale="${4*k}"/></filter>
+ const id='de'+d+(spread?'s':'')+(o.v||'');let svg=`<svg class="desvg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}"><defs><filter id="${id}w"><feTurbulence baseFrequency=".04" numOctaves="2" seed="3"/><feDisplacementMap in="SourceGraphic" scale="${4*k}"/></filter>
  <pattern id="${id}h" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(35)"><line x1="0" y1="0" x2="0" y2="7" stroke="${C.hatch}" stroke-width="1.1"/></pattern>
  ${mags.map((m,j)=>`<clipPath id="${id}c${j}"><circle cx="${m.x}" cy="${m.y}" r="${m.R}"/></clipPath>`).join('')}</defs>`;
  const land=LP(P);svg+=`<g filter="url(#${id}w)"><path d="${land}" fill="${C.land}"/><path d="${land}" fill="url(#${id}h)" stroke="${C.landS}" stroke-width="${1.5*k}"/></g>`;
@@ -1447,9 +1464,39 @@ function deDraw(d,W,H,spread,q,date,c){const D=DAYEND[d];if(!D)return '';
  mags.forEach(m=>{const names=[...new Set(m.c.m.map(i=>st[i][0]))];h+=`<div class="demg" style="left:${m.x}px;top:${m.y+m.R-2*k}px">放大・${names.length>3?names.slice(0,2).join('、')+'…':names.join('、')}</div>`;});
  ph.forEach((o,j)=>{const b=o.b,s=o.s,rot=[-6,4,-3,7,-5,3][j%6];h+=`<div class="destk" data-gk="${s[5]}" data-id="${s[4]}" style="left:${b.x}px;top:${b.y}px;width:${sz}px;height:${sz}px;transform:rotate(${rot}deg)"><img src="img/IMG_${s[4]}.webp" alt="" loading="lazy"></div><div class="delb" style="left:${Math.max(b.x+sz/2,(sz+28*k)/2+2)}px;top:${b.y+sz+2*k}px;width:${sz+28*k}px;left:${Math.min(Math.max(b.x+sz/2,(sz+28*k)/2+2),W-(sz+28*k)/2-2)}px">${s[0]}<i>${[s[1],s[6]].filter(Boolean).join(' · ')}</i></div>`;});
  tags.forEach(t=>{h+=`<div class="detg" style="left:${t.b.x}px;top:${t.b.y}px;width:${t.b.w}px;height:${t.b.h}px;font-size:${t.fs}px">${t.txt}</div>`;});
- h+=`<div class="denote" style="left:${noteX}px;bottom:${H-noteY-noteH}px;width:${noteW}px;min-height:${noteH}px"><b>這一天的一句話</b><p>${q}</p><div class="destamp"><span>2025</span><em>${date.replace(/（.*$/,'').replace('/','.')}</em><span>${D.st}</span></div></div>`;
+ if(!o.noNote)h+=`<div class="denote" style="left:${noteX}px;bottom:${H-noteY-noteH}px;width:${noteW}px;min-height:${noteH}px"><b>這一天的一句話</b><p>${q}</p><div class="destamp"><span>2025</span><em>${date.replace(/（.*$/,'').replace('/','.')}</em><span>${D.st}</span></div></div>`;
  return h+'</div>';}
-const qd=(c,d,date,q)=>({c,cls:'qe',h:()=>{const f=!!(P['q'+d]&&P['q'+d].full)&&!MOB;return deDraw(d,f?W*2:W,H,f,q,date,c);}});
+/* ===== 2026-11-20 跨頁版：正式＝左頁單頁版地圖（不放便條紙）＋右頁相簿＋一句話；三種樣張留著，網址 ?desv=A|B|C 切換=====
+   A 左地圖（編號）＋右相簿；B 整個跨頁的大地圖＋下方一排照片；C 左頁＝單頁版地圖、右頁＝這一天的日記（大照片＋時間表＋一句話） */
+const DEHERO={1:'0494',2:'0508',3:'1972',4:'0781',5:'0831',6:'2136',7:'0941',8:'1008'};
+function dePal(c){let pa='#f4ecd9',ink='#5a3e2b',acc='#a0522d',dk=false;try{[pa,ink,acc,dk]=colOf(MAP[c]);}catch(e){}
+ const sea=mixHex(pa,acc,.08),sub=mixHex(ink,pa,.42),card=dk?mixHex(pa,'#ffffff',.14):mixHex(pa,'#ffffff',.65);
+ return {pa,ink,acc,dk,sea,sub,card,css:`--dbg:${sea};--dpa:${pa};--dink:${ink};--dsub:${sub};--dcard:${card};--dacc:${acc}`};}
+const deNote=(q,date,D)=>`<b>這一天的一句話</b><p>${q}</p><div class="destamp"><span>2025</span><em>${date.replace(/（.*$/,'').replace('/','.')}</em><span>${D.st}</span></div>`;
+function deAlbum(d,W,H,q,date,c,num=true){const D=DAYEND[d],p=dePal(c),k=Math.max(.8,Math.min(1.4,W/560,H/760)),pad=30*k,hd=88*k;
+ const L=D.a.map((s,i)=>({s,i})).filter(x=>x.s[4]),n=L.length,cols=n<=2?1:n<=4?2:n<=6?2:3,rows=Math.ceil(n/cols);
+ const nfs=20*k,noteW=W-2*pad,nl=Math.max(1,Math.ceil(q.length*nfs*1.1/(noteW-80*k))),noteH=nl*nfs*1.6+52*k,aw=W-2*pad,ah=H-hd-noteH-70*k,g=16*k;
+ let cw=(aw-g*(cols-1))/cols,ch=(ah-g*(rows-1))/rows;const cap=40*k;let iw=Math.min(cw-14*k,(ch-cap-14*k)*1.45),ih=iw/1.45;cw=iw+14*k;ch=ih+cap+14*k;
+ const gw=cw*cols+g*(cols-1),gh=ch*rows+g*(rows-1),gx=(W-gw)/2,gy=hd+(ah-gh)/2+10*k;
+ let h=`<div class="de dea" style="--k:${k};${p.css}"><div class="dehd"><div class="det">這一天的照片</div><div class="ded">Day ${d}・${date}</div></div>`;
+ L.forEach((x,j)=>{const r=Math.floor(j/cols),cc=j%cols;const lastRow=r===rows-1,inRow=lastRow?n-r*cols:cols,ox=lastRow?(gw-(inRow*cw+(inRow-1)*g))/2:0;
+  h+=`<div class="deal destk" data-gk="${x.s[5]}" data-id="${x.s[4]}" style="left:${gx+ox+cc*(cw+g)}px;top:${gy+r*(ch+g)}px;width:${cw}px;height:${ch}px;transform:rotate(${[-1.6,1.2,-.8,1.8,-1.2,.9][j%6]}deg)"><img src="img/IMG_${x.s[4]}.webp" alt="" loading="lazy" style="height:${ih}px"><b>${num?'①②③④⑤⑥⑦⑧⑨'[x.i]+' ':''}${x.s[0]}</b><i>${[x.s[1],x.s[6]].filter(Boolean).join(' · ')}</i></div>`;});
+ h+=`<div class="denote" style="left:${pad}px;bottom:${30*k}px;width:${noteW}px;min-height:${noteH}px">${deNote(q,date,D)}</div>`;return h+'</div>';}
+function deDiary(d,W,H,q,date,c){const D=DAYEND[d],p=dePal(c),k=Math.max(.8,Math.min(1.4,W/560,H/760)),pad=34*k,hd=96*k;
+ const st=D.a,nfs=22*k,noteW=W-2*pad,nl=Math.max(1,Math.ceil(q.length*nfs*1.1/(noteW-80*k))),noteH=nl*nfs*1.6+56*k,rowH=30*k,listH=st.length*rowH+10*k;
+ const heroH=Math.max(120*k,H-hd-listH-noteH-80*k),hero=DEHERO[d]||(st.find(s=>s[4])||[])[4],hs=st.find(s=>s[4]===hero)||[];
+ let h=`<div class="de ded2" style="--k:${k};${p.css}"><div class="dehd"><div class="ded">DAY ${d}</div><div class="det">${date}</div></div>`;
+ if(hero)h+=`<div class="dehero destk" data-gk="${hs[5]||''}" data-id="${hero}" style="left:${pad}px;right:${pad}px;top:${hd}px;height:${heroH}px"><img src="img/IMG_${hero}.webp" alt=""><span>${hs[0]||''}</span></div>`;
+ h+=`<div class="delist" style="left:${pad}px;right:${pad}px;top:${hd+heroH+24*k}px">`+st.map(s=>`<div style="height:${rowH}px"><i>${s[1]||''}</i><em>${s[7]||'・'}</em><b>${s[0]}</b><span>${s[6]||''}</span></div>`).join('')+'</div>';
+ h+=`<div class="denote" style="left:${pad}px;bottom:${30*k}px;width:${noteW}px;min-height:${noteH}px">${deNote(q,date,D)}</div>`;return h+'</div>';}
+function deSpread(d,W,H,q,date,c){let v='';try{v=(new URLSearchParams(location.search).get('desv')||'').toUpperCase();}catch(e){}
+ const half=(a,b)=>`<div class="dehalf" style="left:0;width:${W/2}px">${a}</div><div class="dehalf" style="left:${W/2}px;width:${W/2}px">${b}</div>`;
+ if(v==='A')return half(deDraw(d,W/2,H,false,q,date,c,{noNote:1,noStk:1,v:'A'}),deAlbum(d,W/2,H,q,date,c));
+ if(v==='B')return deDraw(d,W,H,true,q,date,c,{row:1,v:'B'});
+ if(v==='C')return half(deDraw(d,W/2,H,false,q,date,c,{noNote:1,v:'C'}),deDiary(d,W/2,H,q,date,c));
+ /* 正式版（2026-11-20 使用者選：C 的左頁＋A 的相簿） */
+ return half(deDraw(d,W/2,H,false,q,date,c,{noNote:1,v:'C'}),deAlbum(d,W/2,H,q,date,c,false));}
+const qd=(c,d,date,q)=>({c,cls:'qe',h:()=>{const f=!!(P['q'+d]&&P['q'+d].full)&&!MOB;return f?deSpread(d,W*2,H,q,date,c):deDraw(d,W,H,false,q,date,c);}});
 Object.assign(P,{
  // 第一章 大阪
  op1:opg('ch1','第一章','大阪','CHAPTER 01 · DAY 1','新今宮的夜','橫幅照片・新今宮的街道','第一天只有半天：降落、換票、吃飯、入住。'),
