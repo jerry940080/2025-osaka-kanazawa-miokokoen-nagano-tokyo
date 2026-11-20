@@ -2109,7 +2109,6 @@ const SPSLOT={
  noren:{t:'暖簾',s:[['in','暖簾拉開後','*',1],['mini','下面一排小圖','*',4]]},
  cabinet:{t:'展示櫃',s:[['r0','第一層','*',6],['r1','第二層','*',6],['r2','第三層','*',6],['r3','第四層','*',6]]},
  focus:{t:'烤網',s:[['grill','烤網上的肉（一塊放一項，點一下才烤熟）','*',9]]},
- intro:{t:'開場動畫',s:[['v','開場影片（0.5 倍速慢慢播）','v',1]]},
  cass:{t:'卡帶',tapes:1}};
 const TAPECOL=['#2b3550','#3b2b45','#4a2b2b','#2b4a3e','#45402b','#2b3a4a'];
 const SPDEF={s_snowbye:{v:[]},tunnel:{v:[TUNNELVID]},gate:{pano:[PANO],sm:GATESM.map(v=>v[0])},snowx:{bg:[SNOWX]},pop:{m:['1954']},korokke:{m:[]},
@@ -2133,7 +2132,6 @@ function spApply(){const sig=JSON.stringify(Object.keys(SPSLOT).map(k=>BPG[k]||n
   {const x=one('tunnel','v','v');TUNNELVID=x?x[0]:SPDEF.tunnel.v[0];}
   {const x=one('gate','pano','i');PANO=x?x[0]:SPDEF.gate.pano[0];const L=spSet('gate','sm')?spRes('gate','sm').filter(x=>x[2]!=='v'):[];GATESM.splice(0,GATESM.length,...(L.length?L.map(x=>[x[0],spCap(x)]):SPD0.GATESM.map(v=>v.slice())));}
   {const x=one('snowx','bg','i');SNOWX=x?x[0]:SPDEF.snowx.bg[0];}
-  {const x=one('intro','v','v');INTROVID=x?x[0]:'0565';}
   {const L=spSet('trainx','cars')?spRes('trainx','cars'):[];TRX.splice(0,TRX.length,...(L.length?L.map(x=>[spCap(x)||(x[2]==='v'?'影片':'照片'),x[2]==='v'?1:0,x[0]]):SPD0.TRX.map(c=>c.slice())));}
   CABS.splice(0,CABS.length,...SPD0.CABS.map((r,i)=>{const c=BPG.cabinet&&BPG.cabinet.slots;if(!(c&&Array.isArray(c['r'+i])))return JSON.parse(JSON.stringify(r));const L=spRes('cabinet','r'+i);
     if(!L.length)return JSON.parse(JSON.stringify(r));L.forEach(x=>{if(!MBYID[x[0]])MBYID[x[0]]=[x[0],x[1],x[2],x[3]];});const n=Math.min(3,L.length);
@@ -2221,7 +2219,7 @@ document.addEventListener('click',e=>{const B=document.querySelector('#base');if
     lbOpen('炭火與牛舌',0,+mt.dataset.i,GRILL.map(x=>[x[0],spCap(x),x[2]]));return;}
   if(e.target.closest('#base .grl')||e.target.closest('#base .gall')){if(e.target.closest('#base .gall')){e.stopPropagation();B.querySelectorAll('.grl .mt:not(.ck)').forEach((m,i)=>setTimeout(()=>{m.classList.add('ck','sizz');setTimeout(()=>m.classList.remove('sizz'),1400);grillCount(B);},i*180));}}},true);
 
-setTimeout(introRun,0);
+/* 2026-11-20 使用者要求刪除開場動畫：不再呼叫 introRun()（函式留著） */
 
 /* ===== 2026-11-19 trip-tools 的即時預覽（?embedpreview=1）=====
    trip-tools 用 iframe 開這本書，postMessage({type:'hkr-preview', k 頁, doc:{layout, items, fixed}, pv:{私人 id:{kind,w,h,note,_f,_p}}})：

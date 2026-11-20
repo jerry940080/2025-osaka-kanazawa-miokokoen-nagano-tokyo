@@ -367,6 +367,7 @@
 - **每天結尾（2026-11-20）**：使用者改了 Day 5–8 的「這一天的一句話」（Day 6 原文「飛觀光」照意思寫成「非觀光」、Day 7「比探險記 完」寫成「探險記　完」）；選「做法一」：每天結尾頁多一塊「這一天走過」（`DAYROUTE`，地名用 → 串起來），Day 9 沒有結尾頁（接後記）。
   **自己加的頁位置修正 `CPFIX`**：Claude 寫不了 Firestore，所以書本與 trip-tools 都在「Firestore 還是原本位置（`from`）」時改用 `CPFIX` 的位置；使用者在 trip-tools 改過位置就以那邊為準。`c_mwnlv4mxbxub`「妙高高原->長野 列車」從 Day 5 早餐後面 → 第四章章扉 `op4` 後面（Day 6）。
   `book-media.json` 多 `cpfix`（`rt/bm2.js`）。trip-tools「✎ 修改」自己加的頁多了「放在哪一頁後面」可以換位置。驗證 scratchpad `nd/txt.js`、`nd/q.js`、`del/t.js`。`sw.js` `hkr-v39`。
+- **開場動畫刪除（2026-11-20，使用者：「點擊網站的開頭動畫請幫我刪除」）**：不再呼叫 `introRun()`（函式與 CSS 留著）；`SPSLOT.intro` 拿掉，trip-tools 特殊頁不再有「開場動畫」格子。`book-media.json` 已重產。`sw.js` `hkr-v40`。
 
 ## GitHub Pages 發布
 - Settings → Pages → Deploy from a branch → 選分支 / `(root)`。
