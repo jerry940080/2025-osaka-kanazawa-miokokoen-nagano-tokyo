@@ -6,9 +6,21 @@
    改了這支檔案要把 V 的版本號加一，舊快取才會被清掉。
    網頁的 fetch 加 cache:'no-cache'，否則 GitHub Pages 的 10 分鐘 HTTP 快取會讓使用者一直看到舊版。 */
 // V：每個行程換一個前綴；同網域的其他行程網站也有快取，activate 時只清掉自己前綴的舊版本。改這支檔案就把數字加一
-const V='hkr-v42', PAGE='./', CORE=['./','manifest.webmanifest','icons/icon-192.png','icons/icon-512.png','icons/apple-touch-icon.png'];
+const V='hkr-v43', PAGE='./', CORE=['./','manifest.webmanifest','icons/icon-192.png','icons/icon-512.png','icons/apple-touch-icon.png'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(V).then(c=>c.addAll(CORE)).then(()=>self.skipWaiting()));});
-self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k.startsWith('hkr-')&&k!==V).map(k=>caches.delete(k)))).then(()=>self.clients.claim()));});
+/* 2026-11-20：公開照片、影片、縮圖另外存在 MC（不跟著 V 改版清掉），看過一次之後再開都直接從裝置讀。檔名不會重複使用（換照片一定換編號），所以不用版本號 */
+const MC='hkr-media-1';
+self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k.startsWith('hkr-')&&k!==V&&k!==MC).map(k=>caches.delete(k)))).then(()=>self.clients.claim()));});
+const isOwnMedia=u=>u.origin===location.origin&&/\/(img|vid|thumb)\/[^/]+\.(webp|jpg|jpeg|png|mp4)$/i.test(u.pathname);
+/* 影片會用 Range 要一段一段：快取裡有完整檔就自己切那一段回去；沒有就先照常從網路給，同時在背景把整支抓下來存好 */
+async function mediaFirst(req){
+  const c=await caches.open(MC),key=req.url.split('#')[0],hit=await c.match(key);const range=req.headers.get('range');
+  if(hit){if(!range)return hit;const buf=await hit.arrayBuffer(),m=/bytes=(\d*)-(\d*)/.exec(range),len=buf.byteLength;
+    let a=m&&m[1]!==''?+m[1]:0,b=m&&m[2]!==''?+m[2]:len-1;if(m&&m[1]===''&&m[2]!==''){a=len-(+m[2]);b=len-1;}b=Math.min(b,len-1);
+    return new Response(buf.slice(a,b+1),{status:206,headers:{'Content-Type':hit.headers.get('Content-Type')||'video/mp4','Content-Range':`bytes ${a}-${b}/${len}`,'Content-Length':String(b-a+1),'Accept-Ranges':'bytes'}});}
+  if(range){fetch(key).then(r=>{if(r&&r.status===200)return c.put(key,r);}).catch(()=>{});return fetch(req);}
+  try{const r=await fetch(req);if(r&&r.status===200)c.put(key,r.clone());return r;}catch(err){return Response.error();}
+}
 const isMedia=u=>/(^|\.)upload\.wikimedia\.org$/.test(u.hostname)||/fonts\.(googleapis|gstatic)\.com$/.test(u.hostname);
 const isWikiApi=u=>/wikipedia\.org$/.test(u.hostname)&&u.pathname.endsWith('/api.php');
 function timeout(ms){return new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),ms));}
@@ -34,6 +46,7 @@ self.addEventListener('fetch',e=>{
   if(req.mode==='navigate'&&u.origin===location.origin){const sc=new URL(self.registration.scope);
     if(u.pathname===sc.pathname||u.pathname===sc.pathname+'index.html'){e.respondWith(pageFirstNetwork(req));return;}
     return;}
+  if(isOwnMedia(u)){e.respondWith(mediaFirst(req));return;}
   if(u.origin===location.origin){e.respondWith(cacheFirst(req));return;}
   if(isWikiApi(u)){e.respondWith(networkFirst(req));return;}
   if(isMedia(u)){e.respondWith(cacheFirst(req));return;}

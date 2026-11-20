@@ -1517,7 +1517,19 @@ function sbyInit(B){const r=B&&B.querySelector('.sp-sby');if(!r||r._t)return;let
     const s=e.target.closest('.sbs.on');if(s){e.stopPropagation();const L=SBSTOP.map(([n,d,id,k])=>{const x=(MEDIA[k]||[]).find(y=>y[0]===id);return [id,n+'・'+(x?x[1]:''),'i',x?x[3]:'h'];});lbOpen('再見，雪國',0,+s.dataset.i,L);}},true);}
 document.addEventListener('timeupdate',e=>{const v=e.target;if(!(v instanceof HTMLVideoElement)||!v.closest('.sp-sby')||!v.duration)return;sbyMark(v.closest('.sp-sby'),Math.min(SBSTOP.length-1,Math.floor(v.currentTime/v.duration*SBSTOP.length)));},true);
 document.addEventListener('click',e=>{const f=e.target.closest('#base .spc.spf');if(!f)return;e.stopPropagation();const k=f.dataset.gk,L=galOf(k)||[];const i=Math.max(0,L.findIndex(x=>x[0]===f.dataset.id));lbOpen(titleOf(k)||'',0,i,L);},true);
-{const _aS=after;after=function(){_aS.apply(this,arguments);try{sbyInit(document.querySelector('#base'));}catch(e){console.error(e);}};}
+/* 2026-11-20 預先讀下一個跨頁（使用者：讀取有點慢）：公開照片／影片封面先抓下來（存進 service worker 的媒體快取），
+   成員登入時私人照片與第一支私人影片也先組好（仍然只存在這次開書的記憶體裡，不存到裝置）。省流量模式不做。 */
+let PFT=null;
+function prefetchNext(){clearTimeout(PFT);PFT=setTimeout(()=>{try{if(navigator.connection&&navigator.connection.saveData)return;
+  const U=UNITS(),nx=[U[I+1],U[I+2]].filter(Boolean).flatMap(u=>Array.isArray(u)?u:[u]).filter(k=>P[k]&&!P[k].spacer);
+  const pubs=new Set(),pvs=[];nx.forEach(k=>{let L=[];try{L=(GPOF[k]&&!bpHas(k))?gpItems(k):bpItems(k);}catch(e){}
+    L.slice(0,8).forEach(x=>{if(x[4]){pvs.push(x);return;}pubs.add(x[2]==='v'?`vid/IMG_${x[0]}.jpg`:`img/IMG_${x[0]}.webp`);});
+    const h=typeof P[k].h==='function'?'':String(P[k].h||'');(h.match(/img\/IMG_\d+\.webp/g)||[]).slice(0,6).forEach(x=>pubs.add(x));});
+  [...pubs].slice(0,16).forEach(u=>{const im=new Image();im.decoding='async';im.src=u;});
+  if(window.PVALL&&window.pvUrl){let v=0;pvs.slice(0,8).forEach(x=>{const m=window.PVALL[String(x[0]).slice(3)];if(!m)return;
+    if(m.kind==='video'){if(v++)return window.pvUrl(m,'p').catch(()=>{});}window.pvUrl(m,'f').catch(()=>{});});}
+}catch(e){}},700);}
+{const _aS=after;after=function(){_aS.apply(this,arguments);try{sbyInit(document.querySelector('#base'));}catch(e){console.error(e);}prefetchNext();};}
 const SEQ=['endp','toc','pre','route',
  'op1','s_arrive','s_dinner1','q1','s_iccard',
  't1','op2','tunnel','s_tsuzumi','s_hotel2','gate','s_castle','s_dinner2','q2','s_noto','s_bus','snowx','pop','korokke','s_album','s_shira','s_unagi','q3','s_uber',
@@ -2305,7 +2317,7 @@ async function urlOf(m,which){   // which：f 本體、p 影片封面
   let parts;if(which==='p')parts=[await chunk(m.id,'p')];
   else{const n=Math.max(1,m.nf||1);parts=new Array(n);let i=0;await Promise.all(Array.from({length:Math.min(4,n)},async()=>{while(i<n){const j=i++;parts[j]=await chunk(m.id,'f'+j);}}));}
   const u=URL.createObjectURL(new Blob(parts,{type:which==='p'?'image/jpeg':(m.mime||(m.kind==='video'?'video/mp4':'image/webp'))}));
-  URLS.set(k,u);while(URLS.size>14){const [k0,u0]=URLS.entries().next().value;URLS.delete(k0);URL.revokeObjectURL(u0);}
+  URLS.set(k,u);while(URLS.size>30){const [k0,u0]=URLS.entries().next().value;URLS.delete(k0);URL.revokeObjectURL(u0);}
   return u;}
 
 /* ── 資料 ── */
