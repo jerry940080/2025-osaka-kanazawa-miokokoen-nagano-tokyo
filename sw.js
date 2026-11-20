@@ -6,7 +6,7 @@
    改了這支檔案要把 V 的版本號加一，舊快取才會被清掉。
    網頁的 fetch 加 cache:'no-cache'，否則 GitHub Pages 的 10 分鐘 HTTP 快取會讓使用者一直看到舊版。 */
 // V：每個行程換一個前綴；同網域的其他行程網站也有快取，activate 時只清掉自己前綴的舊版本。改這支檔案就把數字加一
-const V='hkr-v44', PAGE='./', CORE=['./','manifest.webmanifest','icons/icon-192.png','icons/icon-512.png','icons/apple-touch-icon.png'];
+const V='hkr-v45', PAGE='./', CORE=['./','manifest.webmanifest','icons/icon-192.png','icons/icon-512.png','icons/apple-touch-icon.png'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(V).then(c=>c.addAll(CORE)).then(()=>self.skipWaiting()));});
 /* 2026-11-20：公開照片、影片、縮圖另外存在 MC（不跟著 V 改版清掉），看過一次之後再開都直接從裝置讀。檔名不會重複使用（換照片一定換編號），所以不用版本號 */
 const MC='hkr-media-1';

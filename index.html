@@ -508,22 +508,22 @@ html.pvw .bpa [data-n]::after{content:attr(data-n);position:absolute;left:6px;to
 .bp-pola{display:block}.bp-pola .pf{position:absolute;background:#fff;padding:6px 6px 18px;box-shadow:0 4px 12px rgba(0,0,0,.3)}.bp-pola .pf>div{aspect-ratio:1/1;width:100%}
 /* 2026-11-20 每天結尾：手繪旅行地圖 */
 .pg.qe .pn{z-index:3}
-.de{position:absolute;inset:0;background:#f4ecd9;overflow:hidden;z-index:1;color:#5a3e2b}
+.de{position:absolute;inset:0;background:var(--dbg);overflow:hidden;z-index:1;color:var(--dink)}
 .de .desvg{position:absolute;left:0;top:0}
 .dehd{position:absolute;left:calc(30px*var(--k));top:calc(20px*var(--k))}
-.det{font:700 calc(34px*var(--k))/1.2 var(--hand);color:#5a3e2b}
-.ded{font:calc(16px*var(--k)) var(--hand);color:#8a6a50}
+.det{font:700 calc(34px*var(--k))/1.2 var(--hand);color:var(--dink)}
+.ded{font:calc(16px*var(--k)) var(--hand);color:var(--dsub)}
 .destk{position:absolute;border-radius:50%;border:calc(5px*var(--k)) solid #fff;box-shadow:0 3px 8px #0003;overflow:hidden;box-sizing:border-box;cursor:zoom-in;background:#ddd}
 .destk img{width:100%;height:100%;object-fit:cover;display:block}
-.delb{position:absolute;transform:translateX(-50%);text-align:center;white-space:nowrap;font:700 calc(15px*var(--k))/1.25 var(--hand);color:#5a3e2b;text-shadow:0 0 3px #f4ecd9,0 0 3px #f4ecd9}
-.delb i{display:block;font:400 calc(12px*var(--k))/1.3 var(--hand);font-style:normal;color:#8a6a50}
-.detg{position:absolute;box-sizing:border-box;display:flex;align-items:center;justify-content:center;white-space:nowrap;font-family:var(--hand);font-weight:700;color:#5a3e2b;background:#fffdf6;border:1.5px dashed #a0522d;border-radius:99px}
-.demg{position:absolute;transform:translate(-50%,0);font:calc(12px*var(--k))/1.5 var(--hand);background:#a0522d;color:#fff;padding:0 calc(10px*var(--k));border-radius:99px;white-space:nowrap}
-.denote{position:absolute;background:#fffdf6;box-shadow:0 3px 10px #0002;padding:calc(14px*var(--k)) calc(22px*var(--k));box-sizing:border-box;transform:rotate(-1deg)}
+.delb{position:absolute;transform:translateX(-50%);text-align:center;white-space:nowrap;font:700 calc(15px*var(--k))/1.25 var(--hand);color:var(--dink);text-shadow:0 0 3px var(--dbg),0 0 3px var(--dbg),0 0 6px var(--dbg)}
+.delb i{display:block;white-space:normal;font:400 calc(12px*var(--k))/1.3 var(--hand);font-style:normal;color:var(--dsub)}
+.detg{position:absolute;box-sizing:border-box;display:flex;align-items:center;justify-content:center;white-space:nowrap;font-family:var(--hand);font-weight:700;color:var(--dink);background:var(--dcard);border:1.5px dashed var(--dacc);border-radius:99px}
+.demg{position:absolute;transform:translate(-50%,0);font:calc(12px*var(--k))/1.5 var(--hand);background:var(--dacc);color:#fff;padding:0 calc(10px*var(--k));border-radius:99px;white-space:nowrap}
+.denote{position:absolute;background:var(--dcard);box-shadow:0 3px 10px #0002;padding:calc(14px*var(--k)) calc(22px*var(--k));box-sizing:border-box;transform:rotate(-1deg)}
 .denote::before{content:"";position:absolute;top:calc(-9px*var(--k));left:calc(28px*var(--k));width:calc(66px*var(--k));height:calc(18px*var(--k));background:#cfe0d9cc;transform:rotate(4deg)}
-.denote b{display:block;font:400 calc(11px*var(--k)) var(--mono);letter-spacing:.2em;color:#a0522d;margin-bottom:calc(4px*var(--k))}
-.denote p{margin:0;font:700 calc(20px*var(--k))/1.6 var(--hand);color:#3e2c20;padding-right:calc(36px*var(--k))}
-.destamp{position:absolute;right:calc(-8px*var(--k));top:calc(-34px*var(--k));width:calc(80px*var(--k));height:calc(80px*var(--k));border:3px double #b5452f;border-radius:50%;color:#b5452f;font:700 calc(9.5px*var(--k))/1.2 var(--mono);display:flex;flex-direction:column;align-items:center;justify-content:center;transform:rotate(-14deg);opacity:.8;background:#fffdf690}
+.denote b{display:block;font:400 calc(11px*var(--k)) var(--mono);letter-spacing:.2em;color:var(--dacc);margin-bottom:calc(4px*var(--k))}
+.denote p{margin:0;font:700 calc(20px*var(--k))/1.6 var(--hand);color:var(--dink);padding-right:calc(36px*var(--k))}
+.destamp{position:absolute;right:calc(-8px*var(--k));top:calc(-34px*var(--k));width:calc(80px*var(--k));height:calc(80px*var(--k));border:3px double var(--dacc);border-radius:50%;color:var(--dacc);font:700 calc(9.5px*var(--k))/1.2 var(--mono);display:flex;flex-direction:column;align-items:center;justify-content:center;transform:rotate(-14deg);opacity:.85;background:color-mix(in srgb,var(--dcard) 60%,transparent)}
 .destamp em{font:700 calc(19px*var(--k))/1.1 var(--hand);font-style:normal}
 </style>
 <style>
@@ -1362,7 +1362,11 @@ const DAYEND={
  7:{st:'TOKYO',a:[['長野','早上',36.6431,138.1886,'','','',''],['大宮','',35.9063,139.6239,'','','轉埼京線','🚄'],['新宿','中午',35.6953,139.7007,'2164','s_bookbed','BOOK AND BED','🚃'],['元村','11:00',35.6939,139.6993,'2152','s_motomura','','🚶'],['中野百老匯','下午',35.7092,139.6657,'0930','cabinet','','🚃'],['タロちゃん','晚餐',35.7072,139.6648,'0941','focus','牛舌又加點一份','🚶'],['歌舞伎町','晚上',35.6961,139.7026,'0945','s_bookbed','','🚃']]},
  8:{st:'TOKYO',a:[['新宿','早上',35.6953,139.7007,'','','',''],['淺草','',35.7100,139.7956,'0988','s_plus','Plus Hostel','🚇'],['秋葉原','白天',35.6996,139.7714,'','','AmiAmi','🚇'],['神保町','晚餐',35.6962,139.7590,'','','神田勝本','🚇'],['淺草','晚上',35.7109,139.7958,'','','一蘭','🚇'],['淺草寺','夜裡',35.7130,139.7966,'1008','s_sensoji','晚上人少','🚶']]}
 };
-function deDraw(d,W,H,spread,q,date){const D=DAYEND[d];if(!D)return '';const st=D.a,mob=!spread&&MOB;
+function deDraw(d,W,H,spread,q,date,c){const D=DAYEND[d];if(!D)return '';
+ /* 顏色跟著這一章的色票（colOf(MAP[章])＝紙、字、強調色、是不是深色） */
+ let pa='#f4ecd9',ink='#5a3e2b',acc='#a0522d',dk=false;try{[pa,ink,acc,dk]=colOf(MAP[c]);}catch(e){}
+ const mx=(a,b,t)=>mixHex(a,b,t),C={bg:pa,sea:mx(pa,acc,.08),land:mx(pa,acc,dk?.16:.2),hatch:mx(pa,acc,dk?.3:.34),landS:mx(pa,acc,.55),wave:mx(pa,acc,.45),route:acc,pin:acc,
+  ink,sub:mx(ink,pa,.42),card:dk?mx(pa,'#ffffff',.14):mx(pa,'#ffffff',.65),magW:mx(pa,acc,.3),magL:mx(pa,acc,dk?.1:.07),grid:mx(pa,acc,.16),lead:mx(ink,pa,.3)};const st=D.a,mob=!spread&&MOB;
  const k=spread?Math.max(.8,Math.min(1.4,W/1120,H/760)):mob?Math.max(.85,Math.min(1.25,W/380)):Math.max(.8,Math.min(1.4,W/560,H/760));
  const hd=Math.round((mob?78:88)*k),pad=Math.round((spread?44:mob?8:16)*k);const _nw=spread?470*k:W-2*(spread?44:mob?8:16)*k-(mob?8:20)*k,qh=spread?0:Math.ceil(Math.max(1,Math.ceil(q.length*20*k*1.1/(_nw-80*k)))*20*k*1.6+52*k+40*k);
  const nPh=st.filter(s=>s[4]).length,perSide=Math.max(1,Math.ceil(nPh/2));
@@ -1417,35 +1421,35 @@ function deDraw(d,W,H,spread,q,date){const D=DAYEND[d];if(!D)return '';const st=
    pp.forEach(p=>{if(p[0]>b.x-4&&p[0]<b.x+b.w+4&&p[1]>b.y-4&&p[1]<b.y+b.h+4)s+=900;});s+=r*r*.8;if(s<bs){bs=s;best=b;}}t.b=best;boxes.push(best);});
  // ===== 畫 =====
  const id='de'+d+(spread?'s':'');let svg=`<svg class="desvg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}"><defs><filter id="${id}w"><feTurbulence baseFrequency=".04" numOctaves="2" seed="3"/><feDisplacementMap in="SourceGraphic" scale="${4*k}"/></filter>
- <pattern id="${id}h" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(35)"><line x1="0" y1="0" x2="0" y2="7" stroke="#dccaa5" stroke-width="1.1"/></pattern>
+ <pattern id="${id}h" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(35)"><line x1="0" y1="0" x2="0" y2="7" stroke="${C.hatch}" stroke-width="1.1"/></pattern>
  ${mags.map((m,j)=>`<clipPath id="${id}c${j}"><circle cx="${m.x}" cy="${m.y}" r="${m.R}"/></clipPath>`).join('')}</defs>`;
- const land=LP(P);svg+=`<g filter="url(#${id}w)"><path d="${land}" fill="#ecdfc2"/><path d="${land}" fill="url(#${id}h)" stroke="#a88b62" stroke-width="${1.5*k}"/></g>`;
- for(let j=0;j<6;j++){const yy=hd+40*k+j*(H-hd-60*k)/6,xx=(j*53%120+12)*k;svg+=`<path d="M${xx} ${yy} q${7*k} ${-5*k} ${14*k} 0 t${14*k} 0" fill="none" stroke="#9fbcc4" stroke-width="1.4"/>`;}
- segs.forEach(s=>{svg+=`<path d="M${s.a.join(' ')} Q${s.q.join(' ')} ${s.b.join(' ')}" fill="none" stroke="#a0522d" stroke-width="${3*k}" stroke-dasharray="${9*k} ${7*k}" stroke-linecap="round"/>`;
-  const L2=Math.hypot(s.b[0]-s.a[0],s.b[1]-s.a[1]);if(s.m&&L2>70*k){const mx=.25*s.a[0]+.5*s.q[0]+.25*s.b[0],my=.25*s.a[1]+.5*s.q[1]+.25*s.b[1];svg+=`<circle cx="${mx}" cy="${my}" r="${13*k}" fill="#fffaf0" stroke="#a0522d" stroke-width="1.2"/><text x="${mx}" y="${my+5*k}" font-size="${14*k}" text-anchor="middle">${s.m}</text>`;}});
- const pin=(x,y,s=1)=>`<g transform="translate(${x} ${y}) scale(${k*s})"><path d="M0 0 c-7 -9 -9 -13 -9 -17 a9 9 0 1 1 18 0 c0 4 -2 8 -9 17z" fill="#c8452e" stroke="#fff" stroke-width="2"/><circle cy="-17" r="3.4" fill="#fff"/></g>`;
+ const land=LP(P);svg+=`<g filter="url(#${id}w)"><path d="${land}" fill="${C.land}"/><path d="${land}" fill="url(#${id}h)" stroke="${C.landS}" stroke-width="${1.5*k}"/></g>`;
+ for(let j=0;j<6;j++){const yy=hd+40*k+j*(H-hd-60*k)/6,xx=(j*53%120+12)*k;svg+=`<path d="M${xx} ${yy} q${7*k} ${-5*k} ${14*k} 0 t${14*k} 0" fill="none" stroke="${C.wave}" stroke-width="1.4"/>`;}
+ segs.forEach(s=>{svg+=`<path d="M${s.a.join(' ')} Q${s.q.join(' ')} ${s.b.join(' ')}" fill="none" stroke="${C.route}" stroke-width="${3*k}" stroke-dasharray="${9*k} ${7*k}" stroke-linecap="round"/>`;
+  const L2=Math.hypot(s.b[0]-s.a[0],s.b[1]-s.a[1]);if(s.m&&L2>70*k){const mx=.25*s.a[0]+.5*s.q[0]+.25*s.b[0],my=.25*s.a[1]+.5*s.q[1]+.25*s.b[1];svg+=`<circle cx="${mx}" cy="${my}" r="${13*k}" fill="${C.card}" stroke="${C.route}" stroke-width="1.2"/><text x="${mx}" y="${my+5*k}" font-size="${14*k}" text-anchor="middle">${s.m}</text>`;}});
+ const pin=(x,y,s=1)=>`<g transform="translate(${x} ${y}) scale(${k*s})"><path d="M0 0 c-7 -9 -9 -13 -9 -17 a9 9 0 1 1 18 0 c0 4 -2 8 -9 17z" fill="${C.pin}" stroke="#fff" stroke-width="2"/><circle cy="-17" r="3.4" fill="#fff"/></g>`;
  st.forEach((s,i)=>{if(cOf(i).m.length<2)svg+=pin(...pp[i]);});
  // 放大圈：主圖上的小圈＋兩條切線＋圈裡的放大地圖
  mags.forEach((m,j)=>{const c=m.c,r0=Math.max(12*k,Math.max(...c.m.map(i=>Math.hypot(pp[i][0]-c.x,pp[i][1]-c.y)))+8*k),dx=m.x-c.x,dy=m.y-c.y,D2=Math.hypot(dx,dy),a=Math.atan2(dy,dx),b=Math.asin(Math.min(1,(m.R-r0)/D2));
   const t1=a+Math.PI/2+b,t2=a-Math.PI/2-b;const p1=[c.x+Math.cos(t1)*r0,c.y+Math.sin(t1)*r0],q1=[m.x+Math.cos(t1)*m.R,m.y+Math.sin(t1)*m.R],p2=[c.x+Math.cos(t2)*r0,c.y+Math.sin(t2)*r0],q2=[m.x+Math.cos(t2)*m.R,m.y+Math.sin(t2)*m.R];
-  svg+=`<path d="M${p1} L${q1} L${q2} L${p2}Z" fill="#fff6" stroke="none"/><path d="M${p1} L${q1} M${p2} L${q2}" stroke="#a0522d" stroke-width="${1.3*k}" stroke-dasharray="${3*k} ${4*k}"/>`;
-  svg+=`<circle cx="${c.x}" cy="${c.y}" r="${r0}" fill="#fff8" stroke="#a0522d" stroke-width="${1.8*k}" stroke-dasharray="${4*k} ${3*k}"/>`;
-  svg+=`<circle cx="${m.x}" cy="${m.y}" r="${m.R+4*k}" fill="#fff"/><g clip-path="url(#${id}c${j})"><rect x="${m.x-m.R}" y="${m.y-m.R}" width="${2*m.R}" height="${2*m.R}" fill="#cfe0e4"/><path d="${LP(m.P)}" fill="#f6edd7" stroke="#c9b38b" stroke-width="1"/>`;
-  for(let g=-3;g<=3;g++)svg+=`<path d="M${m.x-m.R} ${m.y+g*m.R/3.2} L${m.x+m.R} ${m.y+g*m.R/3.2+m.R*.12}" stroke="#e6d8b8" stroke-width="1"/>`;
+  svg+=`<path d="M${p1} L${q1} L${q2} L${p2}Z" fill="${C.card}66" stroke="none"/><path d="M${p1} L${q1} M${p2} L${q2}" stroke="${C.route}" stroke-width="${1.3*k}" stroke-dasharray="${3*k} ${4*k}"/>`;
+  svg+=`<circle cx="${c.x}" cy="${c.y}" r="${r0}" fill="${C.card}88" stroke="${C.route}" stroke-width="${1.8*k}" stroke-dasharray="${4*k} ${3*k}"/>`;
+  svg+=`<circle cx="${m.x}" cy="${m.y}" r="${m.R+4*k}" fill="${C.card}"/><g clip-path="url(#${id}c${j})"><rect x="${m.x-m.R}" y="${m.y-m.R}" width="${2*m.R}" height="${2*m.R}" fill="${C.magW}"/><path d="${LP(m.P)}" fill="${C.magL}" stroke="${C.landS}" stroke-width="1"/>`;
+  for(let g=-3;g<=3;g++)svg+=`<path d="M${m.x-m.R} ${m.y+g*m.R/3.2} L${m.x+m.R} ${m.y+g*m.R/3.2+m.R*.12}" stroke="${C.grid}" stroke-width="1"/>`;
   const ip=[];c.m.forEach(i=>{const p=tgt[i],l=ip[ip.length-1];if(!l||Math.hypot(l[0]-p[0],l[1]-p[1])>1)ip.push(p);});
-  for(let i=1;i<ip.length;i++){const [a1,b1]=ip[i-1],[c1,e1]=ip[i];svg+=`<path d="M${a1} ${b1} Q${(a1+c1)/2-(e1-b1)*.2} ${(b1+e1)/2+(c1-a1)*.2} ${c1} ${e1}" fill="none" stroke="#a0522d" stroke-width="${2.4*k}" stroke-dasharray="${6*k} ${5*k}" stroke-linecap="round"/>`;}
-  svg+='</g>';svg+=`<circle cx="${m.x}" cy="${m.y}" r="${m.R}" fill="none" stroke="#a0522d" stroke-width="${2.4*k}"/>`;
+  for(let i=1;i<ip.length;i++){const [a1,b1]=ip[i-1],[c1,e1]=ip[i];svg+=`<path d="M${a1} ${b1} Q${(a1+c1)/2-(e1-b1)*.2} ${(b1+e1)/2+(c1-a1)*.2} ${c1} ${e1}" fill="none" stroke="${C.route}" stroke-width="${2.4*k}" stroke-dasharray="${6*k} ${5*k}" stroke-linecap="round"/>`;}
+  svg+='</g>';svg+=`<circle cx="${m.x}" cy="${m.y}" r="${m.R}" fill="none" stroke="${C.route}" stroke-width="${2.4*k}"/>`;
   Object.values(m.loc).forEach(p=>svg+=pin(p[0],p[1],.85));});
  // 貼紙的虛線
- ph.forEach(o=>{const cx=o.b.x+sz/2,cy=o.b.y+sz/2,dx=o.t[0]-cx,dy=o.t[1]-cy,L2=Math.hypot(dx,dy)||1;svg+=`<path d="M${cx+dx/L2*sz/2} ${cy+dy/L2*sz/2} L${o.t[0]} ${o.t[1]-6*k}" stroke="#7a5a40" stroke-width="${1.4*k}" stroke-dasharray="${2*k} ${4*k}" fill="none"/><circle cx="${o.t[0]}" cy="${o.t[1]-6*k}" r="${2.2*k}" fill="#7a5a40"/>`;});
+ ph.forEach(o=>{const cx=o.b.x+sz/2,cy=o.b.y+sz/2,dx=o.t[0]-cx,dy=o.t[1]-cy,L2=Math.hypot(dx,dy)||1;svg+=`<path d="M${cx+dx/L2*sz/2} ${cy+dy/L2*sz/2} L${o.t[0]} ${o.t[1]-6*k}" stroke="${C.lead}" stroke-width="${1.4*k}" stroke-dasharray="${2*k} ${4*k}" fill="none"/><circle cx="${o.t[0]}" cy="${o.t[1]-6*k}" r="${2.2*k}" fill="${C.lead}"/>`;});
  svg+='</svg>';
- let h=`<div class="de" style="--k:${k}">${svg}<div class="dehd"><div class="det">這一天走過</div><div class="ded">Day ${d}・${date}</div></div>`;
+ let h=`<div class="de" style="--k:${k};--dbg:${C.sea};--dpa:${pa};--dink:${ink};--dsub:${C.sub};--dcard:${C.card};--dacc:${acc}">${svg}<div class="dehd"><div class="det">這一天走過</div><div class="ded">Day ${d}・${date}</div></div>`;
  mags.forEach(m=>{const names=[...new Set(m.c.m.map(i=>st[i][0]))];h+=`<div class="demg" style="left:${m.x}px;top:${m.y+m.R-2*k}px">放大・${names.length>3?names.slice(0,2).join('、')+'…':names.join('、')}</div>`;});
- ph.forEach((o,j)=>{const b=o.b,s=o.s,rot=[-6,4,-3,7,-5,3][j%6];h+=`<div class="destk" data-gk="${s[5]}" data-id="${s[4]}" style="left:${b.x}px;top:${b.y}px;width:${sz}px;height:${sz}px;transform:rotate(${rot}deg)"><img src="img/IMG_${s[4]}.webp" alt="" loading="lazy"></div><div class="delb" style="left:${b.x+sz/2}px;top:${b.y+sz+2*k}px">${s[0]}<i>${[s[1],s[6]].filter(Boolean).join(' · ')}</i></div>`;});
+ ph.forEach((o,j)=>{const b=o.b,s=o.s,rot=[-6,4,-3,7,-5,3][j%6];h+=`<div class="destk" data-gk="${s[5]}" data-id="${s[4]}" style="left:${b.x}px;top:${b.y}px;width:${sz}px;height:${sz}px;transform:rotate(${rot}deg)"><img src="img/IMG_${s[4]}.webp" alt="" loading="lazy"></div><div class="delb" style="left:${Math.max(b.x+sz/2,(sz+28*k)/2+2)}px;top:${b.y+sz+2*k}px;width:${sz+28*k}px;left:${Math.min(Math.max(b.x+sz/2,(sz+28*k)/2+2),W-(sz+28*k)/2-2)}px">${s[0]}<i>${[s[1],s[6]].filter(Boolean).join(' · ')}</i></div>`;});
  tags.forEach(t=>{h+=`<div class="detg" style="left:${t.b.x}px;top:${t.b.y}px;width:${t.b.w}px;height:${t.b.h}px;font-size:${t.fs}px">${t.txt}</div>`;});
  h+=`<div class="denote" style="left:${noteX}px;bottom:${H-noteY-noteH}px;width:${noteW}px;min-height:${noteH}px"><b>這一天的一句話</b><p>${q}</p><div class="destamp"><span>2025</span><em>${date.replace(/（.*$/,'').replace('/','.')}</em><span>${D.st}</span></div></div>`;
  return h+'</div>';}
-const qd=(c,d,date,q)=>({c,cls:'qe',h:()=>{const f=!!(P['q'+d]&&P['q'+d].full)&&!MOB;return deDraw(d,f?W*2:W,H,f,q,date);}});
+const qd=(c,d,date,q)=>({c,cls:'qe',h:()=>{const f=!!(P['q'+d]&&P['q'+d].full)&&!MOB;return deDraw(d,f?W*2:W,H,f,q,date,c);}});
 Object.assign(P,{
  // 第一章 大阪
  op1:opg('ch1','第一章','大阪','CHAPTER 01 · DAY 1','新今宮的夜','橫幅照片・新今宮的街道','第一天只有半天：降落、換票、吃飯、入住。'),
