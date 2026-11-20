@@ -369,6 +369,9 @@
   `book-media.json` 多 `cpfix`（`rt/bm2.js`）。trip-tools「✎ 修改」自己加的頁多了「放在哪一頁後面」可以換位置。驗證 scratchpad `nd/txt.js`、`nd/q.js`、`del/t.js`。`sw.js` `hkr-v39`。
 - **開場動畫刪除（2026-11-20，使用者：「點擊網站的開頭動畫請幫我刪除」）**：不再呼叫 `introRun()`（函式與 CSS 留著）；`SPSLOT.intro` 拿掉，trip-tools 特殊頁不再有「開場動畫」格子。`book-media.json` 已重產。`sw.js` `hkr-v40`。
 - **金澤車站文字分給「拖著行李箱的雪路」（2026-11-20）**：`s_tsuzumi` 只留第一次看到雪、鼓門那段；走雪地快半小時＋「雪中也會撐傘」搬到 `g_tsu2`（`GPINFO` 的文字）。`sw.js` `hkr-v41`。
+- **空白頁改放照片（2026-11-20，使用者截圖問「為什麼會有空白頁」，選「放一張照片」）**：`pairUp` 湊不成對補的留白頁（特殊頁、車票頁前面剩單獨一頁時）改成整頁照片 `.spc.spf`：從前一頁往回最多 3 頁（遇到特殊頁、車票就停，照片頁 `gp` 用它的來源頁）的 `MEDIA` 照片裡，
+  先挑**整本都沒用過**的，沒有就挑**不在前一頁上**的（`GPPUB`、`PHOTO`、`BPG` 的 items／slots 都算用過；同一本不重複用同一張）；都沒有才放原本的大字章號。說明拿掉括號裡的編號註記。點照片開燈箱翻那一頁的相簿。
+  目前 7 個留白頁有 6 個放照片（後記那頁還是章號）；有幾頁會跟前一兩頁的照片重複（使用者知道）。驗證 scratchpad `nd/spc.js`、`del/t.js`。`sw.js` `hkr-v42`。
 
 ## GitHub Pages 發布
 - Settings → Pages → Deploy from a branch → 選分支 / `(root)`。

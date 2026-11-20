@@ -882,6 +882,10 @@ body.pj #pal,body.pj #hint{display:none}
 .m .qpg .qq{font-size:23px}
 .spc{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:color-mix(in srgb,var(--ink) 22%,transparent)}
 .spc b{font:900 96px/1 var(--serif)}.spc span{font:13px var(--mono);letter-spacing:.3em}
+.spc.spf{position:relative;padding:0;gap:0;justify-content:flex-end;cursor:zoom-in;overflow:hidden;border-radius:2px}
+.spc.spf i{position:absolute;inset:0;background-size:cover;background-position:center;filter:blur(18px) brightness(.75);transform:scale(1.1)}
+.spc.spf i.f{inset:28px 28px 64px;background-size:contain;background-repeat:no-repeat;filter:none;transform:none}
+.spc.spf span{position:relative;z-index:1;margin:0 28px 24px;font:14px/1.6 var(--hand,serif);letter-spacing:.05em;color:#fff;text-shadow:0 1px 6px rgba(0,0,0,.6);text-align:center}
 .short .m .txt{font-size:14.5px;line-height:1.65}.short .m h2{font-size:23px}.short .m .col{gap:9px}.short .m .one{font-size:15px;padding-top:8px}
 .short .m .col>.pgr{min-height:100px}.short .m .col>.ph{min-height:80px}.short .toc small{display:none}.short .toc li{padding:6px 0}.short .m .rh{top:10px}.short .m .pg{padding-top:34px;padding-bottom:30px}
 .planlink{align-self:flex-start;color:var(--acc);font:15px var(--sans);text-underline-offset:4px}
@@ -1512,6 +1516,7 @@ function sbyInit(B){const r=B&&B.querySelector('.sp-sby');if(!r||r._t)return;let
       if(v&&v.duration){v.currentTime=v.duration*n/SBSTOP.length;v.play().catch(()=>{});}else{i=n;sbyMark(r,i);}return;}
     const s=e.target.closest('.sbs.on');if(s){e.stopPropagation();const L=SBSTOP.map(([n,d,id,k])=>{const x=(MEDIA[k]||[]).find(y=>y[0]===id);return [id,n+'・'+(x?x[1]:''),'i',x?x[3]:'h'];});lbOpen('再見，雪國',0,+s.dataset.i,L);}},true);}
 document.addEventListener('timeupdate',e=>{const v=e.target;if(!(v instanceof HTMLVideoElement)||!v.closest('.sp-sby')||!v.duration)return;sbyMark(v.closest('.sp-sby'),Math.min(SBSTOP.length-1,Math.floor(v.currentTime/v.duration*SBSTOP.length)));},true);
+document.addEventListener('click',e=>{const f=e.target.closest('#base .spc.spf');if(!f)return;e.stopPropagation();const k=f.dataset.gk,L=galOf(k)||[];const i=Math.max(0,L.findIndex(x=>x[0]===f.dataset.id));lbOpen(titleOf(k)||'',0,i,L);},true);
 {const _aS=after;after=function(){_aS.apply(this,arguments);try{sbyInit(document.querySelector('#base'));}catch(e){console.error(e);}};}
 const SEQ=['endp','toc','pre','route',
  'op1','s_arrive','s_dinner1','q1','s_iccard',
@@ -1771,8 +1776,20 @@ if(new URLSearchParams(location.search).get('bpmock')){const L=new URLSearchPara
 
 const CHNO={ch1:'01',ch2:'02',ch3:'03',ch4:'04',ch5:'05',ch6:'終'};
 function pairUp(seq){const out=[['none','cover']];let pend=null,sn=0;
-  const spacer=c=>{const k='spc'+(++sn);P[k]={c,spacer:1,h:`<div class="spc"><b>${CHNO[c]||''}</b><span>${(CH.find(x=>x.c===c)||{}).sub||''}</span></div>`};return k;};
-  const flush=()=>{if(pend){out.push([pend,spacer(P[pend].c)]);pend=null;}};
+  /* 2026-11-20：湊不成對的空白頁改放一張照片（從前一頁往回找相簿裡還沒放上頁面的照片），找不到才用大字章號 */
+  const tv=f=>{try{return f();}catch(e){return null;}},gpp=tv(()=>GPPUB)||{},pho=tv(()=>PHOTO)||{},gpo=tv(()=>GPOF)||{};
+  const bpg=tv(()=>BPG)||{},bpIds=Object.values(bpg).flatMap(d=>[...(Array.isArray(d&&d.items)?d.items:[]),...Object.values((d&&d.slots)||{}).flat()]).filter(x=>typeof x==='string').map(x=>x.replace(/^pub:/,''));
+  const used=new Set([...Object.values(gpp).flat(),...Object.values(pho).flatMap(o=>Object.values(o).map(v=>v[0])),...bpIds]),taken=new Set();
+  const spCap=t=>String(t||'').replace(/[（(][^）)]*\d{3,}[^）)]*[）)]/g,'').trim();
+  const onPage=k=>new Set([...(gpp[k]||[]),...Object.values(pho[k]||{}).map(v=>v[0]),...((bpg[k]&&Array.isArray(bpg[k].items))?bpg[k].items:[]).map(x=>String(x).replace(/^pub:/,''))]);
+  const spPhoto=prev=>{const i=seq.indexOf(prev),near=[];for(let j=i;j>=0&&j>i-3;j--){const k=seq[j];if(P[k]&&(P[k].full||/^t\d/.test(k)))break;near.push(k);}
+    const pool=[];near.forEach(k=>{const src=(gpo[k]&&gpo[k].src)||k;(MEDIA[src]||[]).filter(x=>x[2]==='i').forEach(x=>pool.push([x,src]));});
+    const here=onPage(prev),ok=x=>!taken.has(x[0][0])&&!here.has(x[0][0]);
+    const f=[...pool].reverse().find(x=>ok(x)&&!used.has(x[0][0]))||[...pool].reverse().find(ok);if(f){taken.add(f[0][0]);return f;}return null;};
+  const spacer=(c,prev)=>{const k='spc'+(++sn),f=prev&&spPhoto(prev);
+    P[k]={c,spacer:1,h:f?`<div class="spc spf" data-gk="${f[1]}" data-id="${f[0][0]}"><i style="background-image:url(img/IMG_${f[0][0]}.webp)"></i><i class="f" style="background-image:url(img/IMG_${f[0][0]}.webp)"></i><span>${spCap(f[0][1])}</span></div>`
+      :`<div class="spc"><b>${CHNO[c]||''}</b><span>${(CH.find(x=>x.c===c)||{}).sub||''}</span></div>`};return k;};
+  const flush=()=>{if(pend){out.push([pend,spacer(P[pend].c,pend)]);pend=null;}};
   for(const k of seq){if(!P[k])throw new Error('沒有這一頁：'+k);
     if(P[k].full){flush();out.push([k]);continue;}
     if(pend){if(/^t\d/.test(k)){flush();pend=k;continue;}out.push([pend,k]);pend=null;}else pend=k;}
