@@ -875,6 +875,8 @@ body.pj #pal,body.pj #hint{display:none}
 #pal{display:none}html.palon #pal{display:flex}
 .qpg{height:100%;display:flex;flex-direction:column;justify-content:center;gap:16px;padding:0 6px}
 .qpg .qm{font:13px var(--mono);letter-spacing:.24em;color:var(--acc)}
+.qpg .qr{padding:12px 0 14px;border-top:1px solid var(--rule,#ddd);border-bottom:1px solid var(--rule,#ddd)}.qpg .qr b{display:block;font:13px var(--mono);letter-spacing:.24em;color:var(--acc);font-weight:400;margin-bottom:8px}
+.qpg .qr p{margin:0;font:600 16px/2 var(--serif);color:var(--ink)}.qpg .qr i{font-style:normal;color:var(--acc);margin:0 6px;opacity:.7}.qpg .qr span{white-space:nowrap}.m .qpg .qr p{font-size:15px}
 .qpg .qq{font:700 26px/1.75 var(--serif);color:var(--ink);text-wrap:pretty}
 .qpg .qq::before{content:"「";color:var(--acc)}.qpg .qq::after{content:"」";color:var(--acc)}
 .m .qpg .qq{font-size:23px}
@@ -1318,7 +1320,10 @@ function tape(k,t,d,c){return `<button class="tape" style="--tc:${c}" data-k="${
 const phs=a=>!a.length?'':a.length===1?ph(...a[0]):a.length===2?`<div class="pgr" style="display:grid;grid-template-columns:1fr 1fr;gap:6px">${ph(...a[0])}${ph(...a[1])}</div>`:`<div class="pgr" style="display:grid;grid-template-columns:1.3fr 1fr;gap:6px">${ph(...a[0])}<div class="pgr" style="display:grid;gap:6px">${ph(...a[1])}${ph(...a[2])}</div></div>`;
 const pg=(c,o)=>({c,h:`${rh('',o.pl,o.d)}<div class="col"><div class="meta">${o.m}</div><h2>${o.t}</h2>${phs(o.ph||[])}${(o.x||[]).map(x=>`<p class="txt">${x}</p>`).join('')}${o.one?`<p class="one">${o.one}</p>`:''}${o.extra||''}</div>`});
 const opg=(c,n,pl,k,t,phl,q,snow)=>({c,snow,h:`${rh('',n,pl)}<div class="op"><div class="k">${k}</div><h2>${t}</h2>${ph('',phl)}<p class="q">${q}</p></div>`});
-const qd=(c,d,date,q)=>({c,h:`<div class="qpg"><div class="meta">DAY ${d} · ${date}</div><div class="qm">這一天的一句話</div><p class="qq">${q}</p></div>`});
+/* 每天結尾：這一天走過的地方（2026-11-20 使用者選「做法一」）＋這一天的一句話 */
+const DAYROUTE={1:['桃園','關西機場','新今宮','動物園前'],2:['新今宮','新大阪','敦賀','金澤車站','金澤城公園','兼六園','近江町'],3:['近江町市場','のとめぐり','白川鄉','金澤車站'],
+  4:['金澤','上越妙高','妙高高原','岡山旅館','夜間雪場','赤倉溫泉街'],5:['岡山旅館','赤倉溫泉街'],6:['妙高高原','長野','湯田中','渋溫泉','長野'],7:['長野','大宮','新宿','中野','歌舞伎町'],8:['新宿','秋葉原','神保町','淺草','淺草寺']};
+const qd=(c,d,date,q)=>({c,h:`<div class="qpg"><div class="meta">DAY ${d} · ${date}</div>${DAYROUTE[d]?`<div class="qr"><b>這一天走過</b><p>${DAYROUTE[d].map(x=>`<span>${x}</span>`).join('<i>→</i>')}</p></div>`:''}<div class="qm">這一天的一句話</div><p class="qq">${q}</p></div>`});
 Object.assign(P,{
  // 第一章 大阪
  op1:opg('ch1','第一章','大阪','CHAPTER 01 · DAY 1','新今宮的夜','橫幅照片・新今宮的街道','第一天只有半天：降落、換票、吃飯、入住。'),
@@ -1356,26 +1361,26 @@ Object.assign(P,{
  s_koyama:pg('ch3',{pl:'赤倉溫泉',d:'DAY 5',m:'午餐',t:'Koyama',ph:[['h','橫幅照片・拉麵與餃子']],x:['好像是吃拉麵，但根本只是清水泡麵加火鍋料，一點調味都沒有，自己煮都比這好吃。','餃子內餡只有韭菜、沒有肉，味道重到像在吃草。']}),
  s_bath5:pg('ch3',{pl:'赤倉溫泉',d:'DAY 5',m:'下午 · 泡湯',t:'有湯花的硫磺泉',ph:[['h','橫幅照片・付費的湯']],x:['下午在旅館泡另外付費的湯，類似有湯花的硫磺泉。一個覺得挺舒服，一個不太喜歡裡面的漂浮物。']}),
  s_taco:pg('ch3',{pl:'赤倉溫泉',d:'DAY 5',m:'晚上 · 晚餐',t:'路邊的 taco',ph:[['h','橫幅照片・taco']],x:['路邊的 taco，當時在 Google 地圖上找不到，但很想給五顆星：用料實在、醬料很香。','吃完又去前一天的 NINJA Riceball，老闆還認得我們。晚上有泡湯。']}),
- q5:qd('ch3',5,'2/26（三）','感覺有點可惜，而且朋友對滑雪有點陰影。'),
+ q5:qd('ch3',5,'2/26（三）','日式榻榻米原來可以這麼舒服~'),
  t3:{c:'ch4',h:()=>ticket({day:'DAY 6',date:'2025. 2.27',a:'妙高高原',ar:'MYOKOKOGEN',b:'長 野',br:'NAGANO',line:'しなの鉄道 北しなの線',no:'No. 0227',st:'信州',ph:'橫幅照片・北しなの線的車頭',txt:'早餐換成西式，很普通。前一天問了旅館的司機，這天由旅館的車送到妙高高原站，在車站對面的咖啡廳等車。',one:'那班車的車頭很漂亮，很多鐵道迷在拍。'})},
  // 第四章 長野・渋溫泉
  op4:opg('ch4','第四章','長野・渋溫泉','CHAPTER 04 · DAY 6','五十五度的湯','橫幅照片・渋溫泉的石板路','北しなの線、長野電鐵、巴士，一路到渋溫泉。'),
  s_soba:pg('ch4',{pl:'長野',d:'DAY 6',m:'午餐',t:'蕎麦政海本舗',ph:[['h','橫幅照片・天婦羅蕎麥麵']],x:['點了天婦羅蕎麥麵套餐。麵普通，天婦羅的麵衣和蝦子是分離的，口感不太好。']}),
  s_dentetsu:pg('ch4',{pl:'長野 → 湯田中',d:'DAY 6',m:'下午 · 長野電鐵',t:'湯けむり號',ph:[['h','橫幅照片・湯けむり號']],x:['從長野搭長野電鐵到湯田中，剛好搭到湯けむり號；沒坐第一節車廂，沒看到什麼特別的。','在湯田中下車，再轉巴士到渋溫泉。地獄谷這次沒去。']}),
- q6:qd('ch4',6,'2/27（四）','長野這種非觀光的地方，對外國客實在很不友善；這次越往日本鄉下走，這種感受就越強烈。'),
+ q6:qd('ch4',6,'2/27（四）','日本非觀光地區對外國客不太友善，越往日本鄉下走，感受就越強烈。'),
  t4:{c:'ch5',h:()=>ticket({day:'DAY 7',date:'2025. 2.28',a:'長 野',ar:'NAGANO',b:'新 宿',br:'SHINJUKU',line:'北陸新幹線 → 大宮 → 埼京線',no:'No. 0228',st:'東京',ph:'橫幅照片・新宿的人潮',txt:'早上心情有點糟，但還要趕車，就沒多想。早餐是樓下超商買的。',one:'新幹線到大宮那段，沒什麼印象。'})},
  // 第五章 東京
  op5:opg('ch5','第五章','東京','CHAPTER 05 · DAY 7–8','霓虹與模型','直幅照片・歌舞伎町','一到新宿，人潮一下子多了好幾倍。'),
  s_bookbed:pg('ch5',{pl:'新宿',d:'DAY 7 · 2/28（五）',m:'上午 · 寄行李',t:'以為是咖啡廳',ph:[['h','橫幅照片・咖啡廳吧檯']],x:['BOOK AND BED 新宿其實在歌舞伎町裡面，一棟大樓的高樓層。前台是咖啡廳吧檯，從外面看就像一間咖啡廳。','寄行李時只看到這個吧檯，還以為是在咖啡廳寄放東西。']}),
  s_motomura:pg('ch5',{pl:'新宿',d:'DAY 7',m:'11:00 · 午餐',t:'牛かつ もと村',ph:[['h','橫幅照片・自己烤的牛かつ']],x:['很幸運 11 點就到、不用排隊。牛排外面裹一層麵衣，自己烤起來脆脆的，很特別的體驗。']}),
  s_kabuki:pg('ch5',{pl:'新宿',d:'DAY 7',m:'晚上 · 歌舞伎町',t:'想看看傳說中的樣子',ph:[['h','橫幅照片・歌舞伎町的街道']],x:['大馬路上有工整站成兩排等待的女性，原以為是 18 禁的業務，實際上多是陪唱歌、喝酒聊天的店。','真正站街拉客的原本在大久保公園，最近警察常臨檢，都不見了；但還是看到零星男女交談後前往酒店。']}),
- q7:qd('ch5',7,'2/28（五）','歌舞伎町比想像中還要龍蛇混雜，但不像真的紅燈區會有主動拉客的行為。'),
+ q7:qd('ch5',7,'2/28（五）','歌舞伎町探險記　完'),
  s_plus:pg('ch5',{pl:'淺草',d:'DAY 8 · 3/1（六）',m:'早上 · 換住處',t:'搬到淺草',ph:[['h','橫幅照片・Plus Hostel']],x:['BOOK AND BED 那晚睡得普通，前一天逛街太累。','搬到淺草寺附近的 Plus Hostel，也是青年旅舍，但旅客明顯比較安靜。']}),
  s_akiba:pg('ch5',{pl:'秋葉原',d:'DAY 8',m:'白天 · 秋葉原',t:'直接去 AmiAmi',ph:[['h','橫幅照片・AmiAmi'],['h','橫幅照片・戰利品']],x:['逛了哪些店已經忘了，但兩個人都在 AmiAmi 買到想要的模型。東西多到有點太多，但有分類擺放。逛了一整天，逛到兩個人都快走不動。'],one:'下次會先逛其他小店，真要買模型就直接去 AmiAmi。'}),
  s_kanda:pg('ch5',{pl:'神保町',d:'DAY 8',m:'午餐',t:'神田勝本',ph:[['h','橫幅照片・沾麵']],x:['原本想吃丸香，門外至少排了 50 人，才改吃這家。','沾麵很滑順，可能先浸過醬汁；醬汁有很香的鰹魚味，調味稍鹹，但保留一絲清爽。']}),
  s_ichiran:pg('ch5',{pl:'淺草',d:'DAY 8',m:'晚上 · 晚餐',t:'一蘭 淺草店',ph:[['h','橫幅照片・一蘭']],x:['先回住處放剛買的模型，出來想就近吃；原訂的米久本店沒去，朋友說想吃一蘭。','店在地下室，桌椅擺得像台灣的八方雲集；畫完單要先去收銀區結帳，餐點好了自己去端。味道像自己買一蘭泡麵泡的。']}),
  s_sensoji:pg('ch5',{pl:'淺草',d:'DAY 8',m:'晚上 · 淺草寺',t:'淺草寺的早晚',ph:[['v','直幅照片・淺草寺的夜']],x:['白天觀光客多到拍照要排很久，只看一眼就走；晚上人少、不用排隊，夜景拍起來很好看。'],one:'這趟看過淺草寺的早上、晚上和凌晨。'}),
- q8:qd('ch5',8,'3/1（六）','往後都決定不再訂這種青年旅舍。'),
+ q8:qd('ch5',8,'3/1（六）','下次可以多逛逛東京其他地區'),
  // 終章
  op6:opg('ch6','終章','成田','EPILOGUE · DAY 9','清晨的機場','橫幅照片・成田的清晨','熬夜到五點，直接出發去成田；機場隨便吃吃，08:30 起飛。'),
 });
@@ -1805,7 +1810,11 @@ const CPTXT={
   c_mwncgmo42xve:{x:'午餐後先走進金澤城公園。場景很大，城門、石垣和雪地一路延伸，站在中間就能把整個公園拍進全景。'},
   c_mwnnkmy4gdxj:{x:'在城裡繞了一大圈，才往隔壁的兼六園走。先被城的宏偉衝擊過，等一下園裡精緻的小布景反而沒那麼吸引人。'},
   c_mwnrpfwngpsk:{x:'晚上回來推開側門，才知道後面是旅舍的公共空間，連著廁所、浴室、交誼廳和每個人的床位。\n\n私人空間只有一張用簾子遮的床，行李箱要另外找地方硬塞，只適合背包客。',one:'寄行李時只看到吧檯，晚上回來才發現裡面長這樣。'}};
-function cpApply(){const L=((BPG._custom||{}).pages||[]).filter(c=>c&&/^c_[\w-]+$/.test(c.k||''));
+/* 自己加的頁位置的修正（使用者請 Claude 改、但 Claude 寫不了 Firestore）：只有 Firestore 還是原本的位置（from）時才套用；使用者在 trip-tools 改過就以那邊為準。
+   c_mwnlv4mxbxub「妙高高原->長野 列車」原本接在 Day 5 早餐後面，實際是 Day 6 早上 → 放到第四章章扉 op4 後面（2026-11-20） */
+const CPFIX={c_mwnlv4mxbxub:{from:'s_bfast',after:'op4',d:'6'}};
+const cpFix=c=>{const f=CPFIX[c.k];return f&&c.after===f.from?{...c,after:f.after,d:f.d}:c;};
+function cpApply(){const L=((BPG._custom||{}).pages||[]).filter(c=>c&&/^c_[\w-]+$/.test(c.k||'')).map(cpFix);
   const vis=L.filter(c=>{try{return bpItems(c.k).length>0;}catch(e){return false;}});
   const META=BPG._meta||{},HID=new Set((META.hidden||[]).filter(k=>k!=='cover'&&k!=='back'));const sig=JSON.stringify([vis.map(c=>[c.k,c.after,c.t,c.pl,c.d,c.x]),[...HID].sort(),META.titles||{}]);if(sig===CPSIG)return false;CPSIG=sig;
   const cur=(()=>{try{return keyAt(I);}catch(e){return null;}})();
